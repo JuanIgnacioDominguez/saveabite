@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save a Bite - Registro e Inicio de Sesión</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+        }
+        .bg-custom-blue {
+            background-color: #27a2e8;
+        }
+        .border-custom-blue {
+            border-color: #27a2e8;
+        }
+        .focus-ring-custom-blue:focus {
+            ring-color: #27a2e8;
+        }
+        .text-custom-blue {
+            color: #27a2e8;
+        }
+        .hover-bg-custom-blue:hover {
+            background-color: #27a2e8;
+        }
+            /* Genel stil */
+        .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 24px;
+        margin: 10px;
+        }
+
+        /* Giriş stil */
+        .toggle-switch .toggle-input {
+        display: none;
+        }
+
+        /* Anahtarın stilinin etrafındaki etiketin stil */
+        .toggle-switch .toggle-label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 24px;
+            background-color: #c9c5c5;
+            border-radius: 34px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        /* Anahtarın yuvarlak kısmının stil */
+        .toggle-switch .toggle-label::before {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            background-color: #ffffff;
+            box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+        }
+
+        /* Anahtarın etkin hale gelmesindeki stil değişiklikleri */
+        .toggle-switch .toggle-input:checked + .toggle-label {
+            background-color: #27a2e8;
+        }
+
+        .toggle-switch .toggle-input:checked + .toggle-label::before {
+            transform: translateX(16px);
+        }
+
+        /* Light tema */
+        .toggle-switch.light .toggle-label {
+            background-color: #BEBEBE;
+        }
+
+        .toggle-switch.light .toggle-input:checked + .toggle-label {
+            background-color: #9B9B9B;
+        }
+
+        .toggle-switch.light .toggle-input:checked + .toggle-label::before {
+            transform: translateX(6px);
+        }
+
+        /* Dark tema */
+        .toggle-switch.dark .toggle-label {
+            background-color: #4B4B4B;
+        }
+
+        .toggle-switch.dark .toggle-input:checked + .toggle-label {
+            background-color: #717171;
+        }
+
+        .toggle-switch.dark .toggle-input:checked + .toggle-label::before {
+            transform: translateX(16px);
+        }
+
+    </style>
+</head>
+<body class="bg-gray-100 flex justify-center items-center h-screen">
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden w-full max-w-md">
+        <div class="relative bg-custom-blue p-4 flex justify-center items-center">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" class="logo w-44"/>
+        </div>
+        <div class="p-6">
+            <div class="flex justify-between border-b pb-2">
+                <button id="registerTab" class="text-custom-blue font-semibold border-b-2 border-custom-blue">Registrarse</button>
+                <button id="loginTab" class="text-gray-600">Iniciar Sesión</button>
+            </div>
+            <form id="registerForm" class="mt-4">
+                <div class="mb-4">
+                    <label for="name" class="block text-gray-700">Nombre completo</label>
+                    <input type="text" id="name" class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-custom-blue">
+                </div>
+                <div class="mb-4">
+                    <label for="email" class="block text-gray-700">Email</label>
+                    <input type="email" id="email" class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-custom-blue">
+                </div>
+                <div class="mb-4 relative">
+                    <label for="password" class="block text-gray-700">Contraseña</label>
+                    <input type="password" id="password" class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-custom-blue">
+                    <button type="button" class="absolute inset-y-0 right-0 px-3 flex items-center">
+                        <svg class="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 111.414 1.414L11.414 10l4.293 4.293a1 1 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 01-1.414-1.414L8.586 10 4.293 5.707a1 1 010-1.414z" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="mb-4 flex items-center">
+                    <div class="toggle-switch">
+                        <input class="toggle-input" id="toggle" type="checkbox">
+                        <label class="toggle-label" for="toggle"></label>
+                    </div>
+                    
+                    <label for="vendor" class="text-gray-700">¿Eres un Restaurante/Vendedor?</label>
+                </div>
+                <div>
+                    <button type="submit" class="w-full bg-custom-blue text-white p-2 rounded-md hover:bg-blue-700">Crear Cuenta</button>
+                </div>
+            </form>
+            <form id="loginForm" class="mt-4 hidden">
+                <div class="mb-4">
+                    <label for="emailLogin" class="block text-gray-700">Email</label>
+                    <input type="email" id="emailLogin" class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-custom-blue">
+                </div>
+                <div class="mb-4 relative">
+                    <label for="passwordLogin" class="block text-gray-700">Contraseña</label>
+                    <input type="password" id="passwordLogin" class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-custom-blue">
+                    <button type="button" class="absolute inset-y-0 right-0 px-3 flex items-center">
+                        <svg class="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 111.414 1.414L11.414 10l4.293 4.293a1 1 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 01-1.414-1.414L8.586 10 4.293 5.707a1 1 010-1.414z" />
+                        </svg>
+                    </button>
+                </div>
+                <div>
+                    <button type="submit" class="w-full bg-custom-blue text-white p-2 rounded-md hover:bg-blue-700">Iniciar Sesión</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        const registerTab = document.getElementById('registerTab');
+        const loginTab = document.getElementById('loginTab');
+        const registerForm = document.getElementById('registerForm');
+        const loginForm = document.getElementById('loginForm');
+
+        registerTab.addEventListener('click', () => {
+            registerTab.classList.add('text-custom-blue', 'font-semibold', 'border-b-2', 'border-custom-blue');
+            loginTab.classList.remove('text-custom-blue', 'font-semibold', 'border-b-2', 'border-custom-blue');
+            loginTab.classList.add('text-gray-600');
+            registerForm.classList.remove('hidden');
+            loginForm.classList.add('hidden');
+        });
+
+        loginTab.addEventListener('click', () => {
+            loginTab.classList.add('text-custom-blue', 'font-semibold', 'border-b-2', 'border-custom-blue');
+            registerTab.classList.remove('text-custom-blue', 'font-semibold', 'border-b-2', 'border-custom-blue');
+            registerTab.classList.add('text-gray-600');
+            loginForm.classList.remove('hidden');
+            registerForm.classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
+

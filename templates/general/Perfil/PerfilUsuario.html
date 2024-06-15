@@ -9,10 +9,40 @@
         .custom-blue {
             background-color: #27a2e8;
         }
+        .gradient-bg {
+            background: linear-gradient(135deg, #6fd8f1 0%, #27a2e8 100%);
+        }
     </style>
 </head>
-<body class="bg-gray-100">
-    <div class="max-w-md mx-auto mt-10 bg-white shadow-md rounded-lg overflow-hidden">
+<body class="gradient-bg min-h-screen flex">
+    <!-- Barra Lateral Izquierda -->
+    <div class="w-64 bg-white shadow-md">
+        <div class="p-4 flex items-center space-x-2">
+            <img src="path/to/logo.png" alt="Logo" class="w-8 h-8">
+            <span class="text-xl font-semibold">Save a Bite</span>
+        </div>
+        <nav class="mt-10">
+            <a href="/perfil" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
+                <span class="material-icons">home</span>
+                <span class="ml-3">Inicio</span>
+            </a>
+            <a href="#" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
+                <span class="material-icons">receipt_long</span>
+                <span class="ml-3">Mis Pedidos</span>
+            </a>
+            <a href="#" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
+                <span class="material-icons">favorite</span>
+                <span class="ml-3">Favoritos</span>
+            </a>
+            <a href="#" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
+                <span class="material-icons">info</span>
+                <span class="ml-3">Información</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Contenedor Principal -->
+    <div class="flex-1 max-w-md mx-auto mt-10 bg-white shadow-md rounded-lg overflow-hidden">
         <div class="custom-blue p-4">
             <h2 class="text-white text-lg font-semibold">Perfil</h2>
         </div>
@@ -29,25 +59,25 @@
             <nav class="p-4">
                 <ul class="space-y-2">
                     <li>
-                        <a href="#" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-200">
+                        <a href="/Direcciones" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-200">
                             <span class="material-icons">location_on</span>
                             <span>Direcciones</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-200">
+                        <a href="/EditarPerfil" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-200">
                             <span class="material-icons">account_circle</span>
                             <span>Editar Perfil</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-200">
+                        <a href="/MetodosPago" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-200">
                             <span class="material-icons">credit_card</span>
-                            <span>Metodos de Pago</span>
+                            <span>Métodos de Pago</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-200">
+                        <a href="/Soporte" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-200">
                             <span class="material-icons">help_outline</span>
                             <span>Soporte</span>
                         </a>
@@ -59,6 +89,7 @@
             <button class="w-full custom-blue text-white py-2 rounded hover:bg-blue-600">Cerrar Sesión</button>
         </div>
     </div>
+
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </body>
 </html>

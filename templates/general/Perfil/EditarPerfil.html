@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Perfil</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .custom-blue {
+            background-color: #27a2e8;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #6fd8f1 0%, #27a2e8 100%);
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen flex">
+    <!-- Barra Lateral Izquierda -->
+    <div class="w-64 bg-white shadow-md">
+        <div class="p-4 flex items-center space-x-2">
+            <img src="path/to/logo.png" alt="Logo" class="w-8 h-8">
+            <span class="text-xl font-semibold">Save a Bite</span>
+        </div>
+        <nav class="mt-10">
+            <a href="/perfil" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
+                <span class="material-icons">home</span>
+                <span class="ml-3">Inicio</span>
+            </a>
+            <a href="#" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
+                <span class="material-icons">receipt_long</span>
+                <span class="ml-3">Mis Pedidos</span>
+            </a>
+            <a href="#" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
+                <span class="material-icons">favorite</span>
+                <span class="ml-3">Favoritos</span>
+            </a>
+            <a href="#" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
+                <span class="material-icons">info</span>
+                <span class="ml-3">Información</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Contenedor Principal -->
+    <div class="flex-1 max-w-md mx-auto mt-10 bg-white shadow-md rounded-lg overflow-hidden">
+        <div class="custom-blue p-4">
+            <h2 class="text-white text-lg font-semibold">Editar Perfil</h2>
+        </div>
+        <div class="p-4 space-y-4">
+            <div class="flex items-center justify-between p-4 rounded-lg bg-gray-100 shadow-sm">
+                <div>
+                    <h3 class="text-md font-medium">Nombre Completo</h3>
+                    <p class="text-sm text-gray-600">{{ user.name }}</p>
+                </div>
+                <button class="text-gray-400">
+                    <span class="material-icons">edit</span>
+                </button>
+            </div>
+            <div class="flex items-center justify-between p-4 rounded-lg bg-gray-100 shadow-sm">
+                <div>
+                    <h3 class="text-md font-medium">Mail</h3>
+                    <p class="text-sm text-gray-600">{{ user.email }}</p>
+                </div>
+                <button class="text-gray-400">
+                    <span class="material-icons">edit</span>
+                </button>
+            </div>
+            <div class="flex items-center justify-between p-4 rounded-lg bg-gray-100 shadow-sm">
+                <div>
+                    <h3 class="text-md font-medium">Contraseña</h3>
+                    <p class="text-sm text-gray-600">{{ user.password }}</p>
+                </div>
+                <button class="text-gray-400">
+                    <span class="material-icons">edit</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</body>
+</html>

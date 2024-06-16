@@ -86,11 +86,13 @@
             color: #27a2e8;
             transform: translateY(-100%) translateX(-5px) scale(0.8);
         }
-        .inputError {
-            border-color: red;
-        }
-        .labelError {
-            color: red;
+        .inputUnderline {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #27a2e8;
         }
         .toggle-switch {
             position: relative;
@@ -158,6 +160,14 @@
         .logo {
             margin: 15px;
         }
+        .flash-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body class="flex justify-center items-center h-screen">
@@ -171,15 +181,26 @@
                 <div id="registerTab" class="toggle-button">Registrarse</div>
             </div>
             <div class="form-container relative">
-                <form id="loginForm" class="form-transition form-visible" onsubmit="return validateLogin()">
+                <!-- Mensajes flash -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-message">
+                            {% for category, message in messages %}
+                                <p>{{ message }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <form id="loginForm" class="form-transition form-visible" method="POST" action="{{ url_for('login') }}">
+                    <br><br>
                     <h2 class="text-2xl font-bold mb-2">Bienvenido de vuelta!</h2>
                     <p class="text-sm text-gray-600 mb-6">Complete con su información en las casillas de abajo para acceder a su cuenta</p>
                     <div class="inputContainer">
-                        <input type="email" id="emailLogin" class="customInput" placeholder=" " required>
+                        <input type="email" id="emailLogin" name="email" class="customInput" placeholder=" " required>
                         <label for="emailLogin" class="inputLabel">Email</label>
                     </div>
                     <div class="inputContainer relative">
-                        <input type="password" id="passwordLogin" class="customInput" placeholder=" " required>
+                        <input type="password" id="passwordLogin" name="password" class="customInput" placeholder=" " required>
                         <label for="passwordLogin" class="inputLabel">Contraseña</label>
                         <span class="show-password-btn" onclick="togglePasswordVisibility('passwordLogin')">
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -188,23 +209,24 @@
                             </svg>
                         </span>
                     </div>
+                    <br><br><br>
                     <div>
                         <button type="submit" class="w-full bg-custom-blue text-white p-2 rounded-md hover:bg-blue-700">Iniciar Sesión</button>
                     </div>
                 </form>
-                <form id="registerForm" class="form-transition form-hidden" onsubmit="return validateRegister()">
+                <form id="registerForm" class="form-transition form-hidden" method="POST" action="{{ url_for('register') }}">
                     <h2 class="text-2xl font-bold mb-2">Crear una Cuenta</h2>
                     <p class="text-sm text-gray-600 mb-6">Complete con su información en las casillas de abajo para crear su cuenta</p>
                     <div class="inputContainer">
-                        <input type="text" id="name" class="customInput" placeholder=" " required>
+                        <input type="text" id="name" name="name" class="customInput" placeholder=" " required>
                         <label for="name" class="inputLabel">Nombre completo</label>
                     </div>
                     <div class="inputContainer">
-                        <input type="email" id="email" class="customInput" placeholder=" " required>
+                        <input type="email" id="email" name="email" class="customInput" placeholder=" " required>
                         <label for="email" class="inputLabel">Email</label>
                     </div>
                     <div class="inputContainer relative">
-                        <input type="password" id="password" class="customInput" placeholder=" " required>
+                        <input type="password" id="password" name="password" class="customInput" placeholder=" " required>
                         <label for="password" class="inputLabel">Contraseña</label>
                         <span class="show-password-btn" onclick="togglePasswordVisibility('password')">
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -215,7 +237,7 @@
                     </div>
                     <div class="mb-4 flex items-center justify-center">
                         <div class="toggle-switch">
-                            <input class="toggle-input" id="toggle" type="checkbox">
+                            <input class="toggle-input" id="toggle" type="checkbox" name="is_vendor">
                             <label class="toggle-label" for="toggle"></label>
                         </div>
                         <label for="toggle" class="text-gray-700 ml-2">¿Eres un Restaurante/Vendedor?</label>
@@ -259,68 +281,6 @@
             } else {
                 input.type = 'password';
             }
-        }
-
-        function validateLogin() {
-            const emailLogin = document.getElementById('emailLogin');
-            const passwordLogin = document.getElementById('passwordLogin');
-            let valid = true;
-
-            if (!emailLogin.value) {
-                emailLogin.classList.add('inputError');
-                emailLogin.nextElementSibling.classList.add('labelError');
-                valid = false;
-            } else {
-                emailLogin.classList.remove('inputError');
-                emailLogin.nextElementSibling.classList.remove('labelError');
-            }
-
-            if (!passwordLogin.value) {
-                passwordLogin.classList.add('inputError');
-                passwordLogin.nextElementSibling.classList.add('labelError');
-                valid = false;
-            } else {
-                passwordLogin.classList.remove('inputError');
-                passwordLogin.nextElementSibling.classList.remove('labelError');
-            }
-
-            return valid;
-        }
-
-        function validateRegister() {
-            const name = document.getElementById('name');
-            const email = document.getElementById('email');
-            const password = document.getElementById('password');
-            let valid = true;
-
-            if (!name.value) {
-                name.classList.add('inputError');
-                name.nextElementSibling.classList.add('labelError');
-                valid = false;
-            } else {
-                name.classList.remove('inputError');
-                name.nextElementSibling.classList.remove('labelError');
-            }
-
-            if (!email.value) {
-                email.classList.add('inputError');
-                email.nextElementSibling.classList.add('labelError');
-                valid = false;
-            } else {
-                email.classList.remove('inputError');
-                email.nextElementSibling.classList.remove('labelError');
-            }
-
-            if (!password.value) {
-                password.classList.add('inputError');
-                password.nextElementSibling.classList.add('labelError');
-                valid = false;
-            } else {
-                password.classList.remove('inputError');
-                password.nextElementSibling.classList.remove('labelError');
-            }
-
-            return valid;
         }
     </script>
 </body>

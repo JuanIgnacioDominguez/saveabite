@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save a Bite - Menu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(to bottom right, #f1f5f9, #0284c7); /* bg-gradient-to-br from-slate-50 to-sky-600 */
+        }
+        .bg-custom-blue {
+            background-color: #27a2e8;
+        }
+        .text-custom-blue {
+            color: #27a2e8;
+        }
+        .nav-item {
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            color: #6b7280;
+            transition: color 0.3s ease;
+        }
+        .nav-item i {
+            height: 24px;
+            width: 24px;
+            margin-right: 0.5rem;
+        }
+        .nav-item:hover,
+        .nav-item.active {
+            color: #27a2e8;
+        }
+        .profile {
+            display: flex;
+            align-items: center;
+            margin-top: auto;
+            margin-bottom: 1rem;
+        }
+        .profile img {
+            height: 40px;
+            width: 40px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        .btn-custom {
+            background-color: white;
+            color: #27a2e8;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 120px;
+        }
+        .btn-custom i {
+            font-size: 24px;
+            margin-bottom: 0.5rem;
+        }
+        .btn-custom:hover,
+        .btn-custom.active {
+            background-color: #27a2e8;
+            color: white;
+        }
+        .recipe-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 16px;
+            transition: transform 0.2s;
+        }
+        .recipe-card:hover {
+            transform: translateY(-5px);
+        }
+        .recipe-card img {
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        .header h1 {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #27a2e8;
+            position: absolute;
+            left: 0;
+            margin-left: 20px;
+        }
+        .search {
+            display: inline-block;
+            position: relative;
+        }
+        .search input[type="text"] {
+            width: 600px;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .search button[type="submit"] {
+            background-color: #4e99e9;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            top: 0;
+            right: 0;
+            transition: 0.3s ease;
+        }
+        .search button[type="submit"]:hover {
+            transform: scale(1.1);
+            color: rgb(255, 255, 255);
+            background-color: blue;
+        }
+    </style>
+</head>
+<body class="flex">
+    <!-- Sidebar -->
+    <div class="flex flex-col h-screen bg-white w-64 p-6 shadow-lg">
+        <div class="flex justify-center mb-8">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" class="logo w-44" alt="Save a Bite Logo"/>
+        </div>
+        <div class="nav-item active">
+            <i class="fas fa-home"></i>
+            Inicio
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-credit-card"></i>
+            Medios de pago
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-shopping-bag"></i>
+            Mis Pedidos
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-heart"></i>
+            Favoritos
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-info-circle"></i>
+            Información
+        </div>
+        <div class="profile">
+            <img src="path_to_profile_image.jpg" alt="Profile">
+            <div class="text-custom-blue">Edit Profile</div>
+        </div>
+    </div>
+    <!-- Main content -->
+    <div class="flex-1 p-6">
+        <div class="header">
+            <h1 class="text-4xl font-bold text-custom-blue">Menu Principal</h1>
+            <div class="search">
+                <input type="text" placeholder="Buscar...">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+        <div class="flex justify-center space-x-4 mb-6">
+            <button class="btn-custom active">
+                <i class="fas fa-utensils"></i>
+                Todos
+            </button>
+            <button class="btn-custom">
+                <i class="fas fa-hamburger"></i>
+                Hamburguesas
+            </button>
+            <button class="btn-custom">
+                <i class="fas fa-pizza-slice"></i>
+                Pizzas
+            </button>
+            <button class="btn-custom">
+                <i class="fas fa-pasta"></i>
+                Pasta
+            </button>
+            <button class="btn-custom">
+                <i class="fas fa-leaf"></i>
+                Ensaladas
+            </button>
+            <button class="btn-custom">
+                <i class="fas fa-coffee"></i>
+                Cafeteria
+            </button>
+            <button class="btn-custom">
+                <i class="fas fa-drumstick-bite"></i>
+                Carnes
+            </button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="recipe-card">
+                <img src="path_to_image.jpg" alt="Spanish Omelette" class="w-full h-40 object-cover">
+                <h3 class="text-xl font-bold mb-2">Spanish Omelette</h3>
+                <p class="text-gray-600 mb-2">Level: Easy</p>
+                <p class="text-gray-600 mb-2">For 4 person</p>
+                <p class="text-gray-600 mb-2">4,385/portion</p>
+                <div class="flex justify-between">
+                    <button class="text-custom-blue">Go to the recipe</button>
+                    <button class="text-custom-blue">Print</button>
+                </div>
+            </div>
+            <div class="recipe-card">
+                <img src="path_to_image.jpg" alt="Green sandwich with avocado and salmon" class="w-full h-40 object-cover">
+                <h3 class="text-xl font-bold mb-2">Green sandwich with avocado and salmon</h3>
+                <p class="text-gray-600 mb-2">Level: Medium</p>
+                <p class="text-gray-600 mb-2">For 4 person</p>
+                <p class="text-gray-600 mb-2">2,425/portion</p>
+                <div class="flex justify-between">
+                    <button class="text-custom-blue">Go to the recipe</button>
+                    <button class="text-custom-blue">Print</button>
+                </div>
+            </div>
+            <div class="recipe-card">
+                <img src="path_to_image.jpg" alt="Shakshouka" class="w-full h-40 object-cover">
+                <h3 class="text-xl font-bold mb-2">Shakshouka</h3>
+                <p class="text-gray-600 mb-2">Level: Hard</p>
+                <p class="text-gray-600 mb-2">For 4 person</p>
+                <p class="text-gray-600 mb-2">1,895/portion</p>
+                <div class="flex justify-between">
+                    <button class="text-custom-blue">Go to the recipe</button>
+                    <button class="text-custom-blue">Print</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

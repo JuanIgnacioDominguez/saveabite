@@ -3,62 +3,325 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <title>Save a Bite - Registro e Inicio de Sesión</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        .custom-blue {
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: url('/static/img/genteb.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        .bg-custom-blue {
             background-color: #27a2e8;
+        }
+        .text-custom-blue {
+            color: #27a2e8;
+        }
+        .btn-custom {
+            background-color: white;
+            color: #27a2e8;
+            padding: 0.5rem 2rem;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .btn-custom:hover {
+            background-color: #e5f3fc;
+        }
+        .toggle-button-group {
+            display: flex;
+            position: relative;
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        .toggle-button {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .toggle-button.active {
+            background-color: #27a2e8;
+            color: white;
+        }
+        .toggle-button:not(.active) {
+            color: #6b7280;
+        }
+        .inputContainer {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .customInput {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: transparent;
+            border: none;
+            border-bottom: 2px solid #b0b0b0;
+            outline: none;
+            transition: border-color 0.3s ease;
+            color: #b0b0b0;
+        }
+        .customInput:focus,
+        .customInput:not(:placeholder-shown) {
+            border-color: #27a2e8;
+        }
+        .inputLabel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            padding: 5px;
+            font-size: 16px;
+            color: #b0b0b0;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        .customInput:focus + .inputLabel,
+        .customInput:not(:placeholder-shown) + .inputLabel {
+            color: #27a2e8;
+            transform: translateY(-100%) translateX(-5px) scale(0.8);
+        }
+        .inputError {
+            border-color: red;
+        }
+        .labelError {
+            color: red;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 24px;
+            margin: 10px;
+        }
+        .toggle-switch .toggle-input {
+            display: none;
+        }
+        .toggle-switch .toggle-label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 24px;
+            background-color: #c9c5c5;
+            border-radius: 34px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .toggle-switch .toggle-label::before {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            background-color: #ffffff;
+            box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+        }
+        .toggle-switch .toggle-input:checked + .toggle-label {
+            background-color: #27a2e8;
+        }
+        .toggle-switch .toggle-input:checked + .toggle-label::before {
+            transform: translateX(16px);
+        }
+        .inputContainer {
+            margin-top: 35px !important;
+        }
+        .form-transition {
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .form-hidden {
+            opacity: 0;
+            transform: translateX(-50%);
+            position: absolute;
+        }
+        .form-visible {
+            opacity: 1;
+            transform: translateX(0);
+            position: relative;
+        }
+        .show-password-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #b0b0b0;
+        }
+        .logo {
+            margin: 15px;
         }
     </style>
 </head>
-<body class="bg-gray-100">
-    <div class="max-w-md mx-auto mt-10 bg-white shadow-md rounded-lg overflow-hidden">
-        <div class="custom-blue p-4">
-            <h2 class="text-white text-lg font-semibold">Perfil</h2>
+<body class="flex justify-center items-center h-screen">
+    <div class="bg-white rounded-lg shadow-2xl overflow-hidden w-full max-w-lg mx-4">
+        <div class="relative p-4 flex justify-center items-center bg-white">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" class="logo w-44"/>
         </div>
-        <div class="p-4">
-            <div class="flex items-center space-x-4">
-                <div class="w-16 h-16 bg-gray-300 rounded-full"></div>
-                <div>
-                    <h3 class="text-lg font-medium" id="user-name">{{ user.name }}</h3>
-                    <p class="text-gray-600" id="user-email">{{ user.email }}</p>
-                </div>
+        <div class="p-6">
+            <div class="toggle-button-group">
+                <div id="loginTab" class="toggle-button active">Iniciar Sesión</div>
+                <div id="registerTab" class="toggle-button">Registrarse</div>
+            </div>
+            <div class="form-container relative">
+                <form id="loginForm" class="form-transition form-visible" onsubmit="return validateLogin()">
+                    <h2 class="text-2xl font-bold mb-2">Bienvenido de vuelta!</h2>
+                    <p class="text-sm text-gray-600 mb-6">Complete con su información en las casillas de abajo para acceder a su cuenta</p>
+                    <div class="inputContainer">
+                        <input type="email" id="emailLogin" class="customInput" placeholder=" " required>
+                        <label for="emailLogin" class="inputLabel">Email</label>
+                    </div>
+                    <div class="inputContainer relative">
+                        <input type="password" id="passwordLogin" class="customInput" placeholder=" " required>
+                        <label for="passwordLogin" class="inputLabel">Contraseña</label>
+                        <span class="show-password-btn" onclick="togglePasswordVisibility('passwordLogin')">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-.638 1.846-1.892 3.418-3.467 4.5M15 12a3 3 0 01-6 0"></path>
+                            </svg>
+                        </span>
+                    </div>
+                    <div>
+                        <button type="submit" class="w-full bg-custom-blue text-white p-2 rounded-md hover:bg-blue-700">Iniciar Sesión</button>
+                    </div>
+                </form>
+                <form id="registerForm" class="form-transition form-hidden" onsubmit="return validateRegister()">
+                    <h2 class="text-2xl font-bold mb-2">Crear una Cuenta</h2>
+                    <p class="text-sm text-gray-600 mb-6">Complete con su información en las casillas de abajo para crear su cuenta</p>
+                    <div class="inputContainer">
+                        <input type="text" id="name" class="customInput" placeholder=" " required>
+                        <label for="name" class="inputLabel">Nombre completo</label>
+                    </div>
+                    <div class="inputContainer">
+                        <input type="email" id="email" class="customInput" placeholder=" " required>
+                        <label for="email" class="inputLabel">Email</label>
+                    </div>
+                    <div class="inputContainer relative">
+                        <input type="password" id="password" class="customInput" placeholder=" " required>
+                        <label for="password" class="inputLabel">Contraseña</label>
+                        <span class="show-password-btn" onclick="togglePasswordVisibility('password')">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-.638 1.846-1.892 3.418-3.467 4.5M15 12a3 3 0 01-6 0"></path>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="mb-4 flex items-center justify-center">
+                        <div class="toggle-switch">
+                            <input class="toggle-input" id="toggle" type="checkbox">
+                            <label class="toggle-label" for="toggle"></label>
+                        </div>
+                        <label for="toggle" class="text-gray-700 ml-2">¿Eres un Restaurante/Vendedor?</label>
+                    </div>
+                    <div>
+                        <button type="submit" class="w-full bg-custom-blue text-white p-2 rounded-md hover:bg-blue-700">Crear Cuenta</button>
+                    </div>
+                </form>
             </div>
         </div>
-        <div class="border-t">
-            <nav class="p-4">
-                <ul class="space-y-2">
-                    <li>
-                        <a href="#" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-200">
-                            <span class="material-icons">location_on</span>
-                            <span>Direcciones</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-200">
-                            <span class="material-icons">account_circle</span>
-                            <span>Editar Perfil</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-200">
-                            <span class="material-icons">credit_card</span>
-                            <span>Metodos de Pago</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-200">
-                            <span class="material-icons">help_outline</span>
-                            <span>Soporte</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-        <div class="border-t p-4">
-            <button class="w-full custom-blue text-white py-2 rounded hover:bg-blue-600">Cerrar Sesión</button>
-        </div>
     </div>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script>
+        const registerTab = document.getElementById('registerTab');
+        const loginTab = document.getElementById('loginTab');
+        const registerForm = document.getElementById('registerForm');
+        const loginForm = document.getElementById('loginForm');
+        const formContainer = document.querySelector('.form-container');
+
+        registerTab.addEventListener('click', () => {
+            registerTab.classList.add('active');
+            loginTab.classList.remove('active');
+            registerForm.classList.remove('form-hidden');
+            loginForm.classList.add('form-hidden');
+            registerForm.classList.add('form-visible');
+            loginForm.classList.remove('form-visible');
+        });
+
+        loginTab.addEventListener('click', () => {
+            loginTab.classList.add('active');
+            registerTab.classList.remove('active');
+            loginForm.classList.remove('form-hidden');
+            registerForm.classList.add('form-hidden');
+            loginForm.classList.add('form-visible');
+            registerForm.classList.remove('form-visible');
+        });
+
+        function togglePasswordVisibility(id) {
+            const input = document.getElementById(id);
+            if (input.type === 'password') {
+                input.type = 'text';
+            } else {
+                input.type = 'password';
+            }
+        }
+
+        function validateLogin() {
+            const emailLogin = document.getElementById('emailLogin');
+            const passwordLogin = document.getElementById('passwordLogin');
+            let valid = true;
+
+            if (!emailLogin.value) {
+                emailLogin.classList.add('inputError');
+                emailLogin.nextElementSibling.classList.add('labelError');
+                valid = false;
+            } else {
+                emailLogin.classList.remove('inputError');
+                emailLogin.nextElementSibling.classList.remove('labelError');
+            }
+
+            if (!passwordLogin.value) {
+                passwordLogin.classList.add('inputError');
+                passwordLogin.nextElementSibling.classList.add('labelError');
+                valid = false;
+            } else {
+                passwordLogin.classList.remove('inputError');
+                passwordLogin.nextElementSibling.classList.remove('labelError');
+            }
+
+            return valid;
+        }
+
+        function validateRegister() {
+            const name = document.getElementById('name');
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            let valid = true;
+
+            if (!name.value) {
+                name.classList.add('inputError');
+                name.nextElementSibling.classList.add('labelError');
+                valid = false;
+            } else {
+                name.classList.remove('inputError');
+                name.nextElementSibling.classList.remove('labelError');
+            }
+
+            if (!email.value) {
+                email.classList.add('inputError');
+                email.nextElementSibling.classList.add('labelError');
+                valid = false;
+            } else {
+                email.classList.remove('inputError');
+                email.nextElementSibling.classList.remove('labelError');
+            }
+
+            if (!password.value) {
+                password.classList.add('inputError');
+                password.nextElementSibling.classList.add('labelError');
+                valid = false;
+            } else {
+                password.classList.remove('inputError');
+                password.nextElementSibling.classList.remove('labelError');
+            }
+
+            return valid;
+        }
+    </script>
 </body>
 </html>

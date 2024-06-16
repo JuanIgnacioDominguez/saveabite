@@ -46,6 +46,17 @@
             border-radius: 50%;
             margin-right: 0.5rem;
         }
+        .profile-text {
+            display: flex;
+            flex-direction: column;
+        }
+        .profile-text .name {
+            font-weight: bold;
+        }
+        .profile-text .edit-profile {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
         .btn-custom {
             background-color: white;
             color: #27a2e8;
@@ -117,8 +128,8 @@
             padding: 10px 20px;
             border-radius: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            position: absolute;
-            top: 0;
+            position: absolute; 
+            top: 0; 
             right: 0;
             transition: 0.3s ease;
         }
@@ -156,8 +167,11 @@
             Información
         </div>
         <div class="profile">
-            <img src="path_to_profile_image.jpg" alt="Profile">
-            <div class="text-custom-blue">Edit Profile</div>
+            <img src="{{ url_for('static', filename='img/perfil.png') }}" alt="Profile">
+            <div class="profile-text">
+                <div class="name">{{ user_name }}</div>
+                <a href="{{ url_for('perfil_usuario') }}" class="edit-profile">Edit Profile</a>
+            </div>
         </div>
     </div>
     <!-- Main content -->

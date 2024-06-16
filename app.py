@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 import sqlite3
 
 app = Flask(__name__)
@@ -38,6 +38,8 @@ def login():
         user = conn.execute('SELECT * FROM usuarios WHERE correo_electronico = ? AND contrasena = ?', (email, password)).fetchone()
         conn.close()
         if user:
+            session['user_id'] = user['id']
+            session['user_name'] = user['nombre_usuario']
             return redirect(url_for('menu'))
         else:
             flash('Cuenta no encontrada o contraseña incorrecta', 'error')
@@ -70,7 +72,13 @@ def register():
 
 @app.route("/menu", methods=['GET', 'POST'])
 def menu():
-    return render_template('general/menu.html')
+    user_name = session.get('user_name')
+    return render_template('general/menu.html', user_name=user_name)
+
+@app.route("/perfil_usuario", methods=['GET', 'POST'])
+def perfil_usuario():
+    user = {'name': session.get('user_name')}
+    return render_template('Perfil/PerfilUsuario.html', user=user)
 
 if __name__ == "__main__":
     app.run(debug=True)

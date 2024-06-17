@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Información</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .custom-blue {
+            background-color: #27a2e8;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #6fd8f1 0%, #27a2e8 100%);
+        }
+        .content-bg {
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+<body class="flex min-h-screen gradient-bg">
+    <!-- Barra Lateral Izquierda -->
+    <div class="w-64 bg-white shadow-md min-h-screen">
+        <div class="p-4 flex items-center space-x-2">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="w-8 h-8">
+            <span class="text-xl font-semibold">Save a Bite</span>
+        </div>
+        <nav class="mt-10">
+            <a href="/perfil" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
+                <span class="material-icons">home</span>
+                <span class="ml-3">Inicio</span>
+            </a>
+            <a href="/metodos_pago" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
+                <span class="material-icons">credit_card</span>
+                <span class="ml-3">Medios de pago</span>
+            </a>
+            <a href="#" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
+                <span class="material-icons">receipt_long</span>
+                <span class="ml-3">Mis Pedidos</span>
+            </a>
+            <a href="#" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
+                <span class="material-icons">favorite</span>
+                <span class="ml-3">Favoritos</span>
+            </a>
+            <a href="/informacion" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
+                <span class="material-icons">info</span>
+                <span class="ml-3">Información</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Contenedor Principal -->
+    <div class="flex-grow p-10">
+        <div class="bg-white shadow-md rounded-lg p-6 max-w-4xl mx-auto">
+            <div class="custom-blue p-4 rounded-t-lg">
+                <h2 class="text-white text-lg font-semibold">Información</h2>
+            </div>
+            <div class="p-4 space-y-4">
+                <div class="text-center">
+                    <img src="{{ url_for('static', filename='img/desperdicio_comida_1.png') }}" alt="Desperdicio de comida" class="mx-auto mb-4 rounded-lg">
+                    <h3 class="text-md font-semibold text-blue-500">Importancia de la Concientización</h3>
+                    <p class="text-gray-600">El desperdicio de alimentos es un problema complejo que afecta tanto a la sociedad como al medio ambiente. Concientizar a los usuarios sobre este tema es crucial para fomentar prácticas más sostenibles y reducir el impacto negativo en el planeta.</p>
+                </div>
+                <div>
+                    <h3 class="text-md font-semibold text-blue-500">Datos y Estadísticas</h3>
+                    <p class="text-gray-600"><span class="font-semibold">Impacto Global:</span> A nivel mundial, un tercio de los alimentos producidos para el consumo humano se pierde o se desperdicia cada año, lo que equivale a aproximadamente 1.300 millones de toneladas (FAO, 2023).</p>
+                    <p class="text-gray-600"><span class="font-semibold">Efectos Económicos:</span> El desperdicio de alimentos representa una pérdida financiera significativa a lo largo de la cadena de suministro alimentaria. Por ejemplo, los consumidores porteños tiran un promedio de 8,4 kg de comida por año en sus hogares (Gobierno de la Ciudad de Buenos Aires, 2024).</p>
+                    <p class="text-gray-600"><span class="font-semibold">Impacto Social:</span> Mientras millones de personas sufren de hambre y desnutrición, grandes cantidades de alimentos se desperdician. Actualmente, 821 millones de personas padecen hambre en el mundo (ONU, 2018).</p>
+                    <p class="text-gray-600"><span class="font-semibold">Impacto Ambiental:</span> El desperdicio de alimentos contribuye significativamente al cambio climático. La producción de alimentos no consumidos genera emisiones innecesarias de dióxido de carbono y otros gases de efecto invernadero (EPA, 2023).</p>
+                    <p class="text-gray-600"><span class="font-semibold">Programas de Donación de Alimentos:</span> Fomentar la donación de alimentos excedentes a organizaciones benéficas puede ayudar a reducir el desperdicio y apoyar a quienes lo necesitan.</p>
+                </div>
+                <div class="text-center">
+                    <img src="{{ url_for('static', filename='img/desperdicio_comida_2.png') }}" alt="Desperdicio de comida" class="mx-auto mb-4 rounded-lg">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</body>
+</html>

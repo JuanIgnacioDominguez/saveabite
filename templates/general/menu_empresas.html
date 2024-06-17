@@ -46,6 +46,17 @@
             border-radius: 50%;
             margin-right: 0.5rem;
         }
+        .profile-text {
+            display: flex;
+            flex-direction: column;
+        }
+        .profile-text .name {
+            font-weight: bold; /* Hace que el nombre se vea en negrita */
+        }
+        .profile-text .edit-profile {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
         .btn-custom {
             background-color: white;
             color: #27a2e8;
@@ -138,8 +149,11 @@
             Editar Perfil
         </div>
         <div class="profile">
-            <img src="path_to_profile_image.jpg" alt="Profile">
-            <div class="text-custom-blue">Cerrar Sesión</div>
+            <img src="{{ url_for('static', filename=restaurant.image) }}" alt="Profile">
+            <div class="profile-text">
+                <div class="name">{{ restaurant.name }}</div>
+                <a href="{{ url_for('perfil_usuario') }}" class="edit-profile">Edit Profile</a>
+            </div>
         </div>
     </div>
     <!-- Main content -->
@@ -153,11 +167,10 @@
             <p><strong>Dirección:</strong> {{ restaurant.address }}</p>
             <p><strong>Email:</strong> {{ restaurant.email }}</p>
         </div>
-         <div class="card">
+        <div class="card">
             <h3>Bienvenido al Panel de Control</h3>
             <p>Desde aquí puedes administrar tus comidas, ver pedidos en curso y editar tu perfil.</p>
-        </div>
-      
+        </div>    
     </div>
 </body>
 </html>

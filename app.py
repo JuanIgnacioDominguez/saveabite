@@ -17,7 +17,8 @@ def create_tables():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nombre_usuario TEXT NOT NULL,
             correo_electronico TEXT NOT NULL UNIQUE,
-            contrasena TEXT NOT NULL
+            contrasena TEXT NOT NULL,
+            imagen TEXT  -- Columna para almacenar imágenes
         )
     ''')
     # Crear tabla usuarioEmpresa
@@ -26,7 +27,21 @@ def create_tables():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nombre_usuario TEXT NOT NULL,
             correo_electronico TEXT NOT NULL UNIQUE,
-            contrasena TEXT NOT NULL
+            contrasena TEXT NOT NULL,
+            imagen TEXT  -- Columna para almacenar imágenes
+        )
+    ''')
+    # Crear tabla Productos
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS Productos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            Empresa TEXT NOT NULL,
+            nombre TEXT NOT NULL,
+            tiempoEstimado TEXT NOT NULL,
+            precio REAL NOT NULL,
+            descripcion TEXT NOT NULL,
+            imagen TEXT NOT NULL,
+            tipoComida TEXT NOT NULL
         )
     ''')
     conn.commit()
@@ -51,10 +66,12 @@ def login():
         if user:
             session['user_id'] = user['id']
             session['user_name'] = user['nombre_usuario']
+            session['user_image'] = user['imagen']
             return redirect(url_for('menu'))
         elif vendor:
             session['user_id'] = vendor['id']
             session['user_name'] = vendor['nombre_usuario']
+            session['user_image'] = vendor['imagen']
             return redirect(url_for('menu_restaurant'))
         else:
             flash('Cuenta no encontrada o contraseña incorrecta', 'error')
@@ -68,6 +85,7 @@ def register():
         email = request.form['email']
         password = request.form['password']
         is_vendor = 'is_vendor' in request.form
+        image = 'img/defaultuser.png'  # Ruta a la imagen predeterminada
 
         if not name or not email or not password:
             flash('Por favor, complete todas las casillas', 'error')
@@ -76,20 +94,22 @@ def register():
         conn = get_db_connection()
         try:
             if is_vendor:
-                conn.execute('INSERT INTO usuarioEmpresa (nombre_usuario, correo_electronico, contrasena) VALUES (?, ?, ?)', (name, email, password))
+                conn.execute('INSERT INTO usuarioEmpresa (nombre_usuario, correo_electronico, contrasena, imagen) VALUES (?, ?, ?, ?)', (name, email, password, image))
                 conn.commit()
                 vendor = conn.execute('SELECT * FROM usuarioEmpresa WHERE correo_electronico = ? AND contrasena = ?', (email, password)).fetchone()
                 conn.close()
                 session['user_id'] = vendor['id']
                 session['user_name'] = vendor['nombre_usuario']
+                session['user_image'] = vendor['imagen']
                 return redirect(url_for('menu_restaurant'))
             else:
-                conn.execute('INSERT INTO usuarios (nombre_usuario, correo_electronico, contrasena) VALUES (?, ?, ?)', (name, email, password))
+                conn.execute('INSERT INTO usuarios (nombre_usuario, correo_electronico, contrasena, imagen) VALUES (?, ?, ?, ?)', (name, email, password, image))
                 conn.commit()
                 user = conn.execute('SELECT * FROM usuarios WHERE correo_electronico = ? AND contrasena = ?', (email, password)).fetchone()
                 conn.close()
                 session['user_id'] = user['id']
                 session['user_name'] = user['nombre_usuario']
+                session['user_image'] = user['imagen']
                 return redirect(url_for('menu'))
         except sqlite3.IntegrityError:
             flash('El correo electrónico ya está registrado', 'error')
@@ -101,11 +121,12 @@ def register():
 @app.route("/menu", methods=['GET', 'POST'])
 def menu():
     user_name = session.get('user_name')
-    return render_template('general/menu.html', user_name=user_name)
+    user_image = session.get('user_image')
+    return render_template('general/menu.html', user_name=user_name, user_image=user_image)
 
 @app.route("/perfil_usuario", methods=['GET', 'POST'])
 def perfil_usuario():
-    user = {'name': session.get('user_name')}
+    user = {'name': session.get('user_name'), 'image': session.get('user_image')}
     return render_template('Perfil/PerfilUsuario.html', user=user)
 
 @app.route("/menu_restaurant")
@@ -113,7 +134,8 @@ def menu_restaurant():
     restaurant = {
         "name": session.get('user_name'),
         "address": "Dirección del Restaurante",
-        "email": session.get('user_email')
+        "email": session.get('user_email'),
+        "image": session.get('user_image')
     }
     return render_template('general/menu_empresas.html', restaurant=restaurant)
 

@@ -48,10 +48,11 @@ def login():
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST']:
+    if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
         password = request.form['password']
+        is_vendor = 'is_vendor' in request.form
 
         if not name or not email or not password:
             flash('Por favor, complete todas las casillas', 'error')
@@ -76,44 +77,8 @@ def menu():
 
 @app.route("/perfil_usuario", methods=['GET', 'POST'])
 def perfil_usuario():
-    user = {'name': session.get('user_name'), 'email': 'user@example.com', 'password': '********'}
+    user = {'name': session.get('user_name')}
     return render_template('Perfil/PerfilUsuario.html', user=user)
-
-@app.route("/direcciones", methods=['GET', 'POST'])
-def direcciones():
-    addresses = [
-        {'name': 'Casa', 'address': 'Calle Falsa 123', 'primary': True},
-        {'name': 'Trabajo', 'address': 'Av. Siempreviva 742', 'primary': False}
-    ]
-    return render_template('Perfil/Direcciones.html', addresses=addresses)
-
-@app.route("/editar_perfil", methods=['GET', 'POST'])
-def editar_perfil():
-    user = {'name': session.get('user_name'), 'email': 'user@example.com', 'password': '********'}
-    return render_template('Perfil/EditarPerfil.html', user=user)
-
-@app.route("/metodos_pago", methods=['GET', 'POST'])
-def metodos_pago():
-    payment_methods = [
-        {'brand': 'Visa', 'number': '**** **** **** 1234', 'primary': True},
-        {'brand': 'MasterCard', 'number': '**** **** **** 5678', 'primary': False}
-    ]
-    return render_template('Perfil/MetodosPago.html', payment_methods=payment_methods)
-
-@app.route("/soporte", methods=['GET', 'POST'])
-def soporte():
-    if request.method == 'POST':
-        # Lógica para manejar el envío de mensajes de soporte
-        return redirect(url_for('soporte_exitoso'))
-    return render_template('Perfil/Soporte.html')
-
-@app.route("/soporte_exitoso", methods=['GET'])
-def soporte_exitoso():
-    return render_template('Perfil/SoporteExitoso.html')
-
-@app.route("/informacion", methods=['GET'])
-def informacion():
-    return render_template('general/Informacion.html')
 
 if __name__ == "__main__":
     app.run(debug=True)

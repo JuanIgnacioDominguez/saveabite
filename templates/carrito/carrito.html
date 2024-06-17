@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Delivery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: #007bff;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        nav a {
+            color: #fff;
+            margin: 0 1rem;
+            text-decoration: none;
+        }
+
+        main {
+            padding: 2rem;
+        }
+
+        .carrito-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .carrito-content {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .carrito-items {
+            width: 60%;
+        }
+
+        .carrito-summary {
+            width: 35%;
+            border-left: 1px solid #ddd;
+            padding-left: 1rem;
+        }
+
+        .carrito-item {
+            display: flex;
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+
+        .carrito-item img {
+            width: 100px;
+            height: 100px;
+            margin-right: 1rem;
+        }
+
+        .item-details p {
+            margin: 0.5rem 0;
+        }
+
+        .delete-btn {
+            color: red;
+            text-decoration: none;
+        }
+
+        .btn-confirm {
+            background-color: #007bff;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Food Delivery Service</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/carrito">Carrito</a>
+        </nav>
+    </header>
+    <main>
+        <div class="carrito-container">
+            <h2>Tu Carrito</h2>
+            <div class="carrito-content">
+                <div class="carrito-items">
+                    <h3>Lista de los items agregados a tu carrito</h3>
+                    <!-- Ejemplo de item en el carrito -->
+                    <div class="carrito-item">
+                        <img src="https://via.placeholder.com/100" alt="Item Name">
+                        <div class="item-details">
+                            <p>[name]</p>
+                            <p>Cantidad: 1</p>
+                            <p>[$1,234.56]</p>
+                            <a href="#" class="delete-btn">Eliminar</a>
+                        </div>
+                    </div>
+                    <!-- Repite este bloque para cada item en el carrito -->
+                </div>
+                <div class="carrito-summary">
+                    <h3>Total de la compra</h3>
+                    <p>Total: [$1,234.56]</p>
+                    <button class="btn-confirm">Confirmar Compra</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

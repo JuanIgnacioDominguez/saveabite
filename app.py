@@ -93,5 +93,16 @@ def perfil_usuario():
     user = {'name': session.get('user_name')}
     return render_template('Perfil/PerfilUsuario.html', user=user)
 
+@app.route("/menu_restaurant")
+def menu_restaurant():
+    # Falta la logica para traer los datos del restaurant
+    # por ahora vamos a harcodear los datos
+    restaurant = {
+        "name": "Nombre del Restaurante",
+        "address": "Dirección del Restaurante",
+        "email": "email@restaurant.com"
+    }
+    return render_template('general/menu_empresas.html', restaurant=restaurant)
+
 if __name__ == "__main__":
     app.run(debug=True)

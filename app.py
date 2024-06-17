@@ -66,11 +66,13 @@ def login():
         if user:
             session['user_id'] = user['id']
             session['user_name'] = user['nombre_usuario']
+            session['user_email'] = user['correo_electronico']
             session['user_image'] = user['imagen']
             return redirect(url_for('menu'))
         elif vendor:
             session['user_id'] = vendor['id']
             session['user_name'] = vendor['nombre_usuario']
+            session['user_email'] = vendor['correo_electronico']
             session['user_image'] = vendor['imagen']
             return redirect(url_for('menu_restaurant'))
         else:
@@ -126,7 +128,7 @@ def menu():
 
 @app.route("/perfil_usuario", methods=['GET', 'POST'])
 def perfil_usuario():
-    user = {'name': session.get('user_name'), 'image': session.get('user_image')}
+    user = {'name': session.get('user_name'), 'email': session.get('user_email'), 'image': session.get('user_image')}
     return render_template('Perfil/PerfilUsuario.html', user=user)
 
 @app.route("/menu_restaurant")
@@ -138,6 +140,27 @@ def menu_restaurant():
         "image": session.get('user_image')
     }
     return render_template('general/menu_empresas.html', restaurant=restaurant)
+
+@app.route("/direcciones")
+def direcciones():
+    return render_template('Perfil/Direcciones.html')
+
+@app.route("/editar_perfil")
+def editar_perfil():
+    user = {'name': session.get('user_name'), 'email': session.get('user_email')}
+    return render_template('Perfil/EditarPerfil.html', user=user)
+
+@app.route("/metodos_pago")
+def metodos_pago():
+    return render_template('Perfil/MetodosPago.html')
+
+@app.route("/membresia")
+def membresia():
+    return render_template('Perfil/Membresia.html')
+
+@app.route("/soporte")
+def soporte():
+    return render_template('Perfil/Soporte.html')
 
 if __name__ == "__main__":
     app.run(debug=True)

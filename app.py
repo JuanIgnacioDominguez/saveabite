@@ -11,8 +11,18 @@ def get_db_connection():
 
 def create_tables():
     conn = get_db_connection()
+    # Crear tabla usuarios
     conn.execute('''
         CREATE TABLE IF NOT EXISTS usuarios (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre_usuario TEXT NOT NULL,
+            correo_electronico TEXT NOT NULL UNIQUE,
+            contrasena TEXT NOT NULL
+        )
+    ''')
+    # Crear tabla usuarioEmpresa
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS usuarioEmpresa (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nombre_usuario TEXT NOT NULL,
             correo_electronico TEXT NOT NULL UNIQUE,
@@ -60,7 +70,10 @@ def register():
 
         conn = get_db_connection()
         try:
-            conn.execute('INSERT INTO usuarios (nombre_usuario, correo_electronico, contrasena) VALUES (?, ?, ?)', (name, email, password))
+            if is_vendor:
+                conn.execute('INSERT INTO usuarioEmpresa (nombre_usuario, correo_electronico, contrasena) VALUES (?, ?, ?)', (name, email, password))
+            else:
+                conn.execute('INSERT INTO usuarios (nombre_usuario, correo_electronico, contrasena) VALUES (?, ?, ?)', (name, email, password))
             conn.commit()
         except sqlite3.IntegrityError:
             flash('El correo electrónico ya está registrado', 'error')
@@ -68,7 +81,7 @@ def register():
         finally:
             conn.close()
         return redirect(url_for('menu'))
-    return render_template('general/Registrarse.html')
+    return render_template('general/Iniciarsesion.html')
 
 @app.route("/menu", methods=['GET', 'POST'])
 def menu():

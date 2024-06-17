@@ -3,93 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <title>Perfil de Usuario</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        .custom-blue {
-            background-color: #27a2e8;
+        body {
+            background: linear-gradient(to bottom right, #f1f5f9, #0284c7); /* bg-gradient-to-br from-slate-50 to-sky-600 */
         }
-        .gradient-bg {
-            background: linear-gradient(135deg, #6fd8f1 0%, #27a2e8 100%);
+        .content-container {
+            height: 90vh; /* Adjusted height */
+            margin: 1rem 1rem 3rem 1rem; /* Margin with more space at the bottom */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .profile-container {
+            height: calc(100% - 4rem); /* Adjusted height to fit the button */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Space between elements */
+        }
+        .profile-info {
+            flex-grow: 1;
+        }
+        .profile-options a {
+            font-size: 1.25rem; /* Larger font size */
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            background-color: #f3f4f6; /* Light gray background */
+            border-radius: 0.5rem; /* Rounded corners */
+            margin-bottom: 0.5rem; /* Space between options */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Slight shadow */
+            transition: background-color 0.2s;
+        }
+        .profile-options a:hover {
+            background-color: #e5e7eb; /* Slightly darker on hover */
+        }
+        .logout-button {
+            background-color: #27a2e8; /* Match color with other buttons */
+            color: white;
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+        .logout-button:hover {
+            background-color: #1b7fbf; /* Darker on hover */
+        }
+        .profile-avatar {
+            width: 8rem; /* Increased size */
+            height: 8rem; /* Increased size */
+            border-radius: 50%;
+            margin-bottom: 1rem;
+        }
+        .profile-name {
+            font-size: 1.5rem; /* Larger font size */
+            font-weight: 600; /* Bold */
+        }
+        .profile-email {
+            font-size: 1.25rem; /* Larger font size */
+            color: #4a5568; /* Slightly darker gray */
         }
     </style>
 </head>
-<body class="gradient-bg min-h-screen flex">
-    <!-- Barra Lateral Izquierda -->
-    <div class="w-64 bg-white shadow-md">
-        <div class="p-4 flex items-center space-x-2">
-            <img src="img\logo.png" alt="Logo" class="w-8 h-8">
-            <span class="text-xl font-semibold">Save a Bite</span>
+<body class="flex h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white text-black shadow-lg">
+        <div class="p-4">
+            <img src="/static/img/logo.png" alt="Logo" class="w-full h-auto">
         </div>
-        <nav class="mt-10">
-            <a href="/perfil" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
-                <span class="material-icons">home</span>
-                <span class="ml-3">Inicio</span>
+        <nav class="mt-4">
+            <a href="#" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-home mr-2 text-blue-500"></i>
+                Inicio
             </a>
-            <a href="#" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
-                <span class="material-icons">receipt_long</span>
-                <span class="ml-3">Mis Pedidos</span>
+            <a href="#" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-box mr-2 text-gray-500"></i>
+                Mis Pedidos
             </a>
-            <a href="#" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
-                <span class="material-icons">favorite</span>
-                <span class="ml-3">Favoritos</span>
+            <a href="#" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-heart mr-2 text-gray-500"></i>
+                Favoritos
             </a>
-            <a href="#" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
-                <span class="material-icons">info</span>
-                <span class="ml-3">Información</span>
+            <a href="#" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-info-circle mr-2 text-gray-500"></i>
+                Información
             </a>
         </nav>
-    </div>
-
-    <!-- Contenedor Principal -->
-    <div class="flex-1 max-w-md mx-auto mt-10 bg-white shadow-md rounded-lg overflow-hidden">
-        <div class="custom-blue p-4">
-            <h2 class="text-white text-lg font-semibold">Perfil</h2>
-        </div>
-        <div class="p-4">
-            <div class="flex items-center space-x-4">
-                <div class="w-16 h-16 bg-gray-300 rounded-full"></div>
-                <div>
-                    <h3 class="text-lg font-medium" id="user-name">{{ user.name }}</h3>
-                    <p class="text-gray-600" id="user-email">{{ user.email }}</p>
+    </aside>
+    <!-- Main content -->
+    <div class="flex-1 p-6">
+        <h1 class="text-2xl font-bold mb-4">Perfil</h1>
+        <div class="content-container bg-white p-6 rounded shadow-md">
+            <div class="profile-container">
+                <div class="profile-info">
+                    <!-- Profile Info -->
+                    <div class="text-center">
+                        <img src="/static/img/perfil.png" alt="User Avatar" class="profile-avatar rounded-full mx-auto">
+                        <h2 class="profile-name mt-4">{{ user.name }}</h2>
+                        <p class="profile-email">{{ user.email }}</p>
+                    </div>
+                    <div class="profile-options mt-6">
+                        <a href="Direcciones.html" class="flex items-center border-t border-b">
+                            <i class="fas fa-map-marker-alt mr-2 text-gray-500"></i>
+                            Direcciones
+                        </a>
+                        <a href="EditarPerfil.html" class="flex items-center border-b">
+                            <i class="fas fa-user-edit mr-2 text-gray-500"></i>
+                            Editar Perfil
+                        </a>
+                        <a href="MetodosPago.html" class="flex items-center border-b">
+                            <i class="fas fa-credit-card mr-2 text-gray-500"></i>
+                            Métodos de Pago
+                        </a>
+                        <a href="Membresia.html" class="flex items-center border-b">
+                            <i class="fas fa-crown mr-2 text-gray-500"></i>
+                            Membresía
+                        </a>
+                        <a href="Soporte.html" class="flex items-center border-b">
+                            <i class="fas fa-life-ring mr-2 text-gray-500"></i>
+                            Soporte
+                        </a>
+                    </div>
                 </div>
+                <button class="logout-button mt-6">Cerrar Sesión</button>
             </div>
         </div>
-        <div class="border-t">
-            <nav class="p-4">
-                <ul class="space-y-2">
-                    <li>
-                        <a href="Direcciones.html" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-200">
-                            <span class="material-icons">location_on</span>
-                            <span>Direcciones</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="EditarPerfil.html" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-200">
-                            <span class="material-icons">account_circle</span>
-                            <span>Editar Perfil</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="MetodosPago.html" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-200">
-                            <span class="material-icons">credit_card</span>
-                            <span>Métodos de Pago</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="Soporte.html" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-200">
-                            <span class="material-icons">help_outline</span>
-                            <span>Soporte</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-        <div class="border-t p-4">
-            <button class="w-full custom-blue text-white py-2 rounded hover:bg-blue-600">Cerrar Sesión</button>
-        </div>
     </div>
-
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </body>
 </html>

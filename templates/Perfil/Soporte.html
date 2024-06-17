@@ -4,57 +4,232 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soporte</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        .custom-blue {
-            background-color: #27a2e8;
+        body {
+            background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
         }
-        .gradient-bg {
-            background: linear-gradient(135deg, #6fd8f1 0%, #27a2e8 100%);
+        .content-container {
+            height: 90vh;
+            margin: 1rem 1rem 3rem 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .profile-container {
+            height: calc(100% - 4rem);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .profile-info {
+            flex-grow: 1;
+        }
+        .profile-options a {
+            font-size: 1.25rem;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            background-color: #f3f4f6;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s;
+        }
+        .profile-options a:hover {
+            background-color: #e5e7eb;
+        }
+        .logout-button {
+            background-color: #e3342f;
+        }
+        .logout-button:hover {
+            background-color: #cc1f1a;
+        }
+        .profile-avatar {
+            width: 8rem;
+            height: 8rem;
+        }
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        .profile-email {
+            font-size: 1.25rem;
+            color: #4a5568;
+        }
+        .support-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            margin-right: 0.5rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .form-group textarea {
+            resize: vertical;
+            height: 300px; /* Increased height */
+        }
+        .modal {
+            display: none; /* Ensure modal is hidden by default */
+            position: fixed;
+            z-index: 50;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            padding: 2rem;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .modal-content p {
+            font-size: 1.25rem;
+            margin-top: 1rem;
+        }
+        .modal-content .close {
+            color: #aaa;
+            float: right;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .modal-content .close:hover,
+        .modal-content .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .modal-content .btn-primary {
+            background-color: #27a2e8;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s;
+        }
+        .modal-content .btn-primary:hover {
+            background-color: #1b7fbf;
+        }
+        .submit-button {
+            background-color: #27a2e8;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            text-align: center;
+            display: inline-block;
+            margin-top: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s;
+            width: 100%;
+        }
+        .submit-button:hover {
+            background-color: #1b7fbf;
         }
     </style>
 </head>
-<body class="gradient-bg min-h-screen flex">
-    <!-- Barra Lateral Izquierda -->
-    <div class="w-64 bg-white shadow-md">
-        <div class="p-4 flex items-center space-x-2">
-            <img src="path/to/logo.png" alt="Logo" class="w-8 h-8">
-            <span class="text-xl font-semibold">Save a Bite</span>
+<body class="flex h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white text-black shadow-lg">
+        <div class="p-4">
+            <img src="/static/img/logo.png" alt="Logo" class="w-full h-auto">
         </div>
-        <nav class="mt-10">
-            <a href="/perfil" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
-                <span class="material-icons">home</span>
-                <span class="ml-3">Inicio</span>
+        <nav class="mt-4">
+            <a href="#" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-home mr-2 text-blue-500"></i>
+                Inicio
             </a>
-            <a href="#" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
-                <span class="material-icons">receipt_long</span>
-                <span class="ml-3">Mis Pedidos</span>
+            <a href="#" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-box mr-2 text-gray-500"></i>
+                Mis Pedidos
             </a>
-            <a href="#" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
-                <span class="material-icons">favorite</span>
-                <span class="ml-3">Favoritos</span>
+            <a href="#" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-heart mr-2 text-gray-500"></i>
+                Favoritos
             </a>
-            <a href="#" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
-                <span class="material-icons">info</span>
-                <span class="ml-3">Información</span>
+            <a href="#" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-info-circle mr-2 text-gray-500"></i>
+                Información
             </a>
         </nav>
+    </aside>
+    <!-- Main content -->
+    <div class="flex-1 p-6">
+        <h1 class="text-2xl font-bold mb-4">Soporte</h1>
+        <div class="content-container bg-white p-6 rounded shadow-md">
+            <div class="profile-container">
+                <div class="profile-info">
+                    <!-- Support Form -->
+                    <form id="support-form" class="flex flex-col h-full">
+                        <div class="flex-grow">
+                            <div class="form-group">
+                                <label for="subject">Asunto</label>
+                                <input type="text" id="subject" name="subject">
+                            </div>
+                            <div class="form-group">
+                                <label for="message">Mensaje</label>
+                                <textarea id="message" name="message"></textarea>
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <button type="submit" class="submit-button">Enviar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Contenedor Principal -->
-    <div class="flex-1 max-w-md mx-auto mt-10 bg-white shadow-md rounded-lg overflow-hidden">
-        <div class="custom-blue p-4">
-            <h2 class="text-white text-lg font-semibold">Soporte</h2>
-        </div>
-        <div class="p-4">
-            <h3 class="text-lg font-semibold mb-4">¡Comunicate con Nosotros!</h3>
-            <form action="/soporte" method="post" onsubmit="showSuccessModal(event)">
-                <textarea name="message" rows="10" class="w-full p-2 border rounded-lg bg-gray-100" placeholder="Comunique su inconveniente en el cuadro..."></textarea>
-                <button type="submit" class="w-full custom-blue text-white py-2 mt-4 rounded hover:bg-blue-600">Enviar</button>
-            </form>
+    <!-- Success Modal -->
+    <div id="successModal" class="modal flex" style="display: none;">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <img src="/static/img/mensajeEnviado.png" alt="Success" class="mx-auto mb-4">
+            <p class="text-blue-600 font-semibold text-xl">Mensaje Enviado con Éxito!</p>
+            <p>Pronto nos comunicaremos contigo</p>
+            <a href="PerfilUsuario.html" class="btn-primary">Ir al Perfil</a>
         </div>
     </div>
 
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script>
+        document.getElementById('support-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            document.getElementById('successModal').style.display = 'flex';
+        });
+
+        document.getElementById('closeModal').onclick = function() {
+            document.getElementById('successModal').style.display = 'none';
+        };
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('successModal')) {
+                document.getElementById('successModal').style.display = 'none';
+            }
+        };
+    </script>
 </body>
 </html>

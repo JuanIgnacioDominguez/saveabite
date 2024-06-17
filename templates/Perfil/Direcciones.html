@@ -4,72 +4,169 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Direcciones</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        .custom-blue {
-            background-color: #27a2e8;
+        body {
+            background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
         }
-        .gradient-bg {
-            background: linear-gradient(135deg, #6fd8f1 0%, #27a2e8 100%);
+        .content-container {
+            height: 90vh;
+            margin: 1rem 1rem 3rem 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .profile-container {
+            height: calc(100% - 4rem);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .profile-info {
+            flex-grow: 1;
+        }
+        .profile-options a {
+            font-size: 1.25rem;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            background-color: #f3f4f6;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s;
+        }
+        .profile-options a:hover {
+            background-color: #e5e7eb;
+        }
+        .logout-button {
+            background-color: #e3342f;
+        }
+        .logout-button:hover {
+            background-color: #cc1f1a;
+        }
+        .profile-avatar {
+            width: 8rem;
+            height: 8rem;
+        }
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        .profile-email {
+            font-size: 1.25rem;
+            color: #4a5568;
+        }
+        .support-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            margin-right: 0.5rem;
+        }
+        .address-item {
+            font-size: 1.25rem;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #f3f4f6;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s;
+        }
+        .address-item:hover {
+            background-color: #e5e7eb;
+        }
+        .add-button {
+            background-color: #27a2e8;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            text-align: center;
+            display: inline-block;
+            margin-top: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s;
+            width: 100%;
+            margin-bottom: 1rem; /* Add margin-bottom to adjust spacing */
+        }
+        .add-button:hover {
+            background-color: #1b7fbf;
+        }
+        .back-button {
+            display: flex;
+            align-items: center;
+            font-size: 1.25rem;
+            padding: 0.75rem;
+            color: #4a5568;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .back-button:hover {
+            color: #1b7fbf;
+        }
+        .back-button i {
+            margin-right: 0.5rem;
+        }
+        .separator {
+            border-bottom: 1px solid #e2e8f0;
+            margin: 1rem 0;
         }
     </style>
 </head>
-<body class="gradient-bg min-h-screen flex">
-    <!-- Barra Lateral Izquierda -->
-    <div class="w-64 bg-white shadow-md">
-        <div class="p-4 flex items-center space-x-2">
-            <img src="path/to/logo.png" alt="Logo" class="w-8 h-8">
-            <span class="text-xl font-semibold">Save a Bite</span>
+<body class="flex h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white text-black shadow-lg">
+        <div class="p-4">
+            <img src="/static/img/logo.png" alt="Logo" class="w-full h-auto">
         </div>
-        <nav class="mt-10">
-            <a href="/perfil" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
-                <span class="material-icons">home</span>
-                <span class="ml-3">Inicio</span>
+        <nav class="mt-4">
+            <a href="#" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-home mr-2 text-blue-500"></i>
+                Inicio
             </a>
-            <a href="#" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
-                <span class="material-icons">receipt_long</span>
-                <span class="ml-3">Mis Pedidos</span>
+            <a href="#" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-box mr-2 text-gray-500"></i>
+                Mis Pedidos
             </a>
-            <a href="#" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
-                <span class="material-icons">favorite</span>
-                <span class="ml-3">Favoritos</span>
+            <a href="#" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-heart mr-2 text-gray-500"></i>
+                Favoritos
             </a>
-            <a href="#" class="flex items-center py-2 px-4 text-gray-700 hover:bg-gray-200">
-                <span class="material-icons">info</span>
-                <span class="ml-3">Información</span>
+            <a href="#" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-info-circle mr-2 text-gray-500"></i>
+                Información
             </a>
         </nav>
-    </div>
-
-    <!-- Contenedor Principal -->
-    <div class="flex-1 max-w-md mx-auto mt-10 bg-white shadow-md rounded-lg overflow-hidden">
-        <div class="custom-blue p-4 flex items-center">
-            <button onclick="window.history.back()" class="text-white">
-                <span class="material-icons">arrow_back</span>
-            </button>
-            <h2 class="text-white text-lg font-semibold ml-4">Direcciones</h2>
-        </div>
-        <div class="p-4 space-y-4">
-            {% for address in addresses %}
-            <div class="flex items-center justify-between p-4 rounded-lg {% if address.primary %}bg-gray-200{% else %}bg-gray-100{% endif %} shadow-sm">
-                <div class="flex items-center space-x-2">
-                    <span class="material-icons {% if address.primary %}text-black{% else %}text-gray-400{% endif %}">location_on</span>
-                    <div>
-                        <h3 class="text-md font-medium {% if address.primary %}text-black{% else %}text-gray-400{% endif %}">{{ address.name }}</h3>
-                        <p class="text-sm {% if address.primary %}text-black{% else %}text-gray-400{% endif %}">{{ address.address }}</p>
+    </aside>
+    <!-- Main content -->
+    <div class="flex-1 p-6">
+        <h1 class="text-2xl font-bold mb-4">Direcciones</h1>
+        <div class="content-container bg-white p-6 rounded shadow-md">
+            <a href="PerfilUsuario.html" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                Volver al Perfil
+            </a>
+            <div class="separator"></div>
+            <div class="profile-container mt-4">
+                <div class="profile-info">
+                    <!-- Address List -->
+                    {% for address in addresses %}
+                    <div class="address-item">
+                        <div>
+                            <i class="fas fa-map-marker-alt mr-2 text-gray-500"></i>
+                            <strong>{{ address.name }}</strong><br>
+                            {{ address.address }}
+                        </div>
+                        <button class="text-red-500">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
                     </div>
+                    {% endfor %}
                 </div>
-                <button class="text-red-400">
-                    <span class="material-icons">delete</span>
-                </button>
+                <button class="add-button">Agregar Dirección</button>
             </div>
-            {% endfor %}
-        </div>
-        <div class="border-t p-4">
-            <button class="w-full custom-blue text-white py-2 rounded hover:bg-blue-600">Agregar Dirección</button>
         </div>
     </div>
-
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </body>
 </html>

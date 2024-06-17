@@ -147,28 +147,17 @@
         <div class="header">
             <h1 class="text-4xl font-bold text-custom-blue">Panel de Control</h1>
         </div>
-        <div class="actions">
-            <button class="btn-custom active">
-                <i class="fas fa-plus"></i>
-                Agregar Comida
-            </button>
-            <button class="btn-custom">
-                <i class="fas fa-list"></i>
-                Ver Comidas
-            </button>
-            <button class="btn-custom">
-                <i class="fas fa-shopping-cart"></i>
-                Pedidos en Curso
-            </button>
-            <button class="btn-custom">
-                <i class="fas fa-user-edit"></i>
-                Editar Perfil
-            </button>
+        <div class="card mt-6">
+            <h3 class="text-xl font-bold mb-2">Información del Restaurante</h3>
+            <p><strong>Nombre:</strong> {{ restaurant.name }}</p>
+            <p><strong>Dirección:</strong> {{ restaurant.address }}</p>
+            <p><strong>Email:</strong> {{ restaurant.email }}</p>
         </div>
-        <div class="card">
+         <div class="card">
             <h3>Bienvenido al Panel de Control</h3>
             <p>Desde aquí puedes administrar tus comidas, ver pedidos en curso y editar tu perfil.</p>
         </div>
+      
     </div>
 </body>
 </html>

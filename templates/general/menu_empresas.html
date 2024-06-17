@@ -120,6 +120,9 @@
         .card p {
             color: #666;
         }
+        .active-link {
+            color: #27a2e8 !important;
+        }
     </style>
 </head>
 <body class="flex">
@@ -128,7 +131,7 @@
         <div class="flex justify-center mb-8">
             <img src="{{ url_for('static', filename='img/logo.png') }}" class="logo w-44" alt="Save a Bite Logo"/>
         </div>
-        <div class="nav-item active">
+        <div class="nav-item active-link">
             <i class="fas fa-home"></i>
             Inicio
         </div>
@@ -145,13 +148,12 @@
             Pedidos en Curso
         </div>
         <div class="nav-item">
-            <i class="fas fa-list"></i>
-            <a href="MembresiaEmp.html">Membresía</a>
+            <i class="fas fa-user"></i>
+            Perfil
         </div>
-        
         <div class="nav-item">
-            <i class="fas fa-user-edit"></i>
-            Editar Perfil
+            <i class="fas fa-info-circle"></i>
+            Información
         </div>
         <div class="profile">
             <img src="{{ url_for('static', filename=restaurant.image) }}" alt="Profile">

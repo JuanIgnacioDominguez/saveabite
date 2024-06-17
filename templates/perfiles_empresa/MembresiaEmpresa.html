@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Membresía</title>
+    <title>Membresía Empresa</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -142,19 +142,23 @@
             <img src="/static/img/logo.png" alt="Logo" class="w-full h-auto">
         </div>
         <nav class="mt-4 sidebar">
-            <a href="menu.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="/general/menu.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-home mr-2 text-gray-500"></i>
                 Inicio
             </a>
-            <a href="/mis-pedidos" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-box mr-2 text-gray-500"></i>
-                Mis Pedidos
+            <a href="/agregar-comida" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-plus mr-2 text-gray-500"></i>
+                Agregar Comida
             </a>
-            <a href="/favoritos" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-heart mr-2 text-gray-500"></i>
-                Favoritos
+            <a href="/ver-comidas" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-list mr-2 text-gray-500"></i>
+                Ver Comidas
             </a>
-            <a href="/perfil-usuario" class="flex items-center py-2.5 px-4 rounded transition duration-200 text-blue-500 active">
+            <a href="/pedidos-en-curso" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-shopping-cart mr-2 text-gray-500"></i>
+                Pedidos en Curso
+            </a>
+            <a href="/perfil-empresa" class="flex items-center py-2.5 px-4 rounded transition duration-200 text-blue-500 active">
                 <i class="fas fa-user mr-2 active"></i>
                 <span class="active">Perfil</span>
             </a>
@@ -166,10 +170,10 @@
     </aside>
     <!-- Main content -->
     <div class="flex-1 p-6">
-        <h1 class="text-2xl font-bold mb-4">Membresías Mensuales</h1>
+        <h1 class="text-2xl font-bold mb-4">Membresías Mensuales para Empresas</h1>
         <p class="text-lg mb-6">Elige el plan que más te guste</p>
         <div class="content-container bg-white p-6 rounded shadow-md">
-            <a href="PerfilUsuario.html" class="back-button">
+            <a href="PerfilEmpresa.html" class="back-button">
                 <i class="fas fa-arrow-left"></i>
                 Volver al Perfil
             </a>
@@ -177,34 +181,37 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="membership-card">
                     <h3>Básico</h3>
-                    <p class="price">$10000 <span>por mes</span></p>
+                    <p class="price">$20000 <span>por mes</span></p>
                     <ul class="text-left">
                         <li>Envío estándar gratuito en pedidos superiores a un monto específico.</li>
                         <li>Descuento del 5% en todas las compras.</li>
-                        <li>Acceso a recetas exclusivas y consejos de cocina básicos.</li>
+                        <li>Acceso a seminarios web exclusivos sobre gestión empresarial.</li>
+                        <li>Asesoría básica en marketing digital.</li>
                     </ul>
                     <button class="select-button">Seleccionar Plan</button>
                 </div>
                 <div class="membership-card">
                     <h3>Media</h3>
-                    <p class="price">$15000 <span>por mes</span></p>
+                    <p class="price">$35000 <span>por mes</span></p>
                     <ul class="text-left">
-                        <li>Acceso a nuevas llegadas de productos 5 horas antes del público general.</li>
-                        <li>Envío estándar gratuito en todos los pedidos y descuentos en envíos exprés.</li>
+                        <li>Acceso prioritario a nuevos productos y promociones.</li>
+                        <li>Envío exprés gratuito en todos los pedidos.</li>
                         <li>Descuento del 10% en todas las compras.</li>
-                        <li>Acceso a recetas avanzadas y tutoriales de cocina.</li>
+                        <li>Acceso a seminarios web avanzados y talleres prácticos.</li>
+                        <li>Asesoría en marketing digital y estrategias de ventas.</li>
                     </ul>
                     <button class="select-button">Seleccionar Plan</button>
                 </div>
                 <div class="membership-card">
                     <h3>Avanzada</h3>
-                    <p class="price">$22000 <span>por mes</span></p>
+                    <p class="price">$50000 <span>por mes</span></p>
                     <ul class="text-left">
-                        <li>Acceso a nuevas llegadas de productos 8 horas antes del público general.</li>
+                        <li>Acceso exclusivo a productos premium antes de su lanzamiento.</li>
                         <li>Envío exprés gratuito en todos los pedidos.</li>
                         <li>Descuento del 15% en todas las compras.</li>
-                        <li>Asesoría personalizada con un nutricionista o chef para planificar dietas y menús.</li>
-                        <li>Regalos exclusivos y muestras de productos premium en fechas especiales y al alcanzar ciertos hitos de compra.</li>
+                        <li>Consultoría personalizada en gestión empresarial.</li>
+                        <li>Acceso a eventos exclusivos y networking con otros empresarios.</li>
+                        <li>Regalos exclusivos y muestras de productos premium en fechas especiales.</li>
                     </ul>
                     <button class="select-button">Seleccionar Plan</button>
                 </div>

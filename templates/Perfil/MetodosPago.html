@@ -17,9 +17,14 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
         }
         .profile-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .profile-info {
             flex-grow: 1;
         }
         .profile-options a {
@@ -85,6 +90,7 @@
             transition: background-color 0.2s;
             width: 100%;
             margin-top: auto; /* Ensures the button is at the bottom */
+            margin-bottom: 1rem; /* Adds bottom margin */
         }
         .add-button:hover {
             background-color: #1b7fbf;
@@ -108,6 +114,9 @@
             border-bottom: 1px solid #e2e8f0;
             margin: 1rem 0;
         }
+        .active {
+            color: #27a2e8 !important; /* Active color */
+        }
     </style>
 </head>
 <body class="flex h-screen">
@@ -116,20 +125,24 @@
         <div class="p-4">
             <img src="/static/img/logo.png" alt="Logo" class="w-full h-auto">
         </div>
-        <nav class="mt-4">
-            <a href="#" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-home mr-2 text-blue-500"></i>
+        <nav class="mt-4 sidebar">
+            <a href="/general/menu.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-home mr-2 text-gray-500"></i>
                 Inicio
             </a>
-            <a href="#" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="/mis-pedidos" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-box mr-2 text-gray-500"></i>
                 Mis Pedidos
             </a>
-            <a href="#" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="/favoritos" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-heart mr-2 text-gray-500"></i>
                 Favoritos
             </a>
-            <a href="#" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="/perfil-usuario" class="flex items-center py-2.5 px-4 rounded transition duration-200 text-blue-500 active">
+                <i class="fas fa-user mr-2 active"></i>
+                <span class="active">Perfil</span>
+            </a>
+            <a href="/informacion" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-info-circle mr-2 text-gray-500"></i>
                 Información
             </a>

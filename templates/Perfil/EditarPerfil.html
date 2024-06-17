@@ -15,6 +15,8 @@
             height: 90vh;
             margin: 1rem 1rem 3rem 1rem;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
         }
         .profile-container {
             height: calc(100% - 4rem);
@@ -57,11 +59,6 @@
             font-size: 1.25rem;
             color: #4a5568;
         }
-        .support-icon {
-            width: 1.5rem;
-            height: 1.5rem;
-            margin-right: 0.5rem;
-        }
         .form-group {
             margin-bottom: 1.5rem;
         }
@@ -85,6 +82,7 @@
             text-align: center;
             display: inline-block;
             margin-top: 1rem;
+            margin-bottom: 1rem; /* Añadir margen inferior */
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             transition: background-color 0.2s;
             width: 100%;
@@ -111,6 +109,20 @@
             border-bottom: 1px solid #e2e8f0;
             margin: 1rem 0;
         }
+        .sidebar a.active {
+            color: #27a2e8;
+        }
+        .active {
+            color: #27a2e8 !important; /* Active color */
+        }
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .form-content {
+            flex-grow: 1;
+        }
     </style>
 </head>
 <body class="flex h-screen">
@@ -119,20 +131,24 @@
         <div class="p-4">
             <img src="/static/img/logo.png" alt="Logo" class="w-full h-auto">
         </div>
-        <nav class="mt-4">
-            <a href="#" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-home mr-2 text-blue-500"></i>
+        <nav class="mt-4 sidebar">
+            <a href="menu.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-home mr-2 text-gray-500"></i>
                 Inicio
             </a>
-            <a href="#" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="/mis-pedidos" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-box mr-2 text-gray-500"></i>
                 Mis Pedidos
             </a>
-            <a href="#" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="/favoritos" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-heart mr-2 text-gray-500"></i>
                 Favoritos
             </a>
-            <a href="#" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="/perfil-usuario" class="flex items-center py-2.5 px-4 rounded transition duration-200 text-blue-500 active">
+                <i class="fas fa-user mr-2"></i>
+                Perfil
+            </a>
+            <a href="/informacion" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-info-circle mr-2 text-gray-500"></i>
                 Información
             </a>
@@ -147,11 +163,11 @@
                 Volver al Perfil
             </a>
             <div class="separator"></div>
-            <div class="profile-container mt-4">
-                <div class="profile-info">
+            <div class="profile-container">
+                <div class="profile-info form-container">
                     <!-- Edit Profile Form -->
                     <form action="/perfil/guardar" method="post" class="flex flex-col h-full">
-                        <div class="flex-grow">
+                        <div class="form-content">
                             <div class="form-group">
                                 <label for="name">Nombre</label>
                                 <input type="text" id="name" name="name" value="{{ user.name }}">
@@ -168,7 +184,6 @@
                         <div class="mt-6">
                             <button type="submit" class="submit-button">Guardar Cambios</button>
                         </div>
-                        <br>
                     </form>
                 </div>
             </div>

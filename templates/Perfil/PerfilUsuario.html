@@ -133,23 +133,23 @@
                         <p class="profile-email">{{ user.email }}</p>
                     </div>
                     <div class="profile-options mt-6">
-                        <a href="Direcciones.html" class="flex items-center border-t border-b">
+                        <a href="{{ url_for('direcciones') }}" class="flex items-center border-t border-b">
                             <i class="fas fa-map-marker-alt mr-2 text-gray-500"></i>
                             Direcciones
                         </a>
-                        <a href="EditarPerfil.html" class="flex items-center border-b">
+                        <a href="{{ url_for('editar_perfil') }}" class="flex items-center border-b">
                             <i class="fas fa-user-edit mr-2 text-gray-500"></i>
                             Editar Perfil
                         </a>
-                        <a href="MetodosPago.html" class="flex items-center border-b">
+                        <a href="{{ url_for('metodos_pago') }}" class="flex items-center border-b">
                             <i class="fas fa-credit-card mr-2 text-gray-500"></i>
                             Métodos de Pago
                         </a>
-                        <a href="Membresia.html" class="flex items-center border-b">
+                        <a href="{{ url_for('membresia') }}" class="flex items-center border-b">
                             <i class="fas fa-crown mr-2 text-gray-500"></i>
                             Membresía
-                        </a>                                                                       
-                        <a href="Soporte.html" class="flex items-center border-b">
+                        </a>
+                        <a href="{{ url_for('soporte') }}" class="flex items-center border-b">
                             <i class="fas fa-life-ring mr-2 text-gray-500"></i>
                             Soporte
                         </a>

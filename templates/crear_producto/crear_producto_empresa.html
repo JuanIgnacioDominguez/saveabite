@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Comida</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
+        }
+        .bg-custom-blue {
+            background-color: #27a2e8;
+        }
+        .text-custom-blue {
+            color: #27a2e8;
+        }
+        .nav-item {
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            color: #6b7280;
+            transition: color 0.3s ease;
+        }
+        .nav-item i {
+            height: 24px;
+            width: 24px;
+            margin-right: 0.5rem;
+        }
+        .nav-item:hover,
+        .nav-item.active {
+            color: #27a2e8;
+        }
+        .profile {
+            display: flex;
+            align-items: center;
+            margin-top: auto;
+            margin-bottom: 1rem;
+        }
+        .profile img {
+            height: 40px;
+            width: 40px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        .btn-custom {
+            background-color: white;
+            color: #27a2e8;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 120px;
+        }
+        .btn-custom i {
+            font-size: 24px;
+            margin-bottom: 0.5rem;
+        }
+        .btn-custom:hover,
+        .btn-custom.active {
+            background-color: #27a2e8;
+            color: white;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        .header h1 {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #27a2e8;
+            position: absolute;
+            left: 0;
+            margin-left: 20px;
+        }
+        .actions {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 16px;
+            margin: 16px;
+            width: 100%;
+        }
+        .card img {
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        .card h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+        .card p {
+            color: #666;
+        }
+    </style>
+</head>
+<body class="flex">
+    <!-- Sidebar -->
+    <div class="flex flex-col h-screen bg-white w-64 p-6 shadow-lg">
+        <div class="flex justify-center mb-8">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" class="logo w-44" alt="Save a Bite Logo"/>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-home"></i>
+            Inicio
+        </div>
+        <div class="nav-item active">
+            <i class="fas fa-plus"></i>
+            Agregar Comida
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-list"></i>
+            Ver Comidas
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-shopping-cart"></i>
+            Pedidos en Curso
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-user-edit"></i>
+            Editar Perfil
+        </div>
+        <div class="profile">
+            <img src="path_to_profile_image.jpg" alt="Profile">
+            <div class="text-custom-blue">Cerrar Sesión</div>
+        </div>
+    </div>
+    <!-- Main content -->
+    <div class="flex-1 p-6">
+        <div class="header">
+            <h1 class="text-4xl font-bold text-custom-blue">Agregar Nueva Comida</h1>
+        </div>
+        <div class="card">
+            <form method="post" enctype="multipart/form-data">
+                <div class="mb-4">
+                    <label for="name" class="block text-gray-700">Nombre de la Comida</label>
+                    <input type="text" name="name" id="name" class="w-full p-2 border rounded-lg" required>
+                </div>
+                <div class="mb-4">
+                    <label for="description" class="block text-gray-700">Descripción</label>
+                    <textarea name="description" id="description" class="w-full p-2 border rounded-lg" required></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="price" class="block text-gray-700">Precio</label>
+                    <input type="number" name="price" id="price" class="w-full p-2 border rounded-lg" required>
+                </div>
+                <div class="mb-4">
+                    <label for="image" class="block text-gray-700">Imagen</label>
+                    <input type="file" name="image" id="image" class="w-full p-2 border rounded-lg" required>
+                </div>
+                <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded">Agregar</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

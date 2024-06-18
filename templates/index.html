@@ -3,72 +3,312 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Save a Bite - Food Delivery</title>
+    <title>Direcciones Empresa</title>
+    <link rel="stylesheet" href="/static/css/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
-            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
         }
-        .bg-custom-blue {
-            background-color: #27a2e8;
-            position: relative;
+        .content-container {
+            height: 90vh;
+            margin: 1rem 1rem 3rem 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
         }
-        .text-custom-blue {
-            color: #27a2e8;
+        .profile-container {
+            height: calc(100% - 4rem);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
-        .btn-custom {
+        .profile-info {
+            flex-grow: 1;
+        }
+        .profile-options a {
+            font-size: 1.25rem;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            background-color: #f3f4f6;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s;
+        }
+        .profile-options a:hover {
+            background-color: #e5e7eb;
+        }
+        .logout-button {
+            background-color: #e3342f;
+        }
+        .logout-button:hover {
+            background-color: #cc1f1a;
+        }
+        .profile-avatar {
+            width: 8rem;
+            height: 8rem;
+        }
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        .profile-email {
+            font-size: 1.25rem;
+            color: #4a5568;
+        }
+        .support-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            margin-right: 0.5rem;
+        }
+        .address-item {
+            font-size: 1.25rem;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #f3f4f6;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+        .address-item:hover {
+            background-color: #e5e7eb;
+        }
+        .add-button {
             background-color: #27a2e8;
             color: white;
-            font-weight: bold;
-            padding: 1rem 2rem;
-            font-size: 1.25rem;
-        }
-        .btn-custom:hover {
-            background-color: #1e91d6;
-        }
-        .white-background {
-            background-color: white;
-            padding: 1rem 2rem;
-            position: relative;
-            z-index: 10;
-        }
-        .wave {
-            position: absolute;
-            bottom: 0;
-            left: 0;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            text-align: center;
+            display: inline-block;
+            margin-top: 1rem;
+            margin-bottom: 1rem; /* Añadir margen inferior */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s;
             width: 100%;
-            overflow: hidden;
-            line-height: 0;
         }
-        .wave svg {
-            position: relative;
-            display: block;
-            width: calc(100% + 1.3px);
-            height: auto;
+        .add-button:hover {
+            background-color: #1b7fbf;
+        }
+        .back-button {
+            display: flex;
+            align-items: center;
+            font-size: 1.25rem;
+            padding: 0.75rem;
+            color: #4a5568;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .back-button:hover {
+            color: #1b7fbf;
+        }
+        .back-button i {
+            margin-right: 0.5rem;
+        }
+        .separator {
+            border-bottom: 1px solid #e2e8f0;
+            margin: 1rem 0;
+        }
+        .sidebar a.active {
+            color: #27a2e8;
+        }
+        .active {
+            color: #27a2e8 !important; /* Active color */
+        }
+        /* Styles for the modal */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+            border-radius: 0.375rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        input {
+            padding-left: 1rem;
+            font-size: 1rem;
+            height: 3rem;
+            border: 1px solid #ddd;
+            border-radius: 0.375rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
-<body class="bg-custom-blue flex flex-col items-center min-h-screen relative">
-    <div class="white-background w-full flex justify-between items-center">
-        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Save a Bite" class="h-12 ml-4">
-        <a href="{{ url_for('login') }}" class="btn-custom rounded-full mr-4">Acceder</a>
-    </div>
-    <main class="flex flex-1 items-center justify-center text-center p-4">
-        <div class="flex flex-wrap max-w-4xl items-center justify-center">
-            <div class="w-full md:w-1/2 p-4">
-                <img src="{{ url_for('static', filename='img/salad_intro.png') }}" alt="Food" class="w-full h-auto object-contain">
-            </div>
-            <div class="w-full md:w-1/2 p-4">
-                <h1 class="text-5xl font-bold mb-4 text-white">¡Delivery de comida y más!</h1>
-                <p class="text-lg mb-6 text-white">Restaurantes, comidas caseras y viandas</p>
+<body class="flex h-screen">
+    <!-- Sidebar Empresa -->
+    {% include 'Sidebars/sidebarEmpresa.html' %}
+
+    <!-- Main content -->
+    <div class="flex-1 p-6 overflow-y-auto">
+        <h1 class="text-2xl font-bold mb-4">Direcciones Empresa</h1>
+        <div class="content-container bg-white p-6 rounded shadow-md">
+            <a href="PerfilEmpresa.html" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                Volver al Perfil
+            </a>
+            <div class="separator"></div>
+            <div class="profile-container">
+                <div class="profile-info">
+                    <!-- Address List -->
+                    {% for address in addresses %}
+                    <div class="address-item" id="address-{{ address.id }}" onclick="openEditModal('{{ address.id }}', '{{ address.name }}', '{{ address.address }}')">
+                        <div>
+                            <i class="fas fa-map-marker-alt mr-2 text-gray-500"></i>
+                            <strong>{{ address.name }}</strong><br>
+                            {{ address.address }}
+                        </div>
+                        <button class="text-red-500" onclick="event.stopPropagation(); deleteAddress('{{ address.id }}');">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+                <button class="add-button" id="openModalBtn">Agregar Dirección</button>
             </div>
         </div>
-    </main>
-    <div class="wave">
-        <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
-            <path d="M0 387L50 379.5C100 372 200 357 300 362.5C400 368 500 394 600 394.5C700 395 800 370 850 357.5L900 345L900 451L850 451C800 451 700 451 600 451C500 451 400 451 300 451C200 451 100 451 50 451L0 451Z" fill="#FFFFFF" stroke-linecap="round" stroke-linejoin="miter"></path>
-        </svg>
     </div>
+    
+    <!-- The Add Modal -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 class="text-xl mb-4">Agregar Dirección</h2>
+            <form id="add-address-form">
+                <label class="block mb-6">
+                    <span class="text-gray-700">Nombre de la Dirección</span>
+                    <input type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="address-name">
+                </label>
+                <label class="block mb-6">
+                    <span class="text-gray-700">Dirección</span>
+                    <input type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="address-details">
+                </label>
+                <button type="submit" class="add-button">Guardar Dirección</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- The Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 class="text-xl mb-4">Editar Dirección</h2>
+            <form id="edit-address-form">
+                <input type="hidden" id="edit-address-id">
+                <label class="block mb-6">
+                    <span class="text-gray-700">Nombre de la Dirección</span>
+                    <input type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="edit-address-name">
+                </label>
+                <label class="block mb-6">
+                    <span class="text-gray-700">Dirección</span>
+                    <input type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="edit-address-details">
+                </label>
+                <button type="submit" class="add-button">Guardar Cambios</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Get the modals
+        var addModal = document.getElementById("addModal");
+        var editModal = document.getElementById("editModal");
+        
+        // Get the buttons that open the modals
+        var addBtn = document.getElementById("openModalBtn");
+        
+        // Get the <span> elements that close the modals
+        var spans = document.getElementsByClassName("close");
+        
+        // When the user clicks the button, open the add modal 
+        addBtn.onclick = function() {
+            addModal.style.display = "block";
+        }
+        
+        // When the user clicks on <span> (x), close the modal
+        for (var i = 0; i < spans.length; i++) {
+            spans[i].onclick = function() {
+                addModal.style.display = "none";
+                editModal.style.display = "none";
+            }
+        }
+        
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == addModal || event.target == editModal) {
+                addModal.style.display = "none";
+                editModal.style.display = "none";
+            }
+        }
+        
+        // Function to open the edit modal with the current address data
+        function openEditModal(id, name, address) {
+            document.getElementById('edit-address-id').value = id;
+            document.getElementById('edit-address-name').value = name;
+            document.getElementById('edit-address-details').value = address;
+            editModal.style.display = "block";
+        }
+        
+        // Function to handle address deletion
+        function deleteAddress(id) {
+            // Show the confirmation modal
+            document.getElementById('confirmDeleteModal').style.display = 'block';
+            document.getElementById('confirmDeleteButton').onclick = function() {
+                // Close the confirmation modal
+                document.getElementById('confirmDeleteModal').style.display = 'none';
+
+                // Implement your delete logic here
+                fetch(`/delete-address/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token if required by your server
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Remove the address item from the UI
+                        document.getElementById(`address-${id}`).remove();
+                    } else {
+                        alert('Error al eliminar la dirección.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al eliminar la dirección.');
+                });
+            };
+        }
+    </script>
 </body>
 </html>

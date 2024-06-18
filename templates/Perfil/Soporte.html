@@ -156,6 +156,9 @@
     <div class="flex-1 p-6">
         <h1 class="text-2xl font-bold mb-4">Soporte</h1>
         <div class="content-container bg-white p-6 rounded shadow-md">
+            <div id="confirmationMessage" class="hidden bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
+                El mensaje se ha enviado correctamente.
+            </div>
             <a href="PerfilUsuario.html" class="back-button">
                 <i class="fas fa-arrow-left"></i>
                 Volver al Perfil
@@ -163,8 +166,8 @@
             <div class="separator"></div>
             <div class="profile-container">
                 <div class="profile-info form-container">
-                    <!-- Support Form -->
-                    <form action="/soporte/enviar" method="post" class="flex flex-col h-full">
+                    <!-- Formulario de soporte -->
+                    <form id="supportForm" action="/soporte/enviar" method="post" class="flex flex-col h-full">
                         <div class="form-content">
                             <div class="form-group">
                                 <label for="subject">Asunto</label>
@@ -183,5 +186,28 @@
             </div>
         </div>
     </div>
+    <!-- Script JavaScript para mostrar mensaje de confirmación -->
+    <script>
+        // Obtener el formulario y el elemento de mensaje de confirmación
+        const form = document.getElementById('supportForm');
+        const confirmationMessage = document.getElementById('confirmationMessage');
+
+        // Escuchar el evento de envío del formulario
+        form.addEventListener('submit', function(event) {
+            // Prevenir el comportamiento por defecto (enviar el formulario)
+            event.preventDefault();
+
+            // Mostrar el mensaje de confirmación
+            confirmationMessage.classList.remove('hidden');
+
+            // Opcional: Puedes resetear el formulario después del envío
+            // form.reset();
+
+            // Puedes ocultar el mensaje de confirmación después de cierto tiempo si lo deseas
+            setTimeout(function() {
+                confirmationMessage.classList.add('hidden');
+            }, 5000); // 5000 milisegundos = 5 segundos (ajusta este tiempo según tu preferencia)
+        });
+    </script>
 </body>
 </html>

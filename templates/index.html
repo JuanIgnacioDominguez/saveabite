@@ -117,6 +117,13 @@
             margin-top: 15px;
             color: #27a2e8;
         }
+        .confirmation-message {
+        display: none;
+        text-align: center;
+        color: #27a2e8;
+        font-size: 1.2rem;
+        margin-top: 20px;
+        }
         /* Estilos para la sección de concientización */
         .concientizacion-info {
             display: none;
@@ -127,6 +134,16 @@
             max-width: 1500px; /* Establece un ancho máximo */
             border-radius: 10px; /* Borde redondeado opcional */
         }
+        /* Estilo de la sección de Acerca de Nosotros */
+        .acerca-de-nosotros {
+            display: none;
+            max-height: 80vh;
+            padding: 20px;
+            margin: 20px auto;
+            width: 100%;
+            max-width: 1500px;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body class="bg-custom-blue flex flex-col items-center min-h-screen relative">
@@ -135,7 +152,7 @@
         <nav>
             <ul class="flex space-x-4">
                 <li><a href="{{ url_for('index') }}" class="text-custom-blue">Menu</a></li>
-                <li><a href="acerca de nosotros.html" class="text-custom-blue">Acerca de Nosotros</a></li>
+                <li><a href="#" class="text-custom-blue" id="acercadenosotros-link">Acerca de Nosotros</a></li>
                 <li><a href="#" class="text-custom-blue" id="concientizacion-link">Concientización</a></li>
                 <li><a href="#" class="text-custom-blue" id="consulta-link">Consultas</a></li>
             </ul>
@@ -157,6 +174,37 @@
             <a href="{{ url_for('login') }}" class="btn-custom rounded-full mr-4">Comprar ahora</a>
         </div>
     </main>
+    <!-- Acerca de Nosotros -->
+    <div class="acerca-de-nosotros" id="acercadenosotros-link">
+        <div class="flex-1 p-6">
+            <h1 class="text-2xl font-bold mb-4">Acerca de Nosotros</h1>
+            <div class="content-container bg-white p-6 rounded shadow-md">
+                <div class="profile-container">
+                    <div class="profile-info form-container">
+                        <div class="form-content">
+                            <p>En Save a Bite, facilitamos la conexión entre los mejores restaurantes y los amantes de la buena mesa. Fundada en 2023, nuestra plataforma permite descubrir y disfrutar de una amplia variedad de opciones gastronómicas de calidad.</p>
+                            
+                            <h2 class="text-xl font-bold mt-4">Nuestra Mision</h2>
+                            <ul class="list-disc pl-6">
+                                <li>Diversidad y Calidad: Colaboramos con restaurantes variados, asegurando una oferta rica y de alta calidad.</li>
+                                <li>Innovación y Simplicidad: Creamos una experiencia de usuario fluida y agradable.</li>
+                                <li>Satisfacción del Cliente: Prioridad en ofrecer un servicio excepcional y memorable.</li>
+                            </ul>
+                
+                            <h2 class="text-xl font-bold mt-4">Nuestro Compromiso</h2>
+                            <ul class="list-disc pl-6">
+                                <li>Plataforma Inclusiva: Facilita el acceso a una amplia gama de restaurantes y tipos de cocina.</li>
+                                <li>Experiencia Única: Soporte integral y personalizado en cada interacción.</li>
+                                <li>Sostenibilidad: Promovemos prácticas responsables y apoyamos a restaurantes con valores compartidos.</li>
+                            </ul>
+                            <p>Únete a Save a Bite y descubre nuevos restaurantes. Gracias por confiar en nosotros para tus aventuras culinarias. ¡Esperamos conectarte con tus próximos sabores favoritos!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <img src="{{ url_for('static', filename='img/team_photo.png') }}" alt="Nuestro equipo">
+    </div>
     <div class="concientizacion-info" id="concientizacion-section" style="display: none;">
         <div class="flex-1 p-6">
             <h1 class="text-2xl font-bold mb-4">Información sobre el Desperdicio de Alimentos</h1>
@@ -203,6 +251,7 @@
             
             <button type="submit">Enviar</button>
         </form>
+        <p class="confirmation-message" id="confirmation-message">Nos pondremos en contacto contigo a la brevedad posible.</p>
     </div>
     <div class="wave">
         <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
@@ -210,19 +259,43 @@
         </svg>
     </div>
     <script>
+        function submitForm() {
+            // Aquí podrías agregar código para enviar el formulario a un servidor, si fuera necesario
+            // Simularemos el envío del formulario por ahora
+            
+            // Mostrar mensaje de confirmación y ocultar formulario
+            document.getElementById('contact-form').style.display = 'none';
+            document.getElementById('confirmation-message').style.display = 'block';
+            
+            // Evitar el envío real del formulario
+            return false;
+        }
         document.getElementById('consulta-link').addEventListener('click', function(event) {
             event.preventDefault();
             document.getElementById('main-section').style.display = 'none'; // Oculta la sección principal
             document.getElementById('contact-form').scrollIntoView({ behavior: 'smooth' });
             document.getElementById('contact-form').style.display = 'block'; // Muestra el formulario de contacto
             document.getElementById('concientizacion-section').style.display = 'none'; // Oculta la sección de concientización
+            document.getElementById('acerca-de-nosotros').style.display = 'none'; // Oculta la sección de Acerca de Nosotros
         });
+
         document.getElementById('concientizacion-link').addEventListener('click', function(event) {
-        event.preventDefault();
-        document.getElementById('main-section').style.display = 'none'; // Oculta la sección principal
-        document.getElementById('contact-form').style.display = 'none'; // Oculta el formulario de contacto si está visible
-        document.getElementById('concientizacion-section').style.display = 'block'; // Muestra la sección de concientización
+            event.preventDefault();
+            document.getElementById('main-section').style.display = 'none'; // Oculta la sección principal
+            document.getElementById('contact-form').style.display = 'none'; // Oculta el formulario de contacto si está visible
+            document.getElementById('concientizacion-section').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('concientizacion-section').style.display = 'block'; // Muestra la sección de concientización
+            document.getElementById('acerca-de-nosotros').style.display = 'none'; // Oculta la sección de Acerca de Nosotros
         });
+
+        document.getElementById('acercadenosotros-link').addEventListener('click', function(event) {
+            event.preventDefault();
+            document.getElementById('main-section').style.display = 'none'; // Oculta la sección principal
+            document.getElementById('contact-form').style.display = 'none'; // Oculta el formulario de contacto si está visible
+            document.getElementById('concientizacion-section').style.display = 'none'; // Oculta la sección de concientización
+            document.getElementById('acerca-de-nosotros').style.display = 'block'; // Muestra la sección de Acerca de Nosotros
+        });
+
     </script>
 </body>
 </html>

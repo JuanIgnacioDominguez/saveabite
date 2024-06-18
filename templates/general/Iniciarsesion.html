@@ -168,6 +168,12 @@
             border-radius: 5px;
             margin-bottom: 20px;
         }
+        .forgot-password-link {
+            cursor: pointer;
+            color: #27a2e8;
+            text-decoration: underline;
+        }
+
     </style>
 </head>
 <body class="flex justify-center items-center h-screen">
@@ -209,10 +215,15 @@
                             </svg>
                         </span>
                     </div>
-                    <br><br><br>
-                    <div>
-                        <button type="submit" class="w-full bg-custom-blue text-white p-2 rounded-md hover:bg-blue-700">Iniciar Sesión</button>
+                    <div class="flex items-center mb-4">
+                        <input type="checkbox" id="rememberMe" name="remember_me" class="mr-2">
+                        <label for="rememberMe" class="text-gray-700">Recuérdame</label>
                     </div>
+                    <div class="mb-4">
+                        <span class="forgot-password-link" onclick="toggleForms('forgotPasswordForm')">¿Olvidaste tu contraseña?</span>
+                    </div>
+                    <button type="submit" class="w-full bg-custom-blue text-white p-2 rounded-md hover:bg-blue-700">Iniciar Sesión</button>
+                    <br><br><br>
                 </form>
                 <form id="registerForm" class="form-transition form-hidden" method="POST" action="{{ url_for('register') }}">
                     <h2 class="text-2xl font-bold mb-2">Crear una Cuenta</h2>
@@ -246,6 +257,20 @@
                         <button type="submit" class="w-full bg-custom-blue text-white p-2 rounded-md hover:bg-blue-700">Crear Cuenta</button>
                     </div>
                 </form>
+
+                <form id="forgotPasswordForm" class="form-transition form-hidden" method="POST" action="{{ url_for('forgot_password') }}">
+                    <h2 class="text-2xl font-bold mb-2">Restablecer Contraseña</h2>
+                    <p class="text-sm text-gray-600 mb-6">Ingrese su dirección de email para recibir un enlace para restablecer su contraseña.</p>
+                    <div class="inputContainer">
+                        <input type="email" id="emailForgot" name="email" class="customInput" placeholder=" " required>
+                        <label for="emailForgot" class="inputLabel">Email</label>
+                    </div>
+                    <div>
+                        <button type="submit" class="w-full bg-custom-blue text-white p-2 rounded-md hover:bg-blue-700">Enviar Mensaje</button>
+                    </div>
+                </form>
+
+
             </div>
         </div>
     </div>
@@ -256,6 +281,8 @@
         const loginForm = document.getElementById('loginForm');
         const formContainer = document.querySelector('.form-container');
 
+        const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+
         registerTab.addEventListener('click', () => {
             registerTab.classList.add('active');
             loginTab.classList.remove('active');
@@ -263,6 +290,10 @@
             loginForm.classList.add('form-hidden');
             registerForm.classList.add('form-visible');
             loginForm.classList.remove('form-visible');
+
+            forgotPasswordForm.classList.add('form-hidden');
+            forgotPasswordForm.classList.remove('form-visible');
+
         });
 
         loginTab.addEventListener('click', () => {
@@ -272,6 +303,10 @@
             registerForm.classList.add('form-hidden');
             loginForm.classList.add('form-visible');
             registerForm.classList.remove('form-visible');
+
+            forgotPasswordForm.classList.add('form-hidden');
+            forgotPasswordForm.classList.remove('form-visible');
+
         });
 
         function togglePasswordVisibility(id) {

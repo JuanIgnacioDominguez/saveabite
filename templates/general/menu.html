@@ -94,6 +94,7 @@
             flex-direction: column;
             align-items: center;
             height: 100%; /* Para asegurarse de que todas las tarjetas tengan la misma altura */
+            cursor: pointer; /* Agregar un puntero de cursor para indicar clicabilidad */
         }
         .recipe-card:hover {
             transform: translateY(-5px);
@@ -197,6 +198,11 @@
             height: 100vh;
         }
     </style>
+    <script>
+        function goToProductDetail(productId) {
+            window.location.href = "Producto.html";
+        }
+    </script>
 </head>
 <body class="flex">
     <!-- Sidebar -->
@@ -268,7 +274,7 @@
             </button>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="recipe-card">
+            <div class="recipe-card" onclick="goToProductDetail('pizza-napolitana')">
                 <img src="{{ url_for('static', filename='img/PIZZA2.jpg') }}" alt="Pizza Napolitana">
                 <h3 class="text-xl font-bold mb-2">Pizza Napolitana</h3>
                 <div class="info">
@@ -291,7 +297,7 @@
                 </div>
             </div>
             <!-- Añadir más tarjetas de recetas -->
-            <div class="recipe-card">
+            <div class="recipe-card" onclick="goToProductDetail('milanesa-napolitana')">
                 <img src="{{ url_for('static', filename='img/milanapo.jpg') }}" alt="Receta 2">
                 <h3 class="text-xl font-bold mb-2">Milanesa Napolitana</h3>
                 <div class="info">
@@ -313,7 +319,7 @@
                     <button class="action-button">Añadir al carrito</button>
                 </div>
             </div>
-            <div class="recipe-card">
+            <div class="recipe-card" onclick="goToProductDetail('hamburguesa-con-papas')">
                 <img src="{{ url_for('static', filename='img/hamburguesa.jpg') }}" alt="Receta 3">
                 <h3 class="text-xl font-bold mb-2">Hamburguesa c/ papas</h3>
                 <div class="info">
@@ -335,7 +341,7 @@
                     <button class="action-button">Añadir al carrito</button>
                 </div>
             </div>
-            <div class="recipe-card">
+            <div class="recipe-card" onclick="goToProductDetail('pasta-bolognesa')">
                 <img src="{{ url_for('static', filename='img/pastabolo.jpg') }}" alt="Receta 4">
                 <h3 class="text-xl font-bold mb-2">Pasta bolognesa</h3>
                 <div class="info">
@@ -357,7 +363,7 @@
                     <button class="action-button">Añadir al carrito</button>
                 </div>
             </div>
-            <div class="recipe-card">
+            <div class="recipe-card" onclick="goToProductDetail('bife-con-pure')">
                 <img src="{{ url_for('static', filename='img/bife.jpg') }}" alt="Receta 5">
                 <h3 class="text-xl font-bold mb-2">Bife con pure</h3>
                 <div class="info">

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
+        }
+        .content-container {
+            max-height: 100vh;
+            margin: 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .profile-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .profile-info {
+            flex-grow: 1;
+        }
+        .profile-options a {
+            font-size: 1.25rem;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            background-color: #f3f4f6;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s;
+        }
+        .profile-options a:hover {
+            background-color: #e5e7eb;
+        }
+        .profile-options a.active {
+            background-color: #e0f7ff;
+            color: #27a2e8;
+        }
+        .profile-options a.active i,
+        .profile-options a.active span {
+            color: #27a2e8;
+        }
+        .logout-button {
+            background-color: #e3342f;
+        }
+        .logout-button:hover {
+            background-color: #cc1f1a;
+        }
+        .profile-avatar {
+            width: 8rem;
+            height: 8rem;
+        }
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        .profile-email {
+            font-size: 1.25rem;
+            color: #4a5568;
+        }
+        .category-item {
+            background-color: #f3f4f6;
+            color: #000;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            display: inline-block;
+            text-align: center;
+            margin: 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .category-item:hover {
+            background-color: #e5e7eb;
+        }
+        .category-item.selected {
+            background-color: #27a2e8;
+            color: #fff;
+        }
+        .create-button {
+            background-color: #27a2e8;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            text-align: center;
+            margin: 1rem 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s;
+            width: 100%;
+        }
+        .create-button:hover {
+            background-color: #1b7fbf;
+        }
+        .back-button {
+            display: flex;
+            align-items: center;
+            font-size: 1.25rem;
+            padding: 0.75rem;
+            color: #4a5568;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .back-button:hover {
+            color: #1b7fbf;
+        }
+        .back-button i {
+            margin-right: 0.5rem;
+        }
+        .separator {
+            border-bottom: 1px solid #e2e8f0;
+            margin: 1rem 0;
+        }
+        .sidebar a.active {
+            color: #27a2e8;
+        }
+        .active {
+            color: #27a2e8 !important;
+        }
+        p {
+            margin-bottom: 2rem;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 0.375rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            font-size: 1.125rem;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #27a2e8;
+            box-shadow: 0 0 5px rgba(39, 162, 232, 0.5);
+        }
+        textarea {
+            height: 150px;
+        }
+        .form-container {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .cart-item img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 0.375rem;
+            margin-right: 1rem;
+        }
+        .cart-item-details {
+            flex-grow: 1;
+        }
+        .cart-item-remove {
+            color: #e3342f;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .cart-item-remove:hover {
+            color: #cc1f1a;
+        }
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 0.375rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="flex h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white text-black shadow-lg">
+        <div class="p-4">
+            <img src="/static/img/logo.png" alt="Logo" class="w-full h-auto">
+        </div>
+        <nav class="mt-4 sidebar">
+            <a href="/templates/general/menu_usuario" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-home mr-2 text-gray-500"></i>
+                Inicio
+            </a>
+            <a href="/carrito" class="flex items-center py-2.5 px-4 rounded transition duration-200 text-blue-500 active">
+                <i class="fas fa-shopping-cart mr-2"></i>
+                Carrito
+            </a>
+            <a href="/mis-pedidos" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-box mr-2 text-gray-500"></i>
+                Mis Pedidos
+            </a>
+            <a href="/favoritos" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-heart mr-2 text-gray-500"></i>
+                Favoritos
+            </a>
+            <a href="/perfil-usuario" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-user mr-2 text-gray-500"></i>
+                Perfil
+            </a>
+            <a href="/informacion" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-info-circle mr-2 text-gray-500"></i>
+                Información
+            </a>
+        </nav>
+    </aside>
+    <!-- Main content -->
+    <div class="flex-1 p-6 overflow-y-auto">
+        <h1 class="text-2xl font-bold mb-4">Tu Carrito</h1>
+        <div class="content-container bg-white p-6 rounded shadow-md">
+            <div class="cart-item" id="cart-item-1">
+                <img src="https://via.placeholder.com/100" alt="Product Image">
+                <div class="cart-item-details">
+                    <h3 class="font-bold">[name]</h3>
+                    <p>Cantidad: 1</p>
+                    <p>[S$]1,234.56</p>
+                </div>
+                <span class="cart-item-remove" onclick="openDeleteModal('cart-item-1')">
+                    <i class="fas fa-trash-alt"></i> Eliminar
+                </span>
+            </div>
+            <div class="cart-total">
+                <span>Total: [S$]1,234.56</span>
+                <button class="create-button" onclick="openConfirmModal()">Confirmar Compra</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('deleteModal')">&times;</span>
+            <h2 class="text-xl mb-4">Confirmar Eliminación</h2>
+            <p>¿Estás seguro de que deseas eliminar este artículo?</p>
+            <button class="create-button" onclick="deleteItem()">Eliminar</button>
+        </div>
+    </div>
+
+    <!-- Confirm Purchase Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('confirmModal')">&times;</span>
+            <h2 class="text-xl mb-4">Compra Confirmada</h2>
+            <p>Tu compra se ha realizado con éxito.</p>
+            <button class="create-button" onclick="closeModal('confirmModal')">Aceptar</button>
+        </div>
+    </div>
+
+    <script>
+        let itemIdToDelete = null;
+
+        function openDeleteModal(itemId) {
+            itemIdToDelete = itemId;
+            document.getElementById('deleteModal').style.display = 'block';
+        }
+
+        function openConfirmModal() {
+            document.getElementById('confirmModal').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function deleteItem() {
+            if (itemIdToDelete) {
+                document.getElementById(itemIdToDelete).remove();
+                closeModal('deleteModal');
+            }
+        }
+    </script>
+</body>
+</html>

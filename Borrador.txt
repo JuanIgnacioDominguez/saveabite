@@ -1,5 +1,7 @@
 Cosas que faltan Usuarios:
-
+-Mis Pedidos
+-Favoritos
+-Carrito
 
 Cosas que faltan Empresas:
 -Agregar Comida
@@ -8,4 +10,6 @@ Cosas que faltan Empresas:
 -Resumen
 
 Cosas que faltan General:
--Arreglar Info
+-Agregar mas informacion e imagenes en el apartado de Informacion
+-Base de datos
+-De las barras laterales arreglar que te lleve a cada cosa bien

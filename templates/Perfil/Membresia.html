@@ -65,6 +65,9 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
             margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         .membership-card h3 {
             font-size: 1.75rem;
@@ -119,6 +122,7 @@
         .membership-card ul {
             list-style-type: none;
             padding-left: 0;
+            margin-bottom: 2rem; /* Espacio para el botón */
         }
         .membership-card ul li {
             display: flex;
@@ -133,20 +137,83 @@
             width: 1em;
             margin-left: -1em; /* Ajusta el espacio del punto */
         }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 2rem;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 0.5rem;
+            text-align: center;
+            z-index: 1000;
+        }
+        .popup.active {
+            display: block;
+        }
+        .popup-button {
+            margin-top: 1rem;
+            background-color: #2563eb;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            text-align: center;
+            display: inline-block;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s;
+            width: 100%;
+        }
+        .popup-button:hover {
+            background-color: #1d4ed8;
+        }
+        .membership-current {
+            margin: 1rem 1rem 2rem 1rem; 
+            padding: 2rem; 
+            border-radius: 0.5rem; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #f1f5f9;
+            text-align: center;
+            color: black; /* Cambiar el color del texto a negro */
+        }
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100vh; /* Para asegurar que el contenido principal ocupe toda la pantalla */
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100vh;
+        }
+        .content {
+            flex: 1;
+        }
+        .footer {
+            flex-shrink: 0;
+        }
     </style>
 </head>
 <body class="flex h-screen">
+    <!-- Popup -->
+    <div id="popup" class="popup">
+        <p>Su plan fue agregado correctamente</p>
+        <button id="closePopup" class="popup-button">Cerrar</button>
+    </div>
     <!-- Sidebar -->
     <aside class="w-64 bg-white text-black shadow-lg">
         <div class="p-4">
             <img src="/static/img/logo.png" alt="Logo" class="w-full h-auto">
         </div>
         <nav class="mt-4 sidebar">
-            <a href="menu.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="{{ url_for('menu') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-home mr-2 text-gray-500"></i>
                 Inicio
             </a>
-            <a href="/mis-pedidos" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="{{ url_for('pedidos_cliente') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-box mr-2 text-gray-500"></i>
                 Mis Pedidos
             </a>
@@ -154,62 +221,108 @@
                 <i class="fas fa-heart mr-2 text-gray-500"></i>
                 Favoritos
             </a>
-            <a href="/perfil-usuario" class="flex items-center py-2.5 px-4 rounded transition duration-200 text-blue-500 active">
+            <a href="{{ url_for('perfil_usuario') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 text-blue-500 active">
                 <i class="fas fa-user mr-2 active"></i>
                 <span class="active">Perfil</span>
             </a>
-            <a href="/informacion" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="{{ url_for('informacion') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-info-circle mr-2 text-gray-500"></i>
                 Información
             </a>
         </nav>
     </aside>
     <!-- Main content -->
-    <div class="flex-1 p-6">
-        <h1 class="text-2xl font-bold mb-4">Membresías Mensuales</h1>
-        <p class="text-lg mb-6">Elige el plan que más te guste</p>
-        <div class="content-container bg-white p-6 rounded shadow-md">
-            <a href="{{ url_for('perfil_usuario') }}" class="back-button">
-                <i class="fas fa-arrow-left"></i>
-                Volver al Perfil
-            </a>
-            <div class="separator"></div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="membership-card">
-                    <h3>Básico</h3>
-                    <p class="price">$10000 <span>por mes</span></p>
-                    <ul class="text-left">
-                        <li>Envío estándar gratuito en pedidos superiores a un monto específico.</li>
-                        <li>Descuento del 5% en todas las compras.</li>
-                        <li>Acceso a recetas exclusivas y consejos de cocina básicos.</li>
-                    </ul>
-                    <button class="select-button">Seleccionar Plan</button>
-                </div>
-                <div class="membership-card">
-                    <h3>Media</h3>
-                    <p class="price">$15000 <span>por mes</span></p>
-                    <ul class="text-left">
-                        <li>Acceso a nuevas llegadas de productos 5 horas antes del público general.</li>
-                        <li>Envío estándar gratuito en todos los pedidos y descuentos en envíos exprés.</li>
-                        <li>Descuento del 10% en todas las compras.</li>
-                        <li>Acceso a recetas avanzadas y tutoriales de cocina.</li>
-                    </ul>
-                    <button class="select-button">Seleccionar Plan</button>
-                </div>
-                <div class="membership-card">
-                    <h3>Avanzada</h3>
-                    <p class="price">$22000 <span>por mes</span></p>
-                    <ul class="text-left">
-                        <li>Acceso a nuevas llegadas de productos 8 horas antes del público general.</li>
-                        <li>Envío exprés gratuito en todos los pedidos.</li>
-                        <li>Descuento del 15% en todas las compras.</li>
-                        <li>Asesoría personalizada con un nutricionista o chef para planificar dietas y menús.</li>
-                        <li>Regalos exclusivos y muestras de productos premium en fechas especiales y al alcanzar ciertos hitos de compra.</li>
-                    </ul>
-                    <button class="select-button">Seleccionar Plan</button>
+    <div class="flex-1 p-6 main-content container">
+        <div class="content">
+            <h1 class="text-2xl font-bold mb-4">Membresías Mensuales</h1>
+            <p class="text-lg mb-6">Elige el plan que más te guste</p>
+            {% if membresia %}
+            <div class="membership-card membership-current">
+                <h3>Membresía Actual</h3>
+                <p>{{ membresia }}</p>
+            </div>
+            {% else %}
+            <div class="membership-card membership-current">
+                <h3>Membresía Actual</h3>
+                <p>No tienes una membresía seleccionada</p>
+            </div>
+            {% endif %}
+            <div class="content-container bg-white p-6 rounded shadow-md">
+                <a href="{{ url_for('perfil_usuario') }}" class="back-button">
+                    <i class="fas fa-arrow-left"></i>
+                    Volver al Perfil
+                </a>
+                <div class="separator"></div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="membership-card">
+                        <h3>Básico</h3>
+                        <p class="price">$10000 <span>por mes</span></p>
+                        <ul class="text-left">
+                            <li>Envío estándar gratuito en pedidos superiores a un monto específico.</li>
+                            <li>Descuento del 5% en todas las compras.</li>
+                            <li>Acceso a recetas exclusivas y consejos de cocina básicos.</li>
+                        </ul>
+                        <div class="flex justify-end mt-auto">
+                            <form method="POST" action="{{ url_for('seleccionar_membresia', membresia='Básico') }}">
+                                <button type="submit" class="select-button">Seleccionar Plan</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="membership-card">
+                        <h3>Media</h3>
+                        <p class="price">$15000 <span>por mes</span></p>
+                        <ul class="text-left">
+                            <li>Acceso a nuevas llegadas de productos 5 horas antes del público general.</li>
+                            <li>Envío estándar gratuito en todos los pedidos y descuentos en envíos exprés.</li>
+                            <li>Descuento del 10% en todas las compras.</li>
+                            <li>Acceso a recetas avanzadas y tutoriales de cocina.</li>
+                        </ul>
+                        <div class="flex justify-end mt-auto">
+                            <form method="POST" action="{{ url_for('seleccionar_membresia', membresia='Media') }}">
+                                <button type="submit" class="select-button">Seleccionar Plan</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="membership-card">
+                        <h3>Avanzada</h3>
+                        <p class="price">$22000 <span>por mes</span></p>
+                        <ul class="text-left">
+                            <li>Acceso a nuevas llegadas de productos 8 horas antes del público general.</li>
+                            <li>Envío exprés gratuito en todos los pedidos.</li>
+                            <li>Descuento del 15% en todas las compras.</li>
+                            <li>Asesoría personalizada con un nutricionista o chef para planificar dietas y menús.</li>
+                            <li>Regalos exclusivos y muestras de productos premium en fechas especiales y al alcanzar ciertos hitos de compra.</li>
+                        </ul>
+                        <div class="flex justify-end mt-auto">
+                            <form method="POST" action="{{ url_for('seleccionar_membresia', membresia='Avanzada') }}">
+                                <button type="submit" class="select-button">Seleccionar Plan</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    <script>
+        document.querySelectorAll('.select-button').forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                fetch(this.closest('form').action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        document.getElementById('popup').classList.add('active');
+                    }
+                });
+            });
+        });
+
+        document.getElementById('closePopup').addEventListener('click', function() {
+            document.getElementById('popup').classList.remove('active');
+        });
+    </script>
 </body>
 </html>

@@ -9,7 +9,7 @@
     <style>
         body {
             font-family: 'Nunito', sans-serif;
-            margin: 0; /* Asegúrate de que no haya márgenes por defecto */
+            margin: 0;
             padding: 0;
         }
         .bg-custom-blue {
@@ -49,7 +49,7 @@
             height: auto;
         }
         .main-content {
-            height: auto; /* Ajuste de altura */
+            height: auto;
         }
         .main-image {
             max-width: 600px;
@@ -77,11 +77,11 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 900px;
             margin-top: 50px;
-            display: none; /* Ocultar el formulario inicialmente */
-            position: absolute; /* Posicionar el formulario de manera absoluta */
-            top: 30%; /* Mover el formulario hacia arriba */
-            left: 50%; /* Centrar el formulario horizontalmente */
-            transform: translate(-50%, -30%); /* Ajustar la posición para centrar correctamente */
+            display: none;
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -30%);
         }
         .contact-form h2 {
             color: #27a2e8;
@@ -118,24 +118,13 @@
             color: #27a2e8;
         }
         .confirmation-message {
-        display: none;
-        text-align: center;
-        color: #27a2e8;
-        font-size: 1.2rem;
-        margin-top: 20px;
-        }
-        /* Estilos para la sección de concientización */
-        .concientizacion-info {
             display: none;
-            max-height: 80vh; /* Altura máxima del 80% del viewport height */
-            padding: 20px; /* Espacio interno para separar el contenido de los bordes */
-            margin: 20px auto; /* Centra el contenido horizontalmente con margen en los lados */
-            width: 100%; /* Ajusta el ancho para un diseño más responsivo */
-            max-width: 1500px; /* Establece un ancho máximo */
-            border-radius: 10px; /* Borde redondeado opcional */
+            text-align: center;
+            color: #27a2e8;
+            font-size: 1.2rem;
+            margin-top: 20px;
         }
-        /* Estilo de la sección de Acerca de Nosotros */
-        .acerca-de-nosotros {
+        .concientizacion-info, .acerca-de-nosotros {
             display: none;
             max-height: 80vh;
             padding: 20px;
@@ -159,8 +148,8 @@
         </nav>
         <a href="{{ url_for('login') }}" class="btn-custom rounded-full mr-4">Acceder</a>
     </div>
-    <main class="main-content flex flex-1 items-center justify-center text-center p-4">
-        <div class="flex-container max-w-4xl" id="main-section">
+    <main class="main-content flex flex-1 items-center justify-center text-center p-4" id="main-section">
+        <div class="flex-container max-w-4xl">
             <div class="w-full p-4">
                 <h2 class="text-3xl font-bold text-white mb-4">¡Disfruta comida deliciosa a precios increíbles!</h2>
                 <p class="text-lg text-white">Ayuda a reducir el desperdicio de alimentos mientras ahorras</p>
@@ -175,7 +164,7 @@
         </div>
     </main>
     <!-- Acerca de Nosotros -->
-    <div class="acerca-de-nosotros" id="acercadenosotros-link">
+    <div class="acerca-de-nosotros" id="acercadenosotros-section">
         <div class="flex-1 p-6">
             <h1 class="text-2xl font-bold mb-4">Acerca de Nosotros</h1>
             <div class="content-container bg-white p-6 rounded shadow-md">
@@ -184,7 +173,7 @@
                         <div class="form-content">
                             <p>En Save a Bite, facilitamos la conexión entre los mejores restaurantes y los amantes de la buena mesa. Fundada en 2023, nuestra plataforma permite descubrir y disfrutar de una amplia variedad de opciones gastronómicas de calidad.</p>
                             
-                            <h2 class="text-xl font-bold mt-4">Nuestra Mision</h2>
+                            <h2 class="text-xl font-bold mt-4">Nuestra Misión</h2>
                             <ul class="list-disc pl-6">
                                 <li>Diversidad y Calidad: Colaboramos con restaurantes variados, asegurando una oferta rica y de alta calidad.</li>
                                 <li>Innovación y Simplicidad: Creamos una experiencia de usuario fluida y agradable.</li>
@@ -205,7 +194,8 @@
         </div>
         <img src="{{ url_for('static', filename='img/team_photo.png') }}" alt="Nuestro equipo">
     </div>
-    <div class="concientizacion-info" id="concientizacion-section" style="display: none;">
+    <!-- Concientización -->
+    <div class="concientizacion-info" id="concientizacion-section">
         <div class="flex-1 p-6">
             <h1 class="text-2xl font-bold mb-4">Información sobre el Desperdicio de Alimentos</h1>
             <div class="content-container bg-white p-6 rounded shadow-md">
@@ -235,9 +225,10 @@
             </div>
         </div>
     </div>
+    <!-- Contacto -->
     <div class="contact-form" id="contact-form">
         <h2>Contáctanos</h2>
-        <form action="#" method="post">
+        <form action="#" method="post" onsubmit="return submitForm()">
             <label for="name">Introduce tu nombre</label>
             <input type="text" id="name" name="name" required>
             
@@ -245,7 +236,7 @@
             <input type="email" id="email" name="email" required>
             
             <label for="message">Introduce tu mensaje</label>
-            <textarea id="message" name="message"required></textarea>
+            <textarea id="message" name="message" required></textarea>
             
             <p>Déjanos tu consulta y nos contactaremos con usted a la brevedad</p>
             
@@ -260,43 +251,38 @@
     </div>
     <script>
         function submitForm() {
-            // Aquí podrías agregar código para enviar el formulario a un servidor, si fuera necesario
-            // Simularemos el envío del formulario por ahora
-            
-            // Mostrar mensaje de confirmación y ocultar formulario
             document.getElementById('contact-form').style.display = 'none';
             document.getElementById('confirmation-message').style.display = 'block';
-            
-            // Evitar el envío real del formulario
             return false;
         }
+
         document.getElementById('consulta-link').addEventListener('click', function(event) {
             event.preventDefault();
-            document.getElementById('main-section').style.display = 'none'; // Oculta la sección principal
+            hideAllSections();
+            document.getElementById('contact-form').style.display = 'block';
             document.getElementById('contact-form').scrollIntoView({ behavior: 'smooth' });
-            document.getElementById('contact-form').style.display = 'block'; // Muestra el formulario de contacto
-            document.getElementById('concientizacion-section').style.display = 'none'; // Oculta la sección de concientización
-            document.getElementById('acerca-de-nosotros').style.display = 'none'; // Oculta la sección de Acerca de Nosotros
         });
 
         document.getElementById('concientizacion-link').addEventListener('click', function(event) {
             event.preventDefault();
-            document.getElementById('main-section').style.display = 'none'; // Oculta la sección principal
-            document.getElementById('contact-form').style.display = 'none'; // Oculta el formulario de contacto si está visible
+            hideAllSections();
+            document.getElementById('concientizacion-section').style.display = 'block';
             document.getElementById('concientizacion-section').scrollIntoView({ behavior: 'smooth' });
-            document.getElementById('concientizacion-section').style.display = 'block'; // Muestra la sección de concientización
-            document.getElementById('acerca-de-nosotros').style.display = 'none'; // Oculta la sección de Acerca de Nosotros
         });
 
         document.getElementById('acercadenosotros-link').addEventListener('click', function(event) {
             event.preventDefault();
-            document.getElementById('main-section').style.display = 'none'; // Oculta la sección principal
-            document.getElementById('contact-form').style.display = 'none'; // Oculta el formulario de contacto si está visible
-            document.getElementById('concientizacion-section').style.display = 'none'; // Oculta la sección de concientización
-            document.getElementById('acerca-de-nosotros').style.display = 'block'; // Muestra la sección de Acerca de Nosotros
+            hideAllSections();
+            document.getElementById('acercadenosotros-section').style.display = 'block';
+            document.getElementById('acercadenosotros-section').scrollIntoView({ behavior: 'smooth' });
         });
 
+        function hideAllSections() {
+            document.getElementById('main-section').style.display = 'none';
+            document.getElementById('contact-form').style.display = 'none';
+            document.getElementById('concientizacion-section').style.display = 'none';
+            document.getElementById('acercadenosotros-section').style.display = 'none';
+        }
     </script>
 </body>
 </html>
-

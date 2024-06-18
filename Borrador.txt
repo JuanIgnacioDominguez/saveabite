@@ -1,0 +1,11 @@
+Cosas que faltan Usuarios:
+
+
+Cosas que faltan Empresas:
+-Agregar Comida
+-Ver comidas
+-Pedidos en Curso
+-Resumen
+
+Cosas que faltan General:
+-Arreglar Info

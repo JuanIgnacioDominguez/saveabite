@@ -1,8 +1,21 @@
+import datetime
+import uuid
 from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask_mail import Mail, Message
 import sqlite3
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
+
+# Configuración de Flask-Mail
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'saveabite.sip@gmail.com'
+app.config['MAIL_PASSWORD'] = 'bduo lszu miho zdhv'
+app.config['MAIL_DEFAULT_SENDER'] = 'saveabite.sip@gmail.com'
+
+mail = Mail(app)
 
 def get_db_connection():
     conn = sqlite3.connect('flask_db.db')
@@ -66,11 +79,31 @@ def create_tables():
             FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
         )
     ''')
+    # Crear tabla PasswordResetTokens
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS PasswordResetTokens (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            token TEXT NOT NULL,
+            expiration DATETIME NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES usuarios (id)
+            )
+    ''')
+
     conn.commit()
     conn.close()
 
 # Llama a la función para crear tablas
 create_tables()
+
+def generate_token():
+    return str(uuid.uuid4())
+
+def send_reset_email(email, token):
+    reset_link = url_for('reset_password', token=token, _external=True)
+    msg = Message('Restablecer Contraseña', recipients=[email])
+    msg.body = f'Para restablecer su contraseña, haga clic en el siguiente enlace: {reset_link}'
+    mail.send(msg)
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
@@ -194,6 +227,47 @@ def borrar_direccion(id):
     conn.close()
     return redirect(url_for('direcciones'))
 
+@app.route("/forgot_password", methods=['POST'])
+def forgot_password():
+    email = request.form['email']
+    conn = get_db_connection()
+    user = conn.execute('SELECT * FROM usuarios WHERE correo_electronico = ?', (email,)).fetchone()
+    if user:
+        # Generar un token y almacenarlo en la base de datos
+        token = generate_token()
+        expiration = datetime.datetime.now() + datetime.timedelta(hours=1)
+        conn.execute('INSERT INTO PasswordResetTokens (user_id, token, expiration) VALUES (?, ?, ?)', (user['id'], token, expiration))
+        conn.commit()
+        # Enviar un correo electrónico con el enlace de restablecimiento
+        send_reset_email(email, token)
+        flash('Se ha enviado un enlace para restablecer la contraseña a su email', 'success')
+    else:
+        flash('Correo electrónico no encontrado', 'error')
+    conn.close()
+    return redirect(url_for('login'))
+
+@app.route("/reset_password/<token>", methods=['GET', 'POST'])
+def reset_password(token):
+    conn = get_db_connection()
+    token_data = conn.execute('SELECT * FROM PasswordResetTokens WHERE token = ?', (token,)).fetchone()
+    if not token_data or token_data['expiration'] < datetime.datetime.now():
+        flash('El token ha expirado o no es válido', 'error')
+        conn.close()
+        return redirect(url_for('forgot_password'))
+
+    if request.method == 'POST':
+        new_password = request.form['password']
+        user_id = token_data['user_id']
+        conn.execute('UPDATE usuarios SET contrasena = ? WHERE id = ?', (new_password, user_id))
+        conn.execute('DELETE FROM PasswordResetTokens WHERE user_id = ?', (user_id,))
+        conn.commit()
+        flash('Contraseña actualizada con éxito', 'success')
+        conn.close()
+        return redirect(url_for('login'))
+
+    conn.close()
+    return render_template('reset_password.html', token=token)
+
 @app.route("/menu", methods=['GET', 'POST'])
 def menu():
     user_name = session.get('user_name')
@@ -260,3 +334,4 @@ def soporte_empresa():
 
 if __name__ == "__main__":
     app.run(debug=True)
+

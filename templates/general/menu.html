@@ -222,10 +222,6 @@
             <i class="fas fa-heart"></i>
             Favoritos
         </div>
-        <div class="nav-item">
-            <i class="fas fa-info-circle"></i>
-            Información
-        </div>
         <div class="profile">
             <img src="{{ url_for('static', filename=user_image) }}" alt="Profile">
             <div class="profile-text">
@@ -244,37 +240,37 @@
             </div>
         </div>
         <div class="flex justify-center space-x-4 mb-6">
-            <button class="btn-custom active">
+            <button class="btn-custom active" onclick="filterCategory('todos')">
                 <i class="fas fa-utensils"></i>
                 Todos
             </button>
-            <button class="btn-custom">
+            <button class="btn-custom" onclick="filterCategory('hamburguesas')">
                 <i class="fas fa-hamburger"></i>
                 Hamburguesas
             </button>
-            <button class="btn-custom">
+            <button class="btn-custom" onclick="filterCategory('pizzas')">
                 <i class="fas fa-pizza-slice"></i>
                 Pizzas
             </button>
-            <button class="btn-custom">
+            <button class="btn-custom" onclick="filterCategory('pastas')">
                 <i class="material-icons">ramen_dining</i> <!-- Ícono de noodles -->
                 Pasta
             </button>
-            <button class="btn-custom">
+            <button class="btn-custom" onclick="filterCategory('ensaladas')">
                 <i class="fas fa-leaf"></i>
                 Ensaladas
             </button>
-            <button class="btn-custom">
+            <button class="btn-custom" onclick="filterCategory('cafeteria')">
                 <i class="fas fa-coffee"></i>
                 Cafeteria
             </button>
-            <button class="btn-custom">
+            <button class="btn-custom" onclick="filterCategory('carnes')">
                 <i class="fas fa-drumstick-bite"></i>
                 Carnes
             </button>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="recipe-card" onclick="goToProductDetail('pizza-napolitana')">
+            <div class="recipe-card pizzas" onclick="goToProductDetail('pizza-napolitana')">
                 <img src="{{ url_for('static', filename='img/PIZZA2.jpg') }}" alt="Pizza Napolitana">
                 <h3 class="text-xl font-bold mb-2">Pizza Napolitana</h3>
                 <div class="info">
@@ -297,7 +293,7 @@
                 </div>
             </div>
             <!-- Añadir más tarjetas de recetas -->
-            <div class="recipe-card" onclick="goToProductDetail('milanesa-napolitana')">
+            <div class="recipe-card carnes" onclick="goToProductDetail('milanesa-napolitana')">
                 <img src="{{ url_for('static', filename='img/milanapo.jpg') }}" alt="Receta 2">
                 <h3 class="text-xl font-bold mb-2">Milanesa Napolitana</h3>
                 <div class="info">
@@ -319,7 +315,7 @@
                     <button class="action-button">Añadir al carrito</button>
                 </div>
             </div>
-            <div class="recipe-card" onclick="goToProductDetail('hamburguesa-con-papas')">
+            <div class="recipe-card hamburguesas" onclick="goToProductDetail('hamburguesa-con-papas')">
                 <img src="{{ url_for('static', filename='img/hamburguesa.jpg') }}" alt="Receta 3">
                 <h3 class="text-xl font-bold mb-2">Hamburguesa c/ papas</h3>
                 <div class="info">
@@ -341,7 +337,7 @@
                     <button class="action-button">Añadir al carrito</button>
                 </div>
             </div>
-            <div class="recipe-card" onclick="goToProductDetail('pasta-bolognesa')">
+            <div class="recipe-card pastas" onclick="goToProductDetail('pasta-bolognesa')">
                 <img src="{{ url_for('static', filename='img/pastabolo.jpg') }}" alt="Receta 4">
                 <h3 class="text-xl font-bold mb-2">Pasta bolognesa</h3>
                 <div class="info">
@@ -363,7 +359,7 @@
                     <button class="action-button">Añadir al carrito</button>
                 </div>
             </div>
-            <div class="recipe-card" onclick="goToProductDetail('bife-con-pure')">
+            <div class="recipe-card carnes" onclick="goToProductDetail('bife-con-pure')">
                 <img src="{{ url_for('static', filename='img/bife.jpg') }}" alt="Receta 5">
                 <h3 class="text-xl font-bold mb-2">Bife con pure</h3>
                 <div class="info">
@@ -387,5 +383,21 @@
             </div>
         </div>
     </div>
+    <script>
+        function filterCategory(category) {
+            // Obtener todas las tarjetas de productos
+            const cards = document.querySelectorAll('.recipe-card');
+    
+            // Mostrar solo las tarjetas de la categoría seleccionada y ocultar las demás
+            cards.forEach(card => {
+                if (category === 'todos' || card.classList.contains(category)) {
+                    card.style.display = 'block'; // Mostrar tarjeta si es de la categoría seleccionada
+                } else {
+                    card.style.display = 'none'; // Ocultar tarjeta si no es de la categoría seleccionada
+                }
+            });
+        }
+    </script>
+    
 </body>
 </html>

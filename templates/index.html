@@ -68,6 +68,54 @@
             display: flex;
             justify-content: center;
         }
+        .contact-form {
+            background-color: #ffffff;
+            border: 2px solid #27a2e8;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 900px;
+            margin-top: 50px;
+            display: none; /* Ocultar el formulario inicialmente */
+            position: absolute; /* Posicionar el formulario de manera absoluta */
+            top: 30%; /* Mover el formulario hacia arriba */
+            left: 50%; /* Centrar el formulario horizontalmente */
+            transform: translate(-50%, -30%); /* Ajustar la posición para centrar correctamente */
+        }
+        .contact-form h2 {
+            color: #27a2e8;
+            text-align: center;
+        }
+        .contact-form label {
+            display: block;
+            margin-top: 10px;
+            color: #27a2e8;
+        }
+        .contact-form input, 
+        .contact-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #27a2e8;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .contact-form button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background-color: #27a2e8;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .contact-form p {
+            text-align: center;
+            margin-top: 15px;
+            color: #27a2e8;
+        }
     </style>
 </head>
 <body class="bg-custom-blue flex flex-col items-center min-h-screen relative">
@@ -78,13 +126,13 @@
                 <li><a href="#" class="text-custom-blue">Menu</a></li>
                 <li><a href="acerca de nosotros.html" class="text-custom-blue">Acerca de Nosotros</a></li>
                 <li><a href="concientización.html" class="text-custom-blue">Concientización</a></li>
-                <li><a href="consultas.html" class="text-custom-blue">Consultas</a></li>
+                <li><a href="#" class="text-custom-blue" id="consulta-link">Consultas</a></li>
             </ul>
         </nav>
         <a href="{{ url_for('login') }}" class="btn-custom rounded-full mr-4">Acceder</a>
     </div>
     <main class="main-content flex flex-1 items-center justify-center text-center p-4">
-        <div class="flex-container max-w-4xl">
+        <div class="flex-container max-w-4xl" id="main-section">
             <div class="w-full p-4">
                 <h2 class="text-3xl font-bold text-white mb-4">¡Disfruta comida deliciosa a precios increíbles!</h2>
                 <p class="text-lg text-white">Ayuda a reducir el desperdicio de alimentos mientras ahorras</p>
@@ -98,10 +146,36 @@
             <a href="{{ url_for('login') }}" class="btn-custom rounded-full mr-4">Comprar ahora</a>
         </div>
     </main>
+    <div class="contact-form" id="contact-form">
+        <h2>Contáctanos</h2>
+        <form action="#" method="post">
+            <label for="name">Introduce tu nombre</label>
+            <input type="text" id="name" name="name" required>
+            
+            <label for="email">Introduce tu email</label>
+            <input type="email" id="email" name="email" required>
+            
+            <label for="message">Introduce tu mensaje</label>
+            <textarea id="message" name="message" required></textarea>
+            
+            <p>Déjanos tu consulta y nos contactaremos con usted a la brevedad</p>
+            
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
     <div class="wave">
         <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
             <path d="M0 387L50 379.5C100 372 200 357 300 362.5C400 368 500 394 600 394.5C700 395 800 370 850 357.5L900 345L900 451L850 451C800 451 700 451 600 451C500 451 400 451 300 451C200 451 100 451 50 451L0 451Z" fill="#FFFFFF" stroke-linecap="round" stroke-linejoin="miter"></path>
         </svg>
     </div>
+    <script>
+        document.getElementById('consulta-link').addEventListener('click', function(event) {
+            event.preventDefault();
+            document.getElementById('main-section').style.display = 'none'; // Oculta la sección principal
+            document.getElementById('contact-form').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('contact-form').style.display = 'block'; // Muestra el formulario de contacto
+        });
+    </script>
 </body>
 </html>
+

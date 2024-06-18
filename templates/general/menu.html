@@ -215,12 +215,20 @@
             Inicio
         </div>
         <div class="nav-item">
-            <i class="fas fa-shopping-bag"></i>
-            Mis Pedidos
-        </div>
+            <a href="{{ url_for('pedidos_cliente') }}">
+                <i class="fas fa-shopping-bag"></i>
+                Mis Pedidos
+            </a>
+        </div>        
         <div class="nav-item">
             <i class="fas fa-heart"></i>
             Favoritos
+        </div>
+        <div class="nav-item">
+            <a href="{{ url_for('informacion') }}">
+                <i class="fas fa-info-circle"></i>
+                Información
+            </a>
         </div>
         <div class="profile">
             <img src="{{ url_for('static', filename=user_image) }}" alt="Profile">

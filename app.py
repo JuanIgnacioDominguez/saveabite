@@ -55,6 +55,17 @@ def create_tables():
             FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
         )
     ''')
+    # Crear tabla direcciones
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS direcciones (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            usuario_id INTEGER NOT NULL,
+            calle TEXT NOT NULL,
+            altura INTEGER NOT NULL,
+            localidad TEXT NOT NULL,
+            FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
+        )
+    ''')
     conn.commit()
     conn.close()
 
@@ -157,6 +168,32 @@ def borrar_metodo_pago(id):
     conn.close()
     return redirect(url_for('metodos_pago'))
 
+@app.route("/direcciones", methods=['GET', 'POST'])
+def direcciones():
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    if request.method == 'POST':
+        calle = request.form['calle']
+        altura = request.form['altura']
+        localidad = request.form['localidad']
+        conn.execute('''
+            INSERT INTO direcciones (usuario_id, calle, altura, localidad)
+            VALUES (?, ?, ?, ?)
+        ''', (user_id, calle, altura, localidad))
+        conn.commit()
+    
+    direcciones = conn.execute('SELECT * FROM direcciones WHERE usuario_id = ?', (user_id,)).fetchall()
+    conn.close()
+    return render_template('Perfil/Direcciones.html', direcciones=direcciones)
+
+@app.route("/borrar_direccion/<int:id>", methods=['POST'])
+def borrar_direccion(id):
+    conn = get_db_connection()
+    conn.execute('DELETE FROM direcciones WHERE id = ?', (id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('direcciones'))
+
 @app.route("/menu", methods=['GET', 'POST'])
 def menu():
     user_name = session.get('user_name')
@@ -178,13 +215,6 @@ def menu_restaurant():
     }
     return render_template('general/menu_empresas.html', restaurant=restaurant)
 
-@app.route("/direcciones")
-def direcciones():
-    addresses = [
-        {'name': 'Casa', 'address': '123 Calle Principal'},
-        {'name': 'Trabajo', 'address': '456 Avenida Secundaria'}
-    ]
-    return render_template('Perfil/Direcciones.html', addresses=addresses)
 
 @app.route("/editar_perfil")
 def editar_perfil():

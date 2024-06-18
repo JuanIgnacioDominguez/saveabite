@@ -1,11 +1,8 @@
 Cosas que faltan Usuarios:
 -Mis Pedidos
 -Favoritos
--Carrito
 
 Cosas que faltan Empresas:
--Agregar Comida
--Ver comidas
 -Pedidos en Curso
 -Resumen
 

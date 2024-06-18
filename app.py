@@ -44,6 +44,28 @@ def create_tables():
             tipoComida TEXT NOT NULL
         )
     ''')
+    # Crear tabla métodos de pago
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS metodos_pago (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            usuario_id INTEGER NOT NULL,
+            tipo_metodo TEXT NOT NULL,
+            tipo_tarjeta TEXT,
+            numero_tarjeta TEXT,
+            FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
+        )
+    ''')
+    # Crear tabla direcciones
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS direcciones (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            usuario_id INTEGER NOT NULL,
+            calle TEXT NOT NULL,
+            altura INTEGER NOT NULL,
+            localidad TEXT NOT NULL,
+            FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
+        )
+    ''')
     conn.commit()
     conn.close()
 
@@ -120,6 +142,58 @@ def register():
             conn.close()
     return render_template('general/Iniciarsesion.html')
 
+@app.route("/metodos_pago", methods=['GET', 'POST'])
+def metodos_pago():
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    if request.method == 'POST':
+        tipo_metodo = request.form['tipo_metodo']
+        tipo_tarjeta = request.form.get('tipo_tarjeta')
+        numero_tarjeta = request.form.get('numero_tarjeta')
+        conn.execute('''
+            INSERT INTO metodos_pago (usuario_id, tipo_metodo, tipo_tarjeta, numero_tarjeta)
+            VALUES (?, ?, ?, ?)
+        ''', (user_id, tipo_metodo, tipo_tarjeta, numero_tarjeta))
+        conn.commit()
+    
+    metodos_pago = conn.execute('SELECT * FROM metodos_pago WHERE usuario_id = ?', (user_id,)).fetchall()
+    conn.close()
+    return render_template('Perfil/MetodosPago.html', metodos_pago=metodos_pago)
+
+@app.route("/borrar_metodo_pago/<int:id>", methods=['POST'])
+def borrar_metodo_pago(id):
+    conn = get_db_connection()
+    conn.execute('DELETE FROM metodos_pago WHERE id = ?', (id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('metodos_pago'))
+
+@app.route("/direcciones", methods=['GET', 'POST'])
+def direcciones():
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    if request.method == 'POST':
+        calle = request.form['calle']
+        altura = request.form['altura']
+        localidad = request.form['localidad']
+        conn.execute('''
+            INSERT INTO direcciones (usuario_id, calle, altura, localidad)
+            VALUES (?, ?, ?, ?)
+        ''', (user_id, calle, altura, localidad))
+        conn.commit()
+    
+    direcciones = conn.execute('SELECT * FROM direcciones WHERE usuario_id = ?', (user_id,)).fetchall()
+    conn.close()
+    return render_template('Perfil/Direcciones.html', direcciones=direcciones)
+
+@app.route("/borrar_direccion/<int:id>", methods=['POST'])
+def borrar_direccion(id):
+    conn = get_db_connection()
+    conn.execute('DELETE FROM direcciones WHERE id = ?', (id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('direcciones'))
+
 @app.route("/menu", methods=['GET', 'POST'])
 def menu():
     user_name = session.get('user_name')
@@ -141,18 +215,14 @@ def menu_restaurant():
     }
     return render_template('general/menu_empresas.html', restaurant=restaurant)
 
-@app.route("/direcciones")
-def direcciones():
-    return render_template('Perfil/Direcciones.html')
 
 @app.route("/editar_perfil")
 def editar_perfil():
-    user = {'name': session.get('user_name'), 'email': session.get('user_email')}
+    user = {
+        'name': session.get('user_name'), 
+        'email': session.get('user_email')
+    }
     return render_template('Perfil/EditarPerfil.html', user=user)
-
-@app.route("/metodos_pago")
-def metodos_pago():
-    return render_template('Perfil/MetodosPago.html')
 
 @app.route("/membresia")
 def membresia():
@@ -161,6 +231,32 @@ def membresia():
 @app.route("/soporte")
 def soporte():
     return render_template('Perfil/Soporte.html')
+
+@app.route("/perfil_empresa")
+def perfil_empresa():
+    company = {'name': session.get('user_name'), 'email': session.get('user_email')}
+    return render_template('Perfil/PerfilEmpresa.html', company=company)
+
+@app.route("/direcciones_empresa")
+def direcciones_empresa():
+    addresses = [
+        {'name': 'Oficina Central', 'address': '789 Calle Empresarial'},
+        {'name': 'Sucursal', 'address': '101 Avenida Comercial'}
+    ]
+    return render_template('Perfil/DireccionesEmpresa.html', addresses=addresses)
+
+@app.route("/editar_perfil_empresa")
+def editar_perfil_empresa():
+    company = {'name': session.get('user_name'), 'email': session.get('user_email')}
+    return render_template('Perfil/EditarPerfilEmpresa.html', company=company)
+
+@app.route("/membresia_empresa")
+def membresia_empresa():
+    return render_template('Perfil/MembresiaEmpresa.html')
+
+@app.route("/soporte_empresa")
+def soporte_empresa():
+    return render_template('Perfil/SoporteEmpresa.html')
 
 if __name__ == "__main__":
     app.run(debug=True)

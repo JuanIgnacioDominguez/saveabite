@@ -24,60 +24,18 @@
             flex-direction: column;
             justify-content: space-between;
         }
-        .profile-info {
-            flex-grow: 1;
-        }
-        .profile-options a {
-            font-size: 1.25rem;
-            padding: 1rem;
+        .profile-options {
             display: flex;
-            align-items: center;
-            background-color: #f3f4f6;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.2s;
-        }
-        .profile-options a:hover {
-            background-color: #e5e7eb;
-        }
-        .logout-button {
-            background-color: #e3342f;
-        }
-        .logout-button:hover {
-            background-color: #cc1f1a;
-        }
-        .profile-avatar {
-            width: 8rem;
-            height: 8rem;
-        }
-        .profile-name {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-        .profile-email {
-            font-size: 1.25rem;
-            color: #4a5568;
-        }
-        .support-icon {
-            width: 1.5rem;
-            height: 1.5rem;
-            margin-right: 0.5rem;
-        }
-        .payment-method-item {
-            font-size: 1.25rem;
-            padding: 1rem;
-            display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
             background-color: #f3f4f6;
             border-radius: 0.5rem;
             margin-bottom: 1rem;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.2s;
         }
-        .payment-method-item:hover {
-            background-color: #e5e7eb;
+        .profile-options i {
+            margin-right: 1rem;
         }
         .add-button {
             background-color: #27a2e8;
@@ -86,13 +44,29 @@
             border-radius: 0.375rem;
             text-align: center;
             display: inline-block;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             transition: background-color 0.2s;
             width: 100%;
-            margin-top: auto; /* Ensures the button is at the bottom */
-            margin-bottom: 1rem; /* Adds bottom margin */
         }
         .add-button:hover {
+            background-color: #1b7fbf;
+        }
+        .submit-button {
+            background-color: #27a2e8;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            text-align: center;
+            display: inline-block;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s;
+            width: 100%;
+        }
+        .submit-button:hover {
             background-color: #1b7fbf;
         }
         .back-button {
@@ -114,8 +88,38 @@
             border-bottom: 1px solid #e2e8f0;
             margin: 1rem 0;
         }
-        .active {
-            color: #27a2e8 !important; /* Active color */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 0.5rem;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -139,8 +143,8 @@
                 Favoritos
             </a>
             <a href="/perfil-usuario" class="flex items-center py-2.5 px-4 rounded transition duration-200 text-blue-500 active">
-                <i class="fas fa-user mr-2 active"></i>
-                <span class="active">Perfil</span>
+                <i class="fas fa-user mr-2"></i>
+                Perfil
             </a>
             <a href="/informacion" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-info-circle mr-2 text-gray-500"></i>
@@ -152,30 +156,77 @@
     <div class="flex-1 p-6">
         <h1 class="text-2xl font-bold mb-4">Métodos de Pago</h1>
         <div class="content-container bg-white p-6 rounded shadow-md">
-            <a href="PerfilUsuario.html" class="back-button">
+            <a href="{{ url_for('perfil_usuario') }}" class="back-button">
                 <i class="fas fa-arrow-left"></i>
                 Volver al Perfil
             </a>
             <div class="separator"></div>
-            <div class="profile-container mt-4">
+            <div class="profile-container">
                 <div class="profile-info">
-                    <!-- Payment Method List -->
-                    {% for method in payment_methods %}
-                    <div class="payment-method-item">
-                        <div>
-                            <i class="fas fa-credit-card mr-2 text-gray-500"></i>
-                            <strong>{{ method.name }}</strong><br>
-                            {{ method.details }}
-                        </div>
-                        <button class="text-red-500">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
+                    <!-- Payment Methods List -->
+                    {% for metodo in metodos_pago %}
+                    <div class="profile-options">
+                        <strong>
+                            {% if metodo.tipo_metodo == 'Efectivo' %}
+                                <i class="fas fa-money-bill-wave"></i>
+                                Efectivo
+                            {% else %}
+                                <i class="fas fa-credit-card"></i>
+                                Tarjeta de Crédito - {{ metodo.tipo_tarjeta }}: **** **** **** {{ metodo.numero_tarjeta[-4:] }}
+                            {% endif %}
+                        </strong>
+                        <form action="{{ url_for('borrar_metodo_pago', id=metodo.id) }}" method="post">
+                            <button type="submit" class="text-red-500">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
                     </div>
                     {% endfor %}
                 </div>
-                <button class="add-button">Agregar Método de Pago</button>
+                <button class="add-button" onclick="document.getElementById('addPaymentModal').style.display='block'">Agregar Método de Pago</button>
             </div>
         </div>
     </div>
+
+    <!-- Add Payment Method Modal -->
+    <div id="addPaymentModal" class="modal">
+        <div class="modal-content bg-white p-6 rounded shadow-md">
+            <span onclick="document.getElementById('addPaymentModal').style.display='none'" class="close">&times;</span>
+            <h2 class="text-xl font-bold mb-4">Agregar Método de Pago</h2>
+            <form action="{{ url_for('metodos_pago') }}" method="post">
+                <div class="form-group">
+                    <label for="tipo_metodo">Tipo de Método</label>
+                    <select id="tipo_metodo" name="tipo_metodo" class="w-full p-2 border rounded" onchange="toggleCardDetails(this)">
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
+                    </select>
+                </div>
+                <div id="cardDetails" style="display: none;">
+                    <div class="form-group">
+                        <label for="tipo_tarjeta">Tipo de Tarjeta</label>
+                        <select id="tipo_tarjeta" name="tipo_tarjeta" class="w-full p-2 border rounded">
+                            <option value="Visa">Visa</option>
+                            <option value="Mastercard">Mastercard</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="numero_tarjeta">Número de Tarjeta</label>
+                        <input type="text" id="numero_tarjeta" name="numero_tarjeta" class="w-full p-2 border rounded">
+                    </div>
+                </div>
+                <button type="submit" class="submit-button">Agregar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleCardDetails(select) {
+            if (select.value === 'Tarjeta de Crédito') {
+                document.getElementById('cardDetails').style.display = 'block';
+            } else {
+                document.getElementById('cardDetails').style.display = 'none';
+            }
+        }
+    </script>
 </body>
 </html>

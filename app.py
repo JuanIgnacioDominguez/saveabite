@@ -32,6 +32,7 @@ def create_tables():
             correo_electronico TEXT NOT NULL UNIQUE,
             contrasena TEXT NOT NULL,
             imagen TEXT  -- Columna para almacenar imágenes
+            membresia TEXT
         )
     ''')
     # Crear tabla usuarioEmpresa
@@ -42,6 +43,7 @@ def create_tables():
             correo_electronico TEXT NOT NULL UNIQUE,
             contrasena TEXT NOT NULL,
             imagen TEXT  -- Columna para almacenar imágenes
+            membresia TEXT 
         )
     ''')
     # Crear tabla Productos
@@ -93,8 +95,31 @@ def create_tables():
     conn.commit()
     conn.close()
 
-# Llama a la función para crear tablas
+def add_membership_field():
+    conn = get_db_connection()
+    # Añadir el campo membresia a la tabla usuarios
+    try:
+        conn.execute('''
+            ALTER TABLE usuarios
+            ADD COLUMN membresia TEXT
+        ''')
+    except sqlite3.OperationalError:
+        # La columna ya existe
+        pass
+    # Añadir el campo membresia a la tabla usuarioEmpresa
+    try:
+        conn.execute('''
+            ALTER TABLE usuarioEmpresa
+            ADD COLUMN membresia TEXT
+        ''')
+    except sqlite3.OperationalError:
+        # La columna ya existe
+        pass
+    conn.commit()
+    conn.close()
+
 create_tables()
+add_membership_field()
 
 def generate_token():
     return str(uuid.uuid4())
@@ -268,11 +293,58 @@ def reset_password(token):
     conn.close()
     return render_template('reset_password.html', token=token)
 
+@app.route('/membresia', methods=['GET', 'POST'])
+def membresia():
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    user = conn.execute('SELECT * FROM usuarios WHERE id = ?', (user_id,)).fetchone()
+    membresia = user['membresia'] if user else None
+    conn.close()
+    return render_template('Perfil/Membresia.html', membresia=membresia)
+
+@app.route('/seleccionar_membresia/<membresia>', methods=['POST'])
+def seleccionar_membresia(membresia):
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    conn.execute('UPDATE usuarios SET membresia = ? WHERE id = ?', (membresia, user_id))
+    conn.commit()
+    conn.close()
+    flash('Membresía seleccionada con éxito', 'success')
+    return '', 204
+
+
+
 @app.route("/menu", methods=['GET', 'POST'])
 def menu():
     user_name = session.get('user_name')
     user_image = session.get('user_image')
     return render_template('general/menu.html', user_name=user_name, user_image=user_image)
+
+@app.route("/pedidos_cliente", methods=['GET'])
+def pedidos_cliente():
+    pedidos = [
+        {
+            'date': '2024-06-18',
+            'restaurant': 'Restaurante 1',
+            'price': 100.0
+        },
+        {
+            'date': '2024-06-19',
+            'restaurant': 'Restaurante 2',
+            'price': 200.0
+        },
+        {
+            'date': '2024-06-20',
+            'restaurant': 'Restaurante 3',
+            'price': 300.0
+        }
+    ]
+    return render_template('general/PedidosCliente.html', pedidos=pedidos)
+
+@app.route("/informacion", methods=['GET'])
+def informacion():
+    return render_template('general/informacion.html')
+
 
 @app.route("/perfil_usuario", methods=['GET', 'POST'])
 def perfil_usuario():
@@ -298,9 +370,6 @@ def editar_perfil():
     }
     return render_template('Perfil/EditarPerfil.html', user=user)
 
-@app.route("/membresia")
-def membresia():
-    return render_template('Perfil/Membresia.html')
 
 @app.route("/soporte")
 def soporte():
@@ -334,4 +403,3 @@ def soporte_empresa():
 
 if __name__ == "__main__":
     app.run(debug=True)
-

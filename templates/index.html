@@ -47,22 +47,55 @@
             width: calc(100% + 1.3px);
             height: auto;
         }
+        .main-content {
+            height: 100vh;
+        }
+        .main-image {
+            max-width: 600px;
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+        .flex-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        .main-image-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
     </style>
 </head>
 <body class="bg-custom-blue flex flex-col items-center min-h-screen relative">
     <div class="white-background w-full flex justify-between items-center">
         <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Save a Bite" class="h-12 ml-4">
+        <nav>
+            <ul class="flex space-x-4">
+                <li><a href="#" class="text-custom-blue">Menu</a></li>
+                <li><a href="acerca de nosotros.html" class="text-custom-blue">Acerca de Nosotros</a></li>
+                <li><a href="concientización.html" class="text-custom-blue">Concientización</a></li>
+                <li><a href="consultas.html" class="text-custom-blue">Consultas</a></li>
+            </ul>
+        </nav>
         <a href="{{ url_for('login') }}" class="btn-custom rounded-full mr-4">Acceder</a>
     </div>
-    <main class="flex flex-1 items-center justify-center text-center p-4">
-        <div class="flex flex-wrap max-w-4xl items-center justify-center">
-            <div class="w-full md:w-1/2 p-4">
-                <img src="{{ url_for('static', filename='img/salad_intro.png') }}" alt="Food" class="w-full h-auto object-contain">
+    <main class="main-content flex flex-1 items-center justify-center text-center p-4">
+        <div class="flex-container max-w-4xl">
+            <div class="w-full p-4">
+                <h2 class="text-3xl font-bold text-white mb-4">¡Disfruta comida deliciosa a precios increíbles!</h2>
+                <p class="text-lg text-white">Ayuda a reducir el desperdicio de alimentos mientras ahorras</p>
             </div>
-            <div class="w-full md:w-1/2 p-4">
-                <h1 class="text-5xl font-bold mb-4 text-white">¡Delivery de comida y más!</h1>
-                <p class="text-lg mb-6 text-white">Restaurantes, comidas caseras y viandas</p>
+            <div class="main-image-container p-4">
+                <img src="{{ url_for('static', filename='img/salad_intro.png') }}" alt="Food" class="main-image">
             </div>
+            <div class="w-full p-4">
+                <p class="text-lg mb-6 text-white">Encuentra platos frescos y de calidad que de otro modo se desperdiciarían. ¡Aprovecha la oportunidad de comer bien y cuidar el planeta!</p>
+            </div>
+            <a href="{{ url_for('login') }}" class="btn-custom rounded-full mr-4">Comprar ahora</a>
         </div>
     </main>
     <div class="wave">

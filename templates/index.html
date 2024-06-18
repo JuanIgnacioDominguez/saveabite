@@ -9,6 +9,8 @@
     <style>
         body {
             font-family: 'Nunito', sans-serif;
+            margin: 0; /* Asegúrate de que no haya márgenes por defecto */
+            padding: 0;
         }
         .bg-custom-blue {
             background-color: #27a2e8;
@@ -34,12 +36,11 @@
             z-index: 10;
         }
         .wave {
-            position: absolute;
+            position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            overflow: hidden;
-            line-height: 0;
+            z-index: -1;
         }
         .wave svg {
             position: relative;
@@ -48,7 +49,7 @@
             height: auto;
         }
         .main-content {
-            height: 100vh;
+            height: auto; /* Ajuste de altura */
         }
         .main-image {
             max-width: 600px;
@@ -116,6 +117,16 @@
             margin-top: 15px;
             color: #27a2e8;
         }
+        /* Estilos para la sección de concientización */
+        .concientizacion-info {
+            display: none;
+            max-height: 80vh; /* Altura máxima del 80% del viewport height */
+            padding: 20px; /* Espacio interno para separar el contenido de los bordes */
+            margin: 20px auto; /* Centra el contenido horizontalmente con margen en los lados */
+            width: 100%; /* Ajusta el ancho para un diseño más responsivo */
+            max-width: 1500px; /* Establece un ancho máximo */
+            border-radius: 10px; /* Borde redondeado opcional */
+        }
     </style>
 </head>
 <body class="bg-custom-blue flex flex-col items-center min-h-screen relative">
@@ -125,7 +136,7 @@
             <ul class="flex space-x-4">
                 <li><a href="{{ url_for('index') }}" class="text-custom-blue">Menu</a></li>
                 <li><a href="acerca de nosotros.html" class="text-custom-blue">Acerca de Nosotros</a></li>
-                <li><a href="concientización.html" class="text-custom-blue">Concientización</a></li>
+                <li><a href="#" class="text-custom-blue" id="concientizacion-link">Concientización</a></li>
                 <li><a href="#" class="text-custom-blue" id="consulta-link">Consultas</a></li>
             </ul>
         </nav>
@@ -146,6 +157,36 @@
             <a href="{{ url_for('login') }}" class="btn-custom rounded-full mr-4">Comprar ahora</a>
         </div>
     </main>
+    <div class="concientizacion-info" id="concientizacion-section" style="display: none;">
+        <div class="flex-1 p-6">
+            <h1 class="text-2xl font-bold mb-4">Información sobre el Desperdicio de Alimentos</h1>
+            <div class="content-container bg-white p-6 rounded shadow-md">
+                <div class="profile-container">
+                    <div class="profile-info form-container">
+                        <div class="form-content">
+                            <h2 class="text-xl font-bold">¿Qué es el Desperdicio de Alimentos?</h2>
+                            <p>El desperdicio de alimentos se refiere a todos aquellos alimentos que se producen y no llegan a ser consumidos. Este problema ocurre a lo largo de toda la cadena de suministro, desde la producción agrícola hasta el consumo final en los hogares. Incluye alimentos que se descartan, ya sea porque no cumplen con los estándares estéticos del mercado, por errores en la cadena de distribución, por mal almacenamiento, o porque simplemente no se consumen a tiempo y se deterioran.</p>
+                            
+                            <h2 class="text-xl font-bold mt-4">Impacto del Desperdicio de Alimentos</h2>
+                            <p>Socialmente, tiene implicaciones importantes para la seguridad alimentaria y el bienestar de las comunidades. A pesar de los avances en la producción de alimentos, según la Organización de las Naciones Unidas (ONU), “existen 821 millones de personas que padecen de hambre en el mundo. Una de cada nueve personas sufre de inseguridad alimentaria, pero en realidad se producen alimentos más que suficientes para todos” (ONU, 2018).</p>
+                            <p>Desde un enfoque ambiental, la producción de alimentos requiere enormes cantidades de agua, tierra y energía, y cuando se desperdician alimentos, se está utilizando de manera ineficiente estos recursos. Además, cuando los alimentos no consumidos terminan en vertederos, liberan metano, un gas de efecto invernadero potente que agrava el cambio climático. Esta práctica no solo es insostenible desde un punto de vista ambiental, sino que también tiene consecuencias negativas a largo plazo para el planeta y para las generaciones futuras.</p>
+                            <p>A nivel mundial, el desperdicio de alimentos afecta a todas las etapas de la cadena de suministro. Según la Organización de las Naciones Unidas para la Alimentación y la Agricultura (FAO), “anualmente se perdía o desperdiciaba en torno a un tercio de los alimentos a nivel mundial, es decir, unos 1 300 millones de toneladas de alimentos al año” (FAO, 2023). Teniendo así impactos significativos tanto en países desarrollados como en desarrollo.</p>
+                            <p>En los países desarrollados, se concentra principalmente en el nivel de consumo, mientras que en los países en desarrollo, ocurre mayormente en las etapas de producción y distribución debido a la falta de infraestructura adecuada (ONU, 2024).</p>
+                            
+                            <h2 class="text-xl font-bold mt-4">Consejos para Reducir el Desperdicio de Alimentos</h2>
+                            <ul class="list-disc pl-6">
+                                <li>Planificar las comidas y hacer una lista de compras para evitar comprar en exceso.</li>
+                                <li>Almacenar los alimentos de manera adecuada para prolongar su vida útil.</li>
+                                <li>Utilizar las sobras en nuevas recetas creativas.</li>
+                                <li>Compostar los restos de comida en lugar de tirarlos a la basura.</li>
+                                <li>Utilizar una solución para reducir el desperdicio como Save A Bite!.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="contact-form" id="contact-form">
         <h2>Contáctanos</h2>
         <form action="#" method="post">
@@ -174,6 +215,13 @@
             document.getElementById('main-section').style.display = 'none'; // Oculta la sección principal
             document.getElementById('contact-form').scrollIntoView({ behavior: 'smooth' });
             document.getElementById('contact-form').style.display = 'block'; // Muestra el formulario de contacto
+            document.getElementById('concientizacion-section').style.display = 'none'; // Oculta la sección de concientización
+        });
+        document.getElementById('concientizacion-link').addEventListener('click', function(event) {
+        event.preventDefault();
+        document.getElementById('main-section').style.display = 'none'; // Oculta la sección principal
+        document.getElementById('contact-form').style.display = 'none'; // Oculta el formulario de contacto si está visible
+        document.getElementById('concientizacion-section').style.display = 'block'; // Muestra la sección de concientización
         });
     </script>
 </body>

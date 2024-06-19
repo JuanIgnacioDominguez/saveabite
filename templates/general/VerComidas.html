@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ver Comidas</title>
+    <title>Crear Producto</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -55,12 +55,41 @@
         .card button:hover {
             background-color: #1b7fbf;
         }
-        .sidebar a.active {
+        .sidebar {      /* cuadro blanco de la sidebar */
+            height: 100vh;
+            background-color: white;
+            width: 16rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            flex: 0 0 16rem;
+        }
+        .main-content {
+            margin-left: 16rem; /* Ensure this matches the width of the sidebar */
+            flex: 1;
+            padding: 1rem;
+        }
+        .nav-item {
+            margin: 2rem 0;
+            display: flex;
+            align-items: center;
+            color: #6b7280;
+            transition: color 0.3s ease;
+        }
+        .nav-item i {
+            height: 24px;
+            width: 24px;
+            margin-right: 0.5rem;
+        }
+        .nav-item a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .nav-item:hover,
+        .nav-item.active {
             color: #27a2e8;
         }
-        .sidebar a.active i {
-            color: #27a2e8;
-        }
+        
         /* Modal styles */
         .modal {
             display: none; 
@@ -160,52 +189,23 @@
     </script>
 </head>
 <body class="flex h-screen">
-    <!-- Sidebar -->
-    <aside class="w-64 bg-white text-black shadow-lg">
-        <div class="p-4">
-            <img src="/static/img/logo.png" alt="Logo" class="w-full h-auto">
-        </div>
-        <nav class="mt-4 sidebar">
-            <a href="{{ url_for('menu_empresas') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-home mr-2 text-gray-500"></i>
-                Inicio
-            </a>
-            <a href="{{ url_for('crear_producto') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-plus mr-2"></i>
-                Agregar Comida
-            </a>
-            <a href="{{ url_for('VerComidas') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 text-blue-500 active">
-                <i class="fas fa-list mr-2"></i>
-                Ver Comidas
-            </a>
-            <a href="{{ url_for('pedidos') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-shopping-cart mr-2 text-gray-500"></i>
-                Pedidos en Curso
-            </a>
-            <a href="{{ url_for('perfil_empresa') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-user mr-2 text-gray-500"></i>
-                Perfil
-            </a>
-            <a href="{{ url_for('informacion') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-info-circle mr-2 text-gray-500"></i>
-                Información
-            </a>
-        </nav>
-    </aside>
-    <!-- Main content -->
-    <div class="flex-1 p-6 overflow-y-auto">
-        <h1 class="text-2xl font-bold mb-4">Ver Comidas</h1>
-        <div class="content-container bg-transparent p-6 rounded">
-            <div class="form-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {% for producto in comidas %}
-                <div class="card" data-id="{{ producto['id'] }}">
-                    <img src="{{ url_for('static', filename=producto['imagen']) }}" alt="{{ producto['nombre'] }}">
-                    <h2 class="text-xl font-bold product-name">{{ producto['nombre'] }}</h2>
-                    <div class="text-gray-600 product-people">Para {{ producto['cantidadPersonas'] }} personas</div>
-                    <div class="text-gray-600 product-price">$ {{ producto['precio'] }}</div>
-                    <button class="mt-4 edit-button">Editar Producto</button>
+    <div class="flex">
+        {% include 'Sidebars/sidebarEmpresa.html' %}
+        <!-- Main content -->
+        <div class="main-content flex-1 p-6 overflow-y-auto">
+            <h1 class="text-2xl font-bold mb-4">Ver Comidas</h1>
+            <div class="content-container bg-transparent p-6 rounded">
+                <div class="form-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {% for producto in comidas %}
+                    <div class="card" data-id="{{ producto['id'] }}">
+                        <img src="{{ url_for('static', filename=producto['imagen']) }}" alt="{{ producto['nombre'] }}">
+                        <h2 class="text-xl font-bold product-name">{{ producto['nombre'] }}</h2>
+                        <div class="text-gray-600 product-people">Para {{ producto['cantidadPersonas'] }} personas</div>
+                        <div class="text-gray-600 product-price">$ {{ producto['precio'] }}</div>
+                        <button class="mt-4 edit-button">Editar Producto</button>
+                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
             </div>
         </div>
     </div>

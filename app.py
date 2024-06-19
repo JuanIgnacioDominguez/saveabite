@@ -652,10 +652,9 @@ def crear_producto():
         
     return render_template('crear_producto/CrearProducto.html')
 
-@app.route("/logout")
+@app.route('/logout', methods=['POST'])
 def logout():
     session.clear()
-    flash("Has cerrado sesión exitosamente.", "success")
     return redirect(url_for("index"))
 
 # Endpoint para subir imágenes de la empresa

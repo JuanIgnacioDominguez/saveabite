@@ -142,7 +142,9 @@
                         </a>
                     </div>
                 </div>
-                <button class="logout-button w-full text-white py-2 px-4 rounded-lg transition duration-200 mt-6" onclick="location.href='{{ url_for('logout') }}'">Cerrar Sesión</button>
+                <form action="{{ url_for('logout') }}" method="POST" class="w-full">
+                    <button type="submit" class="logout-button w-full text-white py-2 px-4 rounded-lg transition duration-200 mt-6">Cerrar Sesión</button>
+                </form>
             </div>
         </div>
     </div>

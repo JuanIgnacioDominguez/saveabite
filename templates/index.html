@@ -54,7 +54,7 @@
         }
         .main-image {
             max-width: 600px;
-            width: 100%;
+            width: 80%;
             height: auto;
             object-fit: contain;
         }
@@ -150,11 +150,11 @@
         <a href="{{ url_for('login') }}" class="btn-custom rounded-full mr-4">Acceder</a>
     </div>
     <main class="main-content flex flex-col items-center justify-center text-center p-2" id="main-section">
-        <div class="flex-container max-w-4xl flex-row justify-center items-center">
-            <div class="w-full main-image-container">
+        <div class="flex-container 2x2 flex flex-row justify-center items-center">
+            <div class="w-1/2 main-image-container flex items-center justify-center mt-10">
                 <img src="{{ url_for('static', filename='img/salad_intro.png') }}" alt="Food" class="main-image">
             </div>
-            <div class="w-full text-container flex items-center justify-center">
+            <div class="w-1/2 text-container flex items-center justify-center mt-10">
                 <div class="w-full text-center">
                     <h1 class="text-4xl text-white font-bold">¡Disfruta comida deliciosa a precios increíbles!</h1>
                     <p class="text-lg mb-6 text-white">Encuentra platos frescos y de calidad que de otro modo se desperdiciarían.</p>

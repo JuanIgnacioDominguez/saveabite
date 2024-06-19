@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        
         body {
             font-family: 'Nunito', sans-serif;
             margin: 0;
@@ -52,33 +53,22 @@
             height: auto;
         }
         .main-image {
-            max-width: 100%;
+            max-width: 600px;
+            width: 100%;
             height: auto;
             object-fit: contain;
         }
         .flex-container {
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            height: auto;
-            width: 100%;
+            justify-content: center;
+            height: 100%;
         }
         .main-image-container {
-            width: 50%;
+            width: 100%;
             display: flex;
             justify-content: center;
-        }
-        .text-container {
-            width: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            justify-content: center;
-            padding: 1rem;
-        }
-        .text-lg {
-            text-align: left;
         }
         .contact-form {
             background-color: #ffffff;
@@ -186,48 +176,76 @@
                         <div class="form-content">
                             <p>En Save a Bite, facilitamos la conexión entre los mejores restaurantes y los amantes de la buena mesa. Fundada en 2023, nuestra plataforma permite descubrir y disfrutar de una amplia variedad de opciones gastronómicas de calidad.</p>
                             
-                            <h2 class="text-xl font-bold mt-6">Nuestra Misión</h2>
-                            <p>Reducir el desperdicio de alimentos, apoyar a los restaurantes y ofrecer a nuestros usuarios platos deliciosos y variados a precios reducidos.</p>
+                            <h2 class="text-xl font-bold mt-4">Nuestra Misión</h2>
+                            <ul class="list-disc pl-6">
+                                <li>Diversidad y Calidad: Colaboramos con restaurantes variados, asegurando una oferta rica y de alta calidad.</li>
+                                <li>Innovación y Simplicidad: Creamos una experiencia de usuario fluida y agradable.</li>
+                                <li>Satisfacción del Cliente: Prioridad en ofrecer un servicio excepcional y memorable.</li>
+                            </ul>
+                
+                            <h2 class="text-xl font-bold mt-4">Nuestro Compromiso</h2>
+                            <ul class="list-disc pl-6">
+                                <li>Plataforma Inclusiva: Facilita el acceso a una amplia gama de restaurantes y tipos de cocina.</li>
+                                <li>Experiencia Única: Soporte integral y personalizado en cada interacción.</li>
+                                <li>Sostenibilidad: Promovemos prácticas responsables y apoyamos a restaurantes con valores compartidos.</li>
+                            </ul>
+                            <p>Únete a Save a Bite y descubre nuevos restaurantes. Gracias por confiar en nosotros para tus aventuras culinarias. ¡Esperamos conectarte con tus próximos sabores favoritos!</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <img src="{{ url_for('static', filename='img/team_photo.png') }}" alt="Nuestro equipo">
     </div>
     <!-- Concientización -->
     <div class="concientizacion-info" id="concientizacion-section">
         <div class="flex-1 p-6">
-            <h1 class="text-2xl font-bold mb-4">Concientización</h1>
+            <h1 class="text-2xl font-bold mb-4">Información sobre el Desperdicio de Alimentos</h1>
             <div class="content-container bg-white p-6 rounded shadow-md">
                 <div class="profile-container">
                     <div class="profile-info form-container">
                         <div class="form-content">
-                            <p>La concientización sobre el desperdicio de alimentos es crucial para nuestro planeta. En Save a Bite, estamos comprometidos con la reducción del desperdicio de alimentos al conectar a los consumidores con platos frescos que de otro modo se desperdiciarían.</p>
+                            <h2 class="text-xl font-bold">¿Qué es el Desperdicio de Alimentos?</h2>
+                            <p>El desperdicio de alimentos se refiere a todos aquellos alimentos que se producen y no llegan a ser consumidos. Este problema ocurre a lo largo de toda la cadena de suministro, desde la producción agrícola hasta el consumo final en los hogares. Incluye alimentos que se descartan, ya sea porque no cumplen con los estándares estéticos del mercado, por errores en la cadena de distribución, por mal almacenamiento, o porque simplemente no se consumen a tiempo y se deterioran.</p>
                             
-                            <h2 class="text-xl font-bold mt-6">Impacto Ambiental</h2>
-                            <p>El desperdicio de alimentos contribuye significativamente a las emisiones de gases de efecto invernadero. Al elegir Save a Bite, estás ayudando a reducir este impacto y a promover un futuro más sostenible.</p>
+                            <h2 class="text-xl font-bold mt-4">Impacto del Desperdicio de Alimentos</h2>
+                            <p>Socialmente, tiene implicaciones importantes para la seguridad alimentaria y el bienestar de las comunidades. A pesar de los avances en la producción de alimentos, según la Organización de las Naciones Unidas (ONU), “existen 821 millones de personas que padecen de hambre en el mundo. Una de cada nueve personas sufre de inseguridad alimentaria, pero en realidad se producen alimentos más que suficientes para todos” (ONU, 2018).</p>
+                            <p>Desde un enfoque ambiental, la producción de alimentos requiere enormes cantidades de agua, tierra y energía, y cuando se desperdician alimentos, se está utilizando de manera ineficiente estos recursos. Además, cuando los alimentos no consumidos terminan en vertederos, liberan metano, un gas de efecto invernadero potente que agrava el cambio climático. Esta práctica no solo es insostenible desde un punto de vista ambiental, sino que también tiene consecuencias negativas a largo plazo para el planeta y para las generaciones futuras.</p>
+                            <p>A nivel mundial, el desperdicio de alimentos afecta a todas las etapas de la cadena de suministro. Según la Organización de las Naciones Unidas para la Alimentación y la Agricultura (FAO), “anualmente se perdía o desperdiciaba en torno a un tercio de los alimentos a nivel mundial, es decir, unos 1 300 millones de toneladas de alimentos al año” (FAO, 2023). Teniendo así impactos significativos tanto en países desarrollados como en desarrollo.</p>
+                            <p>En los países desarrollados, se concentra principalmente en el nivel de consumo, mientras que en los países en desarrollo, ocurre mayormente en las etapas de producción y distribución debido a la falta de infraestructura adecuada (ONU, 2024).</p>
                             
-                            <h2 class="text-xl font-bold mt-6">Cómo Puedes Ayudar</h2>
-                            <p>Unirte a nuestra misión es simple: compra comidas a través de nuestra plataforma y ayúdanos a reducir el desperdicio de alimentos. Cada bocado cuenta.</p>
+                            <h2 class="text-xl font-bold mt-4">Consejos para Reducir el Desperdicio de Alimentos</h2>
+                            <ul class="list-disc pl-6">
+                                <li>Planificar las comidas y hacer una lista de compras para evitar comprar en exceso.</li>
+                                <li>Almacenar los alimentos de manera adecuada para prolongar su vida útil.</li>
+                                <li>Utilizar las sobras en nuevas recetas creativas.</li>
+                                <li>Compostar los restos de comida en lugar de tirarlos a la basura.</li>
+                                <li>Utilizar una solución para reducir el desperdicio como Save A Bite!.</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Formulario de Consultas -->
+    <!-- Contacto -->
     <div class="contact-form" id="contact-form">
-        <h2>Formulario de Consultas</h2>
-        <form id="consultation-form">
-            <label for="name">Nombre:</label>
+        <h2>Contáctanos</h2>
+        <form action="#" method="post" onsubmit="return submitForm()">
+            <label for="name">Introduce tu nombre</label>
             <input type="text" id="name" name="name" required>
-            <label for="email">Email:</label>
+            
+            <label for="email">Introduce tu email</label>
             <input type="email" id="email" name="email" required>
-            <label for="message">Mensaje:</label>
-            <textarea id="message" name="message" rows="4" required></textarea>
+            
+            <label for="message">Introduce tu mensaje</label>
+            <textarea id="message" name="message" required></textarea>
+            
+            <p>Déjanos tu consulta y nos contactaremos con usted a la brevedad</p>
+            
             <button type="submit">Enviar</button>
         </form>
-        <p id="form-response" class="confirmation-message">¡Gracias por tu mensaje! Nos pondremos en contacto contigo pronto.</p>
+        <p class="confirmation-message" id="confirmation-message">Nos pondremos en contacto contigo a la brevedad posible.</p>
     </div>
     <div class="wave">
         <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
@@ -235,39 +253,39 @@
         </svg>
     </div>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const acercadenosotrosLink = document.getElementById('acercadenosotros-link');
-            const acercadenosotrosSection = document.getElementById('acercadenosotros-section');
-            const concientizacionLink = document.getElementById('concientizacion-link');
-            const concientizacionSection = document.getElementById('concientizacion-section');
-            const consultaLink = document.getElementById('consulta-link');
-            const contactForm = document.getElementById('contact-form');
-            const consultationForm = document.getElementById('consultation-form');
-            const formResponse = document.getElementById('form-response');
-
-            acercadenosotrosLink.addEventListener('click', () => {
-                acercadenosotrosSection.style.display = acercadenosotrosSection.style.display === 'none' ? 'block' : 'none';
-                concientizacionSection.style.display = 'none';
-                contactForm.style.display = 'none';
-            });
-
-            concientizacionLink.addEventListener('click', () => {
-                concientizacionSection.style.display = concientizacionSection.style.display === 'none' ? 'block' : 'none';
-                acercadenosotrosSection.style.display = 'none';
-                contactForm.style.display = 'none';
-            });
-
-            consultaLink.addEventListener('click', () => {
-                contactForm.style.display = contactForm.style.display === 'none' ? 'block' : 'none';
-                acercadenosotrosSection.style.display = 'none';
-                concientizacionSection.style.display = 'none';
-            });
-
-            consultationForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                formResponse.style.display = 'block';
-            });
+        function submitForm() {
+            document.getElementById('contact-form').style.display = 'none';
+            document.getElementById('confirmation-message').style.display = 'block';
+            return false;
+        }
+ 
+        document.getElementById('consulta-link').addEventListener('click', function(event) {
+            event.preventDefault();
+            hideAllSections();
+            document.getElementById('contact-form').style.display = 'block';
+            document.getElementById('contact-form').scrollIntoView({ behavior: 'smooth' });
         });
+ 
+        document.getElementById('concientizacion-link').addEventListener('click', function(event) {
+            event.preventDefault();
+            hideAllSections();
+            document.getElementById('concientizacion-section').style.display = 'block';
+            document.getElementById('concientizacion-section').scrollIntoView({ behavior: 'smooth' });
+        });
+ 
+        document.getElementById('acercadenosotros-link').addEventListener('click', function(event) {
+            event.preventDefault();
+            hideAllSections();
+            document.getElementById('acercadenosotros-section').style.display = 'block';
+            document.getElementById('acercadenosotros-section').scrollIntoView({ behavior: 'smooth' });
+        });
+ 
+        function hideAllSections() {
+            document.getElementById('main-section').style.display = 'none';
+            document.getElementById('contact-form').style.display = 'none';
+            document.getElementById('concientizacion-section').style.display = 'none';
+            document.getElementById('acercadenosotros-section').style.display = 'none';
+        }
     </script>
 </body>
 </html>

@@ -313,6 +313,33 @@ def seleccionar_membresia(membresia):
     return '', 204
 
 
+@app.route('/membresia_empresa', methods=['GET', 'POST'])
+def membresia_empresa():
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    user = conn.execute('SELECT * FROM usuarioEmpresa WHERE id = ?', (user_id,)).fetchone()
+    print(f'Usuario empresa encontrado: {user}')
+    if user:
+        membresia = user['membresia']
+        print(f'Membresía encontrada: {membresia}')
+    else:
+        membresia = None
+        print('No se encontró membresía para la empresa.')
+    conn.close()
+    return render_template('perfiles_empresa/MembresiaEmpresa.html', membresia=membresia)
+
+@app.route('/seleccionar_membresia_empresa/<empresa_membresia>', methods=['POST'])
+def seleccionar_membresia_empresa(empresa_membresia):
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    conn.execute('UPDATE usuarioEmpresa SET membresia = ? WHERE id = ?', (empresa_membresia, user_id))
+    conn.commit()
+    conn.close()
+    flash('Membresía seleccionada con éxito', 'success')
+    return '', 204
+
+
+
 
 @app.route("/menu", methods=['GET', 'POST'])
 def menu():
@@ -378,7 +405,7 @@ def soporte():
 @app.route("/perfil_empresa")
 def perfil_empresa():
     company = {'name': session.get('user_name'), 'email': session.get('user_email')}
-    return render_template('Perfil/PerfilEmpresa.html', company=company)
+    return render_template('perfiles_empresa/PerfilEmpresa.html', company=company)
 
 @app.route("/direcciones_empresa")
 def direcciones_empresa():
@@ -386,20 +413,16 @@ def direcciones_empresa():
         {'name': 'Oficina Central', 'address': '789 Calle Empresarial'},
         {'name': 'Sucursal', 'address': '101 Avenida Comercial'}
     ]
-    return render_template('Perfil/DireccionesEmpresa.html', addresses=addresses)
+    return render_template('perfiles_empresa/DireccionesEmpresa.html', addresses=addresses)
 
 @app.route("/editar_perfil_empresa")
 def editar_perfil_empresa():
     company = {'name': session.get('user_name'), 'email': session.get('user_email')}
-    return render_template('Perfil/EditarPerfilEmpresa.html', company=company)
-
-@app.route("/membresia_empresa")
-def membresia_empresa():
-    return render_template('Perfil/MembresiaEmpresa.html')
+    return render_template('perfiles_empresa/EditarPerfilEmpresa.html', company=company)
 
 @app.route("/soporte_empresa")
 def soporte_empresa():
-    return render_template('Perfil/SoporteEmpresa.html')
+    return render_template('perfiles_empresa/SoporteEmpresa.html')
 
 if __name__ == "__main__":
     app.run(debug=True)

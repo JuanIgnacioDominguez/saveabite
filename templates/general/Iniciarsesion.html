@@ -283,6 +283,7 @@
 
         const forgotPasswordForm = document.getElementById('forgotPasswordForm');
 
+
         registerTab.addEventListener('click', () => {
             registerTab.classList.add('active');
             loginTab.classList.remove('active');
@@ -293,9 +294,7 @@
 
             forgotPasswordForm.classList.add('form-hidden');
             forgotPasswordForm.classList.remove('form-visible');
-
         });
-
         loginTab.addEventListener('click', () => {
             loginTab.classList.add('active');
             registerTab.classList.remove('active');
@@ -306,10 +305,21 @@
 
             forgotPasswordForm.classList.add('form-hidden');
             forgotPasswordForm.classList.remove('form-visible');
-
         });
 
-        function togglePasswordVisibility(id) {
+        function toggleForms(formId) {
+            loginForm.classList.add('form-hidden');
+            loginForm.classList.remove('form-visible');
+            registerForm.classList.add('form-hidden');
+            registerForm.classList.remove('form-visible');
+            forgotPasswordForm.classList.add('form-hidden');
+            forgotPasswordForm.classList.remove('form-visible');
+
+            const form = document.getElementById(formId);
+            form.classList.remove('form-hidden');
+            form.classList.add('form-visible');
+        }
+function togglePasswordVisibility(id) {
             const input = document.getElementById(id);
             if (input.type === 'password') {
                 input.type = 'text';
@@ -318,5 +328,6 @@
             }
         }
     </script>
+
 </body>
 </html>

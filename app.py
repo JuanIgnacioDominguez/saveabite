@@ -424,5 +424,12 @@ def editar_perfil_empresa():
 def soporte_empresa():
     return render_template('perfiles_empresa/SoporteEmpresa.html')
 
+@app.route("/logout")
+def logout():
+    session.clear()
+    flash("Has cerrado sesión exitosamente.", "success")
+    return redirect(url_for("index"))
+
+
 if __name__ == "__main__":
     app.run(debug=True)

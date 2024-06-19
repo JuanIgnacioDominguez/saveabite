@@ -90,17 +90,53 @@
             height: 100vh;
             padding: 20px;
         }
+        .sidebar {      /* cuadro blanco de la sidebar */
+            height: 100vh;
+            background-color: white;
+            width: 16rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            flex: 0 0 16rem;
+        }
+        .main-content {
+            margin-left: 16rem; /* Ensure this matches the width of the sidebar */
+            flex: 1;
+            padding: 1rem;
+        }
+        .nav-item {
+            margin: 2rem 0;
+            display: flex;
+            align-items: center;
+            color: #6b7280;
+            transition: color 0.3s ease;
+        }
+        .nav-item i {
+            height: 24px;
+            width: 24px;
+            margin-right: 0.5rem;
+        }
+        .nav-item a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .nav-item:hover,
+        .nav-item.active {
+            color: #27a2e8;
+        }
     </style>
 </head>
-<body class="flex">
-
-    <!-- Main content -->
-    <div class="flex-1 p-6 content ml-64">
-        <div class="header">
-            <h1 class="text-4xl font-bold text-custom-blue">Lista de Pedidos</h1>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="orders-list">
-            
+<body class="flex h-screen">
+    <div class="flex">
+        {% include 'Sidebars/sidebarEmpresa.html' %}
+        <!-- Main content -->
+        <div class="main-content flex-1 p-6 overflow-y-auto">
+            <div class="header">
+                <h1 class="text-4xl font-bold text-custom-blue">Lista de Pedidos</h1>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="orders-list">
+                
+            </div>
         </div>
     </div>
 
@@ -126,7 +162,7 @@
             },
             {
                 description: 'Pasta bolognesa',
-                image: src="{{ url_for('static', filename='img/logo.png') }}",
+                image: 'static/img/logo.png',
                 user: 'Ana Fernández',
                 price: 5000,
             },

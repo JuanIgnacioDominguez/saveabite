@@ -17,6 +17,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
+            margin-left: 16rem;
         }
         .profile-container {
             height: calc(100% - 4rem);
@@ -61,50 +62,26 @@
             border-bottom: 1px solid #e2e8f0;
             margin: 1rem 0;
         }
-        .sidebar a.active {
-            color: #27a2e8;
+        .sidebar {
+            height: 100vh;
+            background-color: white;
+            width: 16rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            flex: 0 0 16rem;
         }
-        .active {
-            color: #27a2e8 !important; /* Active color */
+        .ml-16rem {
+            margin-left: 16rem;
         }
     </style>
 </head>
 <body class="flex h-screen">
     <!-- Sidebar -->
-    <aside class="w-64 bg-white text-black shadow-lg">
-        <div class="p-4">
-            <img src="/static/img/logo.png" alt="Logo" class="w-full h-auto">
-        </div>
-        <nav class="mt-4 sidebar">
-            <a href="/general/menu.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-home mr-2 text-gray-500"></i>
-                Inicio
-            </a>
-            <a href="/agregar-comida" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-plus mr-2 text-gray-500"></i>
-                Agregar Comida
-            </a>
-            <a href="/ver-comidas" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-list mr-2 text-gray-500"></i>
-                Ver Comidas
-            </a>
-            <a href="/pedidos-en-curso" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-shopping-cart mr-2 text-gray-500"></i>
-                Pedidos en Curso
-            </a>
-            <a href="/perfil-empresa" class="flex items-center py-2.5 px-4 rounded transition duration-200 text-blue-500 active">
-                <i class="fas fa-user mr-2"></i>
-                Perfil
-            </a>
-            <a href="/informacion" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-info-circle mr-2 text-gray-500"></i>
-                Información
-            </a>
-        </nav>
-    </aside>
+    {% include 'Sidebars/sidebarEmpresa.html' %}
     <!-- Main content -->
     <div class="flex-1 p-6">
-        <h1 class="text-2xl font-bold mb-4">Resumen Empresa</h1>
+        <h1 class="text-2xl font-bold mb-4 ml-16rem">Estadisticas</h1>
         <div class="content-container bg-white p-6 rounded shadow-md">
             <a href="{{ url_for('perfil_empresa') }}" class="back-button">
                 <i class="fas fa-arrow-left"></i>

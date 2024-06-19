@@ -583,6 +583,7 @@ def editar_perfil_empresa():
     company = {'name': session.get('user_name'), 'email': session.get('user_email')}
     return render_template('perfiles_empresa/EditarPerfilEmpresa.html', company=company)
 
+
 @app.route("/soporte_empresa")
 def soporte_empresa():
     return render_template('perfiles_empresa/SoporteEmpresa.html')

@@ -17,6 +17,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
+            margin-left: 16rem;
         }
         .profile-container {
             height: calc(100% - 4rem);
@@ -75,6 +76,13 @@
             border-radius: 0.375rem;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
+        .password-container {
+            display: flex;
+            gap: 1rem;
+        }
+        .password-container .form-group {
+            flex: 1;
+        }
         .form-group .password-eye {
             position: absolute;
             right: 1rem;
@@ -89,8 +97,7 @@
             border-radius: 0.375rem;
             text-align: center;
             display: inline-block;
-            margin-top: 1rem;
-            margin-bottom: 1rem; /* Añadir margen inferior */
+            margin-top: 0.5rem; /* Reduce el valor para ajustar la posición */
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             transition: background-color 0.2s;
             width: 100%;
@@ -121,7 +128,7 @@
             color: #27a2e8;
         }
         .active {
-            color: #27a2e8 !important; /* Active color */
+            color: #27a2e8 !important;
         }
         .form-container {
             display: flex;
@@ -130,45 +137,28 @@
         }
         .form-content {
             flex-grow: 1;
+            margin-bottom: 0; /* Añadido para ajustar margen inferior */
+        }
+        .sidebar {
+            height: 100vh;
+            background-color: white;
+            width: 16rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            flex: 0 0 16rem;
+        }
+        .ml-16rem {
+            margin-left: 16rem;
         }
     </style>
 </head>
 <body class="flex h-screen">
     <!-- Sidebar -->
-    <aside class="w-64 bg-white text-black shadow-lg">
-        <div class="p-4">
-            <img src="/static/img/logo.png" alt="Logo" class="w-full h-auto">
-        </div>
-        <nav class="mt-4 sidebar">
-            <a href="{{ url_for('menu') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-home mr-2 text-gray-500"></i>
-                Inicio
-            </a>
-            <a href="/agregar-comida" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-plus mr-2 text-gray-500"></i>
-                Agregar Comida
-            </a>
-            <a href="/ver-comidas" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-list mr-2 text-gray-500"></i>
-                Ver Comidas
-            </a>
-            <a href="/pedidos-en-curso" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-shopping-cart mr-2 text-gray-500"></i>
-                Pedidos en Curso
-            </a>
-            <a href="{{ url_for('perfil_empresa') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 text-blue-500 active">
-                <i class="fas fa-user mr-2"></i>
-                Perfil
-            </a>
-            <a href="{{ url_for('informacion') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-info-circle mr-2 text-gray-500"></i>
-                Información
-            </a>
-        </nav>
-    </aside>
+    {% include 'Sidebars/sidebarEmpresa.html' %}
     <!-- Main content -->
     <div class="flex-1 p-6">
-        <h1 class="text-2xl font-bold mb-4">Editar Perfil Empresa</h1>
+        <h1 class="text-2xl font-bold mb-4 ml-16rem">Editar Perfil Empresa</h1>
         <div class="content-container bg-white p-6 rounded shadow-md">
             <a href="{{ url_for('perfil_empresa') }}" class="back-button">
                 <i class="fas fa-arrow-left"></i>
@@ -178,27 +168,29 @@
             <div class="profile-container">
                 <div class="profile-info form-container">
                     <!-- Edit Profile Form -->
-                    <form action="{{ url_for('guardar_perfil_empresa') }}" method="post" class="flex flex-col h-full">
+                    <form action="{{ url_for('editar_perfil_empresa') }}" method="post" class="flex flex-col h-full" onsubmit="return validateForm()">
                         <div class="form-content">
                             <div class="form-group">
                                 <label for="name">Nombre</label>
-                                <input type="text" id="name" name="name" value="{{ company.name }}">
+                                <input type="text" id="name" name="name" value="{{ company.name }}" required>
                             </div>
                             <div class="form-group">
                                 <label for="email">Correo Electrónico</label>
-                                <input type="email" id="email" name="email" value="{{ company.email }}">
+                                <input type="email" id="email" name="email" value="{{ company.email }}" required>
                             </div>
                             <div class="form-group">
                                 <label for="current_password">Contraseña Actual</label>
-                                <input type="text" id="current_password" name="current_password" value="{{ company.password }}" readonly>
-                                <i class="fas fa-eye password-eye" id="togglePassword"></i>
+                                <input type="password" id="current_password" name="current_password" value="" required>
+                                <i class="fas fa-eye password-eye" id="toggleCurrentPassword"></i>
                             </div>
                             <div class="form-group">
                                 <label for="new_password">Nueva Contraseña</label>
-                                <input type="password" id="new_password" name="new_password">
+                                <input type="password" id="new_password" name="new_password" value="" required>
+                                <i class="fas fa-eye password-eye" id="toggleNewPassword"></i>
                             </div>
+                            
                         </div>
-                        <div class="mt-6">
+                        <div class="mt-4">
                             <button type="submit" class="submit-button">Guardar Cambios</button>
                         </div>
                     </form>
@@ -207,12 +199,33 @@
         </div>
     </div>
     <script>
-        document.getElementById('togglePassword').addEventListener('click', function (e) {
+        // Toggle password visibility
+        document.getElementById('toggleCurrentPassword').addEventListener('click', function () {
             const passwordInput = document.getElementById('current_password');
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
             this.classList.toggle('fa-eye-slash');
         });
+        document.getElementById('toggleNewPassword').addEventListener('click', function () {
+            const passwordInput = document.getElementById('new_password');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        // Form validation
+        function validateForm() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const currentPassword = document.getElementById('current_password').value;
+            const newPassword = document.getElementById('new_password').value;
+
+            if (!name || !email || !currentPassword || !newPassword) {
+                alert("Todos los campos son obligatorios.");
+                return false;
+            }
+            return true;
+        }
     </script>
 </body>
 </html>

@@ -7,15 +7,23 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         body {
             background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
         }
         .content-container {
             height: 90vh;
-            margin: 1rem 1rem 3rem 1rem;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-left: 16rem;
+        }
+        .sidebar {      
+            height: 100vh;
+            background-color: white;
+            width: 16rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            flex: 0 0 16rem;
         }
         .profile-container {
             height: calc(100% - 4rem);
@@ -42,27 +50,34 @@
         }
         .logout-button {
             background-color: #e3342f;
-            color: white;
-            padding: 0.75rem;
-            border-radius: 0.375rem;
-            text-align: center;
-            display: inline-block;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s ease-in-out;
-            width: 100%;
         }
         .logout-button:hover {
-            background: linear-gradient(to right, #e3342f, #ff0000);
+            background-color: #cc1f1a;
         }
         .profile-avatar {
-            width: 8rem;
-            height: 8rem;
+            width: 100px; /* Tamaño ajustado de la imagen */
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .edit-photo-button {
+            background-color: #4a5568;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem; /* Tamaño ajustado del botón */
+            cursor: pointer;
+            margin-top: 0.5rem;
+            border-radius: 0.25rem;
+            transition: background-color 0.2s;
+        }
+        .edit-photo-button:hover {
+            background-color: #2d3748;
         }
         .profile-name {
             font-size: 1.5rem;
             font-weight: 600;
+            color: #1a202c; /* Ajusta el color según tus preferencias */
         }
         .profile-email {
             font-size: 1.25rem;
@@ -71,76 +86,48 @@
         .active {
             color: #27a2e8 !important;
         }
-        .sidebar {
-            height: 100vh;
-            background-color: white;
-            width: 16rem;
-            padding: 1.5rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            position: fixed;
-        }
-        .nav-item {
-            margin: 2rem 0;
-            display: flex;
-            align-items: center;
-            color: #6b7280;
-            transition: color 0.3s ease;
-        }
-        .nav-item i {
-            height: 24px;
-            width: 24px;
-            margin-right: 0.5rem;
-        }
-        .nav-item a {
-            color: inherit;
-            text-decoration: none;
-        }
-        .nav-item:hover,
-        .nav-item.active {
-            color: #27a2e8;
-        }
-        .bg-custom-blue {
-            background-color: #27a2e8;
-        }
-        .main-content {
-            margin-left: 17rem; /* Add margin to the left to make space for the sidebar */
-            flex: 1;
-            padding: 1.5rem;
+        .ml-16rem {
+            margin-left: 16rem;
         }
     </style>
 </head>
 <body class="flex h-screen">
+    <!-- Sidebar -->
     {% include 'Sidebars/sidebarEmpresa.html' %}
-    <div class="main-content">
-        <h1 class="text-2xl font-bold mb-4">Perfil Empresa</h1>
+        
+    <div class="flex-1 p-6">
+        <h1 class="text-4xl font-bold text-custom-blue mb-4 ml-16rem">Perfil</h1>
         <div class="content-container bg-white p-6 rounded shadow-md">
             <div class="profile-container">
-                <div class="profile-info">
-                    <div class="text-center">
+                <div class="profile-info flex items-start"> <!-- Cambiado a flex y items-start para alinear elementos hacia la izquierda -->
+                    <div class="text-center mr-4">
                         <img src="{{ company.image if company.image else url_for('static', filename='img/defaultUser.png') }}" alt="Company Avatar" class="profile-avatar rounded-full mx-auto" id="profile-image">
+                        <button class="edit-photo-button" onclick="openFileInput()">Editar Foto</button>
                         <form id="image-form" action="{{ url_for('upload_company_image') }}" method="POST" enctype="multipart/form-data" style="display:none;">
                             <input type="file" name="profile_image" id="file-input" accept="image/*">
                         </form>
-                        <h2 class="profile-name mt-4">{{ company.name }}</h2>
+                    </div>
+                    <div>
+                        <h2 class="profile-name">{{ company.name }}</h2>
                         <p class="profile-email">{{ company.email }}</p>
                     </div>
-                    <div class="profile-options mt-6">
-                        <a href="{{ url_for('direcciones_empresa') }}" class="flex items-center border-t border-b">
-                            <i class="fas fa-map-marker-alt mr-2 text-gray-500"></i> Direcciones
-                        </a>
-                        <a href="{{ url_for('editar_perfil_empresa') }}" class="flex items-center border-b">
-                            <i class="fas fa-user-edit mr-2 text-gray-500"></i> Editar Perfil
-                        </a>
-                        <a href="{{ url_for('estadistica') }}" class="flex items-center border-b">
-                            <i class="fas fa-chart-line mr-2 text-gray-500"></i> Estadísticas
-                        </a>
-                        <a href="{{ url_for('membresia_empresa') }}" class="flex items-center border-b">
-                            <i class="fas fa-star mr-2 text-gray-500"></i> Membresía
-                        </a>
-                        <a href="{{ url_for('soporte_empresa') }}" class="flex items-center border-b">
-                            <i class="fas fa-life-ring mr-2 text-gray-500"></i> Soporte
-                        </a>
-                    </div>
+                </div>
+                <div class="profile-options mt-6">
+                    <a href="{{ url_for('direcciones_empresa') }}" class="flex items-center border-t border-b">
+                        <i class="fas fa-map-marker-alt mr-2 text-gray-500"></i> Direcciones
+                    </a>
+                    <a href="{{ url_for('editar_perfil_empresa') }}" class="flex items-center border-b">
+                        <i class="fas fa-user-edit mr-2 text-gray-500"></i> Editar Perfil
+                    </a>
+                    <a href="{{ url_for('estadistica') }}" class="flex items-center border-b">
+                        <i class="fas fa-chart-line mr-2 text-gray-500"></i> Estadísticas
+                    </a>
+                    <a href="{{ url_for('membresia_empresa') }}" class="flex items-center border-b">
+                        <i class="fas fa-star mr-2 text-gray-500"></i> Membresía
+                    </a>
+                    <a href="{{ url_for('soporte_empresa') }}" class="flex items-center border-b">
+                        <i class="fas fa-life-ring mr-2 text-gray-500"></i> Soporte
+                    </a>
                 </div>
                 <form action="{{ url_for('logout') }}" method="POST" class="w-full">
                     <button type="submit" class="logout-button w-full text-white py-2 px-4 rounded-lg transition duration-200 mt-6">Cerrar Sesión</button>
@@ -149,9 +136,10 @@
         </div>
     </div>
     <script>
-        document.getElementById('profile-image').addEventListener('click', function() {
+        function openFileInput() {
             document.getElementById('file-input').click();
-        });
+        }
+
         document.getElementById('file-input').addEventListener('change', function() {
             document.getElementById('image-form').submit();
         });

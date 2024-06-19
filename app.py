@@ -348,6 +348,15 @@ def seleccionar_membresia_empresa(empresa_membresia):
     flash('Membresía seleccionada con éxito', 'success')
     return '', 204
 
+@app.route('/cancelar_membresia_empresa', methods=['POST'])
+def cancelar_membresia_empresa():
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    conn.execute('UPDATE usuarioEmpresa SET membresia = NULL WHERE id = ?', (user_id,))
+    conn.commit()
+    conn.close()
+    flash('Membresía de empresa dada de baja correctamente.', 'success')
+    return redirect(url_for('membresia_empresa'))
 
 
 

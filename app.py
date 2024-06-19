@@ -325,10 +325,10 @@ def forgot_password():
     conn.close()
     return redirect(url_for('login'))
 
-@app.route("/resumen_empresa", methods=['GET'])
-def resumen_empresa():
+@app.route("/estadistica", methods=['GET'])
+def estadistica():
     # Add your logic to handle the resumen_empresa page here
-    return render_template('perfiles_empresa/resumen_empresa.html')
+    return render_template('perfiles_empresa/estadistica.html')
 
 @app.route("/reset_password/<token>", methods=['GET', 'POST'])
 def reset_password(token):
@@ -440,6 +440,27 @@ def menu():
     productos = conn.execute('SELECT * FROM Productos').fetchall()
     conn.close()
     return render_template('general/menu.html', user_name=user_name, user_image=user_image, productos=productos)
+
+@app.route('/filter_menu', methods=['GET'])
+def filter_menu():
+    user_name = session.get('user_name')
+    user_image = session.get('user_image')
+    tipo_comida = request.args.get('tipoComida', 'todos')
+    
+    conn = get_db_connection()
+    if tipo_comida == 'todos':
+        productos = get_all_productos(conn)
+    else:
+        productos = get_productos_by_tipo(conn, tipo_comida)
+    conn.close()
+    
+    return render_template('general/menu.html', user_name=user_name, user_image=user_image, productos=productos, tipo_comida=tipo_comida)
+
+def get_all_productos(conn):
+    return conn.execute('SELECT * FROM Productos').fetchall()
+
+def get_productos_by_tipo(conn, tipo):
+    return conn.execute('SELECT * FROM Productos WHERE tipoComida = ?', (tipo,)).fetchall()
 
 @app.route("/pedidos", methods=['GET'])
 def pedidos():

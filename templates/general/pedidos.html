@@ -12,7 +12,7 @@
         body {
             font-family: 'Nunito', sans-serif;
             background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
-            overflow: hidden;
+            overflow: hidden; /* Evita el desplazamiento horizontal en toda la página */
         }
         .bg-custom-blue {
             background-color: #27a2e8;
@@ -90,19 +90,24 @@
             height: 100vh;
             padding: 20px;
         }
-        .sidebar {      /* cuadro blanco de la sidebar */
+        .sidebar {
             height: 100vh;
             background-color: white;
             width: 16rem;
             padding: 1.5rem;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             position: fixed;
-            flex: 0 0 16rem;
+            left: 0; /* Asegura que la barra lateral esté fija a la izquierda */
+            top: 0; /* Ajusta la posición de la barra lateral */
+            overflow-y: auto; /* Habilita el desplazamiento vertical dentro de la barra lateral */
         }
         .main-content {
-            margin-left: 16rem; /* Ensure this matches the width of the sidebar */
+            margin-left: 16rem; /* Alinea el contenido principal a la derecha de la barra lateral */
             flex: 1;
             padding: 1rem;
+            overflow-y: auto; /* Habilita el desplazamiento vertical en el contenido principal */
+            height: 100vh; /* Ocupa toda la altura visible del viewport */
+            overflow-x: hidden; /* Oculta el desplazamiento horizontal */
         }
         .nav-item {
             margin: 2rem 0;
@@ -130,10 +135,8 @@
     <div class="flex">
         {% include 'Sidebars/sidebarEmpresa.html' %}
         <!-- Main content -->
-        <div class="main-content flex-1 p-6 overflow-y-auto">
-            <div class="header">
-                <h1 class="text-4xl font-bold text-custom-blue">Lista de Pedidos</h1>
-            </div>
+        <div class="main-content flex-1 p-6">
+            <h1 class="text-2xl font-bold mb-4">Lista de Pedidos</h1>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="orders-list">
                 
             </div>
@@ -162,7 +165,7 @@
             },
             {
                 description: 'Pasta bolognesa',
-                image: 'static/img/logo.png',
+                image: 'static/img/pastabolo.jpg',
                 user: 'Ana Fernández',
                 price: 5000,
             },

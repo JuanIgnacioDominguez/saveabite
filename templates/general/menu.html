@@ -20,22 +20,8 @@
         .text-custom-blue {
             color: #27a2e8;
         }
-        .sidebar {      /* cuadro blanco de la sidebar */
-            height: 100vh;
-            background-color: white;
-            width: 16rem;
-            padding: 1.5rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            position: fixed;
-        }
-        .main-content {
-            margin-left: 2rem; /* creo y lo agrego al div */
-            flex: 0.13;
-            padding: 1rem;
-        }
         .nav-item {
-            height: 0;
-            margin: 1.8rem 0;
+            margin: 1rem 0;
             display: flex;
             align-items: center;
             color: #6b7280;
@@ -46,16 +32,10 @@
             width: 24px;
             margin-right: 0.5rem;
         }
-        .nav-item a {
-            color: inherit;
-            text-decoration: none;
-        }
         .nav-item:hover,
         .nav-item.active {
             color: #27a2e8;
         }
-        
-
         .profile {
             display: flex;
             align-items: center;
@@ -74,17 +54,16 @@
         }
         .profile-text .name {
             font-weight: bold;
-            font-size: 14px;
         }
         .profile-text .edit-profile {
             color: #6b7280;
-            font-size: 12px;
+            font-size: 0.875rem;
         }
         .btn-custom {
             background-color: white;
             color: #27a2e8;
-            padding: 0.5rem;
-            font-size: 0.875rem;
+            padding: 1rem;
+            font-size: 1rem;
             font-weight: bold;
             transition: background-color 0.3s, color 0.3s;
             border-radius: 8px;
@@ -96,8 +75,8 @@
         }
         .btn-custom i,
         .btn-custom .material-icons {
-            font-size: 18px;
-            margin-bottom: 0.25rem;
+            font-size: 24px;
+            margin-bottom: 0.5rem;
         }
         .btn-custom:hover,
         .btn-custom.active {
@@ -218,21 +197,77 @@
         .content {
             overflow-y: auto;
             height: 100vh;
-            padding: 1rem;
-            margin-left: 15rem; /* Espacio para la sidebar */
+        }
+        .profile {
+            display: flex;
+            align-items: center;
+            margin-top: auto;
+            margin-bottom: 1rem;
+        }
+        .profile img {
+            height: 40px;
+            width: 40px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        .profile-text {
+            display: flex;
+            flex-direction: column;
+        }
+        .profile-text .name {
+            font-weight: bold;
+        }
+        .profile-text .edit-profile {
+            color: #6b7280;
+            font-size: 0.875rem;
         }
     </style>
     <script>
         function goToProductDetail(productId) {
             window.location.href = "Producto.html";
         }
+
+        function filterCategory(category) {
+            window.location.href = `/filter_menu?tipoComida=${category}`;
+        }
     </script>
 </head>
 <body class="flex">
     <!-- Sidebar -->
-    {% include 'Sidebars/sidebarUsuario.html' %}
+    <div class="flex flex-col h-screen bg-white w-64 p-6 shadow-lg fixed">
+        <div class="flex justify-center mb-8">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" class="logo w-44" alt="Save a Bite Logo"/>
+        </div>
+        <div class="nav-item {% if request.path == url_for('menu') %}active{% endif %}">
+            <i class="fas fa-home"></i>
+            <a href="{{ url_for('menu') }}" class="text-decoration-none">Inicio</a>
+        </div>
+        <div class="nav-item {% if request.path == url_for('carrito') %}active{% endif %}">
+            <i class="fas fa-shopping-bag"></i>
+            <a href="{{ url_for('carrito') }}" class="text-decoration-none">Carrito</a>
+        </div>
+        <div class="nav-item {% if request.path == url_for('favoritos') %}active{% endif %}">
+            <i class="fas fa-heart"></i>
+            <a href="{{ url_for('favoritos') }}" class="text-decoration-none">Favoritos</a>
+        </div>
+        <div class="nav-item {% if request.path == url_for('perfil_usuario') %}active{% endif %}">
+            <i class="fas fa-user"></i>
+            <a href="{{ url_for('perfil_usuario') }}" class="text-decoration-none">Perfil</a>
+        </div>
+        <div class="nav-item {% if request.path == url_for('informacion') %}active{% endif %}">
+            <i class="fas fa-info-circle"></i>
+            <a href="{{ url_for('informacion') }}" class="text-decoration-none">Información</a>
+        </div>
+        <div class="profile mt-auto">
+            <img src="{{ url_for('static', filename='uploads/' ~ user_image) }}" alt="Profile">
+            <div class="profile-text">
+                <div class="name">{{ user_name }}</div>
+                <a href="{{ url_for('perfil_usuario') }}" class="edit-profile">Edit Profile</a>
+            </div>
+        </div>
+    </div>
     <!-- Main content -->
-    <div class="flex-1 p-6 content">
+    <div class="flex-1 p-6 content ml-64">
         <div class="header">
             <h1 class="text-4xl font-bold text-custom-blue">Menu Principal</h1>
             <div class="search">
@@ -241,57 +276,57 @@
             </div>
         </div>
         <div class="button-container">
-            <button class="btn-custom active" onclick="filterCategory('todos')">
+            <button class="btn-custom {% if tipo_comida == 'todos' %}active{% endif %}" onclick="filterCategory('todos')">
                 <i class="fas fa-utensils"></i>
                 Todos
             </button>
-            <button class="btn-custom" onclick="filterCategory('hamburguesas')">
+            <button class="btn-custom {% if tipo_comida == 'Hamburguesas' %}active{% endif %}" onclick="filterCategory('Hamburguesas')">
                 <i class="fas fa-hamburger"></i>
                 Hamburguesas
             </button>
-            <button class="btn-custom" onclick="filterCategory('pizzas')">
+            <button class="btn-custom {% if tipo_comida == 'Pizzas' %}active{% endif %}" onclick="filterCategory('Pizzas')">
                 <i class="fas fa-pizza-slice"></i>
                 Pizzas
             </button>
-            <button class="btn-custom" onclick="filterCategory('pastas')">
+            <button class="btn-custom {% if tipo_comida == 'Pasta' %}active{% endif %}" onclick="filterCategory('Pasta')">
                 <i class="material-icons">ramen_dining</i>
                 Pasta
             </button>
-            <button class="btn-custom" onclick="filterCategory('ensaladas')">
+            <button class="btn-custom {% if tipo_comida == 'Ensaladas' %}active{% endif %}" onclick="filterCategory('Ensaladas')">
                 <i class="fas fa-leaf"></i>
                 Ensaladas
             </button>
-            <button class="btn-custom" onclick="filterCategory('cafeteria')">
+            <button class="btn-custom {% if tipo_comida == 'Cafeteria' %}active{% endif %}" onclick="filterCategory('Cafeteria')">
                 <i class="fas fa-coffee"></i>
                 Cafeteria
             </button>
-            <button class="btn-custom" onclick="filterCategory('carnes')">
+            <button class="btn-custom {% if tipo_comida == 'Carnes' %}active{% endif %}" onclick="filterCategory('Carnes')">
                 <i class="fas fa-drumstick-bite"></i>
                 Carnes
             </button>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for producto in productos %}
-            <div class="recipe-card {{ producto['tipoComida'] }}" onclick="goToProductDetail('{{ producto['id'] }}')">
-                <img src="{{ url_for('static', filename='uploads/' ~ producto['imagen']) }}" alt="{{ producto['nombre'] }}">
-                <h3 class="text-xl font-bold mb-2">{{ producto['nombre'] }}</h3>
+            <div class="recipe-card {{ producto.tipo_comida }}" onclick="goToProductDetail('{{ producto.id }}')">
+                <img src="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}" alt="{{ producto.nombre }}">
+                <h3 class="text-xl font-bold mb-2">{{ producto.nombre }}</h3>
                 <div class="info">
                     <div>
                         <div class="info-icon"><i class="fas fa-clock"></i></div>
-                        <p class="text-gray-600">{{ producto['tiempoEstimado'] }}</p>
+                        <p class="text-gray-600">{{ producto.tiempo_estimado }}</p>
                     </div>
                     <div>
                         <div class="info-icon"><i class="fas fa-user"></i></div>
-                        <p class="text-gray-600">{{ producto['tipoComida'] }} personas</p>
+                        <p class="text-gray-600">{{ producto.tipo_comida }} personas</p>
                     </div>
                     <div>
                         <div class="info-icon"><i class="fas fa-dollar-sign"></i></div>
-                        <p class="text-gray-600">$ {{ producto['precio'] }}</p>
+                        <p class="text-gray-600">$ {{ producto.precio }}</p>
                     </div>
                 </div>
                 <div class="button-container">
                     <button class="action-button">Favoritos</button>
-                    <form method="POST" action="{{ url_for('agregar_al_carrito', producto_id=producto['id']) }}">
+                    <form method="POST" action="{{ url_for('agregar_al_carrito', producto_id=producto.id) }}">
                         <button type="submit" class="action-button">Añadir al carrito</button>
                     </form>
                 </div>
@@ -299,17 +334,5 @@
             {% endfor %}
         </div>
     </div>
-    <script>
-        function filterCategory(category) {
-            const cards = document.querySelectorAll('.recipe-card');
-            cards.forEach(card => {
-                if (category === 'todos' || card.classList.contains(category)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-    </script>
 </body>
 </html>

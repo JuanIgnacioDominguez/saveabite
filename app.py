@@ -339,8 +339,6 @@ def seleccionar_membresia_empresa(empresa_membresia):
     return '', 204
 
 
-
-
 @app.route("/menu", methods=['GET', 'POST'])
 def menu():
     user_name = session.get('user_name')
@@ -371,7 +369,6 @@ def pedidos_cliente():
 @app.route("/informacion", methods=['GET'])
 def informacion():
     return render_template('general/informacion.html')
-
 
 @app.route("/perfil_usuario", methods=['GET', 'POST'])
 def perfil_usuario():
@@ -423,6 +420,16 @@ def editar_perfil_empresa():
 @app.route("/soporte_empresa")
 def soporte_empresa():
     return render_template('perfiles_empresa/SoporteEmpresa.html')
+
+# Nuevo endpoint para 'favoritos'
+@app.route("/favoritos", methods=['GET'])
+def favoritos():
+    return render_template('general/favoritos.html')
+
+# Nuevo endpoint para 'carrito'
+@app.route("/carrito", methods=['GET'])
+def carrito():
+    return render_template('carrito/Carrito2.html')
 
 if __name__ == "__main__":
     app.run(debug=True)

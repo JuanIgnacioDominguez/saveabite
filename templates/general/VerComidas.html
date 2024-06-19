@@ -118,10 +118,13 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const cards = document.querySelectorAll('.card');
+            const baseUrl = "{{ url_for('producto', id=0) }}";
+            const productBaseUrl = baseUrl.slice(0, -1); // Remove the trailing '0'
+            
             cards.forEach(card => {
                 card.addEventListener('click', function() {
                     const productoId = this.getAttribute('data-id');
-                    window.location.href = "{{ url_for('producto') }}" + "/" + productoId;
+                    window.location.href = productBaseUrl + productoId;
                 });
             });
 
@@ -163,19 +166,19 @@
             <img src="/static/img/logo.png" alt="Logo" class="w-full h-auto">
         </div>
         <nav class="mt-4 sidebar">
-            <a href="{{ url_for('menu_restaurant') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="{{ url_for('menu_empresas') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-home mr-2 text-gray-500"></i>
                 Inicio
             </a>
-            <a href="{{ url_for('agregar_comida') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="{{ url_for('crear_producto') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-plus mr-2"></i>
                 Agregar Comida
             </a>
-            <a href="{{ url_for('ver_comidas') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 text-blue-500 active">
+            <a href="{{ url_for('VerComidas') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 text-blue-500 active">
                 <i class="fas fa-list mr-2"></i>
                 Ver Comidas
             </a>
-            <a href="{{ url_for('pedidos_en_curso') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="{{ url_for('pedidos') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-shopping-cart mr-2 text-gray-500"></i>
                 Pedidos en Curso
             </a>
@@ -194,7 +197,7 @@
         <h1 class="text-2xl font-bold mb-4">Ver Comidas</h1>
         <div class="content-container bg-transparent p-6 rounded">
             <div class="form-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {% for producto in productos %}
+                {% for producto in comidas %}
                 <div class="card" data-id="{{ producto['id'] }}">
                     <img src="{{ url_for('static', filename=producto['imagen']) }}" alt="{{ producto['nombre'] }}">
                     <h2 class="text-xl font-bold product-name">{{ producto['nombre'] }}</h2>

@@ -131,25 +131,26 @@
         <div class="flex justify-center mb-8">
             <img src="{{ url_for('static', filename='img/logo.png') }}" class="logo w-44" alt="Save a Bite Logo"/>
         </div>
-        <div class="nav-item active-link">
+        <div class="nav-item {% if request.path == url_for('menu_empresas') %}active{% endif %}">
             <i class="fas fa-home"></i>
-            Inicio
+            <a href="{{ url_for('menu_empresas') }}" class="text-decoration-none">Inicio</a>
         </div>
-        <div class="nav-item">
-            <i class="fas fa-plus"></i>
-            Agregar Comida
-        </div>
-        <div class="nav-item">
+        <!-- menu_empresas.html -->
+<div class="nav-item {% if request.path == url_for('crear_producto') %}active{% endif %}">
+    <i class="fas fa-plus"></i>
+    <a href="{{ url_for('crear_producto') }}" class="text-decoration-none">Agregar Comida</a>
+</div>
+        <div class="nav-item {% if request.path == url_for('VerComidas') %}active{% endif %}">
             <i class="fas fa-list"></i>
-            Ver Comidas
+            <a href="{{ url_for('VerComidas') }}" class="text-decoration-none">Ver Comidas</a>
         </div>
-        <div class="nav-item">
+        <div class="nav-item {% if request.path == url_for('pedidos') %}active{% endif %}">
             <i class="fas fa-shopping-cart"></i>
-            Pedidos en Curso
+            <a href="{{ url_for('pedidos') }}" class="text-decoration-none">Pedidos en Curso</a>
         </div>
-        <div class="nav-item">
+        <div class="nav-item {% if request.path == url_for('perfil_empresa') %}active{% endif %}">
             <i class="fas fa-user"></i>
-            Perfil
+            <a href="{{ url_for('perfil_empresa') }}" class="text-decoration-none">Perfil Empresa</a>
         </div>
         <div class="profile">
             <img src="{{ url_for('static', filename=restaurant.image) }}" alt="Profile">
@@ -161,22 +162,24 @@
     </div>
     <!-- Main content -->
     <div class="flex-1 p-6">
-        <!--
-        <div class="header">
-            <h1 class="text-4xl font-bold text-custom-blue">Panel de Control</h1>
+        <div class="profile">
+            <img src="{{ url_for('static', filename=restaurant['image']) }}" alt="Profile">
+            <div class="profile-text">
+                <div class="name">{{ restaurant['name'] }}</div>
+                <a href="{{ url_for('perfil_empresa') }}" class="edit-profile">Edit Profile</a>
+            </div>
         </div>
-        -->
-        <div class="card">
-            <h3>Bienvenido al Panel de Control</h3>
-            <p>Desde aquí puedes administrar tus comidas, ver pedidos en curso y editar tu perfil.</p>
-        </div> 
+        <form id="image-form" action="{{ url_for('upload_company_image') }}" method="POST" enctype="multipart/form-data" style="display:none;">
+            <input type="file" name="company_image" id="company_image">
+            <button type="submit">Upload</button>
+        </form>
         <div class="card mt-6">
             <h3 class="text-xl font-bold mb-2">Información del Restaurante</h3>
-            <p><strong>Nombre:</strong> {{ restaurant.name }}</p>
-            <p><strong>Dirección:</strong> {{ restaurant.address }}</p>
-            <p><strong>Email:</strong> {{ restaurant.email }}</p>
+            <p><strong>Nombre:</strong> {{ restaurant['name'] }}</p>
+            <p><strong>Dirección:</strong> {{ restaurant['address'] }}</p>
+            <p><strong>Email:</strong> {{ restaurant['email'] }}</p>
         </div>
-           
+        <!-- Aquí puedes agregar más contenido relevante para el perfil de la empresa -->
     </div>
 </body>
 </html>

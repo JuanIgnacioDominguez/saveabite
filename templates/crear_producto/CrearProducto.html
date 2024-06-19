@@ -162,9 +162,12 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const categoryItems = document.querySelectorAll('.category-item');
+            const categoriaInput = document.getElementById('categoria');
             categoryItems.forEach(item => {
                 item.addEventListener('click', () => {
-                    item.classList.toggle('selected');
+                    categoryItems.forEach(i => i.classList.remove('selected'));
+                    item.classList.add('selected');
+                    categoriaInput.value = item.getAttribute('data-category');
                 });
             });
 
@@ -174,7 +177,15 @@
 
             form.addEventListener('submit', function(event) {
                 event.preventDefault();
-                modal.style.display = 'block';
+                const formData = new FormData(form);
+                fetch('{{ url_for("crear_producto") }}', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => {
+                    if (response.ok) {
+                        modal.style.display = 'block';
+                    }
+                });
             });
 
             closeModal.onclick = function() {
@@ -196,27 +207,27 @@
             <img src="/static/img/logo.png" alt="Logo" class="w-full h-auto">
         </div>
         <nav class="mt-4 sidebar">
-            <a href="/templates/general/menu_empresas" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="{{ url_for('menu_empresas') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-home mr-2 text-gray-500"></i>
                 Inicio
             </a>
-            <a href="/agregar-comida" class="flex items-center py-2.5 px-4 rounded transition duration-200 text-blue-500 active">
+            <a href="{{ url_for('crear_producto') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 text-blue-500 active">
                 <i class="fas fa-plus mr-2"></i>
                 Agregar Comida
             </a>
-            <a href="/ver-comidas" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="{{ url_for('VerComidas') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-list mr-2 text-gray-500"></i>
                 Ver Comidas
             </a>
-            <a href="/pedidos-en-curso" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="{{ url_for('pedidos_cliente') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-shopping-cart mr-2 text-gray-500"></i>
                 Pedidos en Curso
             </a>
-            <a href="/perfil-empresa" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="{{ url_for('perfil_empresa') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-user mr-2 text-gray-500"></i>
                 Perfil
             </a>
-            <a href="/informacion" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="{{ url_for('informacion') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-info-circle mr-2 text-gray-500"></i>
                 Información
             </a>
@@ -228,32 +239,33 @@
         <h2 class="text-xl mb-4">Complete los campos para crear y publicar su producto</h2>
         <div class="content-container bg-white p-6 rounded shadow-md">
             <div class="form-container">
-                <form>
+                <form method="post" enctype="multipart/form-data">
                     <label class="block mb-6">
                         <span class="text-gray-700">Imagen del Producto</span>
-                        <input type="file" accept="image/png" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        <input type="file" name="imagen" accept="image/png, image/jpeg" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                     </label>
                     <label class="block mb-6">
                         <span class="text-gray-700">Nombre del Producto</span>
-                        <input type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        <input type="text" name="nombre" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                     </label>
                     <label class="block mb-6">
                         <span class="text-gray-700">Precio del Producto</span>
-                        <input type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        <input type="text" name="precio" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                     </label>
                     <label class="block mb-6">
                         <span class="text-gray-700">Descripción</span>
-                        <textarea class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" rows="5"></textarea>
+                        <textarea name="descripcion" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" rows="5"></textarea>
                     </label>
+                    <input type="hidden" id="categoria" name="categoria" value="">
                     <span class="text-gray-700">Categoría del Producto</span>
                     <div class="flex flex-wrap mb-6">
-                        <span class="category-item">Todos</span>
-                        <span class="category-item">Hamburguesas</span>
-                        <span class="category-item">Pizzas</span>
-                        <span class="category-item">Pasta</span>
-                        <span class="category-item">Ensaladas</span>
-                        <span class="category-item">Cafeteria</span>
-                        <span class="category-item">Carnes</span>
+                        <span class="category-item" data-category="Todos">Todos</span>
+                        <span class="category-item" data-category="Hamburguesas">Hamburguesas</span>
+                        <span class="category-item" data-category="Pizzas">Pizzas</span>
+                        <span class="category-item" data-category="Pasta">Pasta</span>
+                        <span class="category-item" data-category="Ensaladas">Ensaladas</span>
+                        <span class="category-item" data-category="Cafeteria">Cafeteria</span>
+                        <span class="category-item" data-category="Carnes">Carnes</span>
                     </div>
                     <button type="submit" class="create-button">Crear Producto</button>
                 </form>

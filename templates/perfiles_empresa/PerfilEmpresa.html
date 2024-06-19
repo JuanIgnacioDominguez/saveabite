@@ -3,143 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil Empresa</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <title>Save a Bite - Perfil Empresa</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body {
+            font-family: 'Nunito', sans-serif;
             background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
         }
-        .content-container {
-            height: 90vh;
-            margin: 1rem 1rem 3rem 1rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        .bg-custom-blue {
+            background-color: #27a2e8;
         }
-        .profile-container {
-            height: calc(100% - 4rem);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+        .text-custom-blue {
+            color: #27a2e8;
         }
-        .profile-info {
-            flex-grow: 1;
-        }
-        .profile-options a {
-            font-size: 1.25rem;
-            padding: 1rem;
+        .profile {
             display: flex;
             align-items: center;
-            background-color: #f3f4f6;
-            border-radius: 0.5rem;
-            margin-bottom: 0.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.2s;
-        }
-        .profile-options a:hover {
-            background-color: #e5e7eb;
-        }
-        .logout-button {
-            background-color: #e3342f;
-            color: white;
-            padding: 0.75rem;
-            border-radius: 0.375rem;
-            text-align: center;
-            display: inline-block;
-            margin-top: 1rem;
+            margin-top: auto;
             margin-bottom: 1rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s ease-in-out;
-            width: 100%;
         }
-        .logout-button:hover {
-            background: linear-gradient(to right, #e3342f, #ff0000);
+        .profile img {
+            height: 40px;
+            width: 40px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
         }
-        .profile-avatar {
-            width: 8rem;
-            height: 8rem;
+        .profile-text {
+            display: flex;
+            flex-direction: column;
         }
-        .profile-name {
-            font-size: 1.5rem;
-            font-weight: 600;
+        .profile-text .name {
+            font-weight: bold;
         }
-        .profile-email {
-            font-size: 1.25rem;
-            color: #4a5568;
-        }
-        .active {
-            color: #27a2e8 !important;
+        .profile-text .edit-profile {
+            color: #6b7280;
+            font-size: 0.875rem;
         }
     </style>
 </head>
-<body class="flex h-screen">
-    <aside class="w-64 bg-white text-black shadow-lg">
-        <div class="p-4">
-            <img src="/static/img/logo.png" alt="Logo" class="w-full h-auto">
+<body class="flex">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="flex justify-center mb-8">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" class="logo w-44" alt="Save a Bite Logo"/>
         </div>
-        <nav class="mt-4 sidebar">
-            <a href="/general/menu.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-home mr-2 text-gray-500"></i> Inicio
-            </a>
-            <a href="/agregar-comida" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-plus mr-2 text-gray-500"></i> Agregar Comida
-            </a>
-            <a href="/ver-comidas" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-list mr-2 text-gray-500"></i> Ver Comidas
-            </a>
-            <a href="/pedidos-en-curso" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-shopping-cart mr-2 text-gray-500"></i> Pedidos en Curso
-            </a>
-            <a href="/perfil-empresa" class="flex items-center py-2.5 px-4 rounded transition duration-200 text-blue-500 active">
-                <i class="fas fa-user mr-2 active"></i> Perfil
-            </a>
-            <a href="/informacion" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-info-circle mr-2 text-gray-500"></i> Información
-            </a>
-        </nav>
+        <div class="nav-item {% if request.path == url_for('menu_empresas') %}active{% endif %}">
+            <i class="fas fa-home"></i>
+            <a href="{{ url_for('menu_empresas') }}" class="text-decoration-none">Inicio</a>
+        </div>
+        <div class="nav-item {% if request.path == url_for('crear_producto') %}active{% endif %}">
+            <i class="fas fa-plus"></i>
+            <a href="{{ url_for('crear_producto') }}" class="text-decoration-none">Agregar Comida</a>
+        </div>
+        <div class="nav-item {% if request.path == url_for('VerComidas') %}active{% endif %}">
+            <i class="fas fa-list"></i>
+            <a href="{{ url_for('VerComidas') }}" class="text-decoration-none">Ver Comidas</a>
+        </div>
+        <div class="nav-item {% if request.path == url_for('pedidos') %}active{% endif %}">
+            <i class="fas fa-shopping-cart"></i>
+            <a href="{{ url_for('pedidos') }}" class="text-decoration-none">Pedidos en Curso</a>
+        </div>
+        <div class="nav-item {% if request.path == url_for('PerfilEmpresa') %}active{% endif %}">
+            <i class="fas fa-user-tie"></i>
+            <a href="{{ url_for('PerfilEmpresa') }}" class="text-decoration-none">Perfil Empresa</a>
+        </div>
     </aside>
+    <!-- Main content -->
     <div class="flex-1 p-6">
-        <h1 class="text-2xl font-bold mb-4">Perfil Empresa</h1>
-        <div class="content-container bg-white p-6 rounded shadow-md">
-            <div class="profile-container">
-                <div class="profile-info">
-                    <div class="text-center">
-                        <img src="{{ company.image if company.image else url_for('static', filename='img/defaultUser.png') }}" alt="Company Avatar" class="profile-avatar rounded-full mx-auto" id="profile-image">
-                        <form id="image-form" action="{{ url_for('upload_company_image') }}" method="POST" enctype="multipart/form-data" style="display:none;">
-                            <input type="file" name="profile_image" id="file-input" accept="image/*">
-                        </form>
-                        <h2 class="profile-name mt-4">{{ company.name }}</h2>
-                        <p class="profile-email">{{ company.email }}</p>
-                    </div>
-                    <div class="profile-options mt-6">
-                        <a href="{{ url_for('direcciones_empresa') }}" class="flex items-center border-t border-b">
-                            <i class="fas fa-map-marker-alt mr-2 text-gray-500"></i> Direcciones
-                        </a>
-                        <a href="{{ url_for('editar_perfil_empresa') }}" class="flex items-center border-b">
-                            <i class="fas fa-user-edit mr-2 text-gray-500"></i> Editar Perfil
-                        </a>
-                        <a href="{{ url_for('resumen_empresa') }}" class="flex items-center border-b">
-                            <i class="fas fa-chart-line mr-2 text-gray-500"></i> Resumen
-                        </a>
-                        <a href="{{ url_for('membresia_empresa') }}" class="flex items-center border-b">
-                            <i class="fas fa-star mr-2 text-gray-500"></i> Membresía
-                        </a>
-                        <a href="{{ url_for('soporte_empresa') }}" class="flex items-center border-b">
-                            <i class="fas fa-life-ring mr-2 text-gray-500"></i> Soporte
-                        </a>
-                    </div>
-                </div>
-                <button class="logout-button w-full text-white py-2 px-4 rounded-lg transition duration-200 mt-6" onclick="location.href='{{ url_for('logout') }}'">Cerrar Sesión</button>
+        <div class="profile">
+            <img src="{{ url_for('static', filename=company.image) }}" alt="Profile">
+            <div class="profile-text">
+                <div class="name">{{ company.name }}</div>
+                <a href="{{ url_for('perfil_empresa') }}" class="edit-profile">Edit Profile</a>
             </div>
         </div>
+        <form id="image-form" action="{{ url_for('upload_company_image') }}" method="POST" enctype="multipart/form-data" style="display:none;">
+            <input type="file" name="company_image" id="company_image">
+            <button type="submit">Upload</button>
+        </form>
+        <div class="card mt-6">
+            <h3 class="text-xl font-bold mb-2">Información del Restaurante</h3>
+            <p><strong>Nombre:</strong> {{ company.name }}</p>
+            <p><strong>Dirección:</strong> {{ company.address }}</p>
+            <p><strong>Email:</strong> {{ company.email }}</p>
+        </div>
+        <!-- Aquí puedes agregar más contenido relevante para el perfil de la empresa -->
     </div>
-    <script>
-        document.getElementById('profile-image').addEventListener('click', function() {
-            document.getElementById('file-input').click();
-        });
-        document.getElementById('file-input').addEventListener('change', function() {
-            document.getElementById('image-form').submit();
-        });
-    </script>
 </body>
 </html>

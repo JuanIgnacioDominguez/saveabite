@@ -83,7 +83,7 @@
             font-size: 1.25rem;
         }
         .select-button {
-            background-color: #2563eb;
+            background-color: #27a2e8;
             color: white;
             padding: 0.75rem;
             border-radius: 0.375rem;
@@ -154,13 +154,13 @@
             display: block;
         }
         .popup-button {
-            margin-top: 1rem;
-            background-color: #2563eb;
+            background-color: #27a2e8;
             color: white;
             padding: 0.75rem;
             border-radius: 0.375rem;
             text-align: center;
             display: inline-block;
+            margin-top: 1rem;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             transition: background-color 0.2s;
             width: 100%;
@@ -209,6 +209,39 @@
         }
         .cancel-button:hover {
             background-color: #cc0000; /* Darker red on hover */
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 0.5rem;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -281,9 +314,7 @@
                             <li>Acceso a recetas exclusivas y consejos de cocina básicos.</li>
                         </ul>
                         <div class="flex justify-end mt-auto">
-                            <form method="POST" action="{{ url_for('seleccionar_membresia', membresia='Básico') }}">
-                                <button type="submit" class="select-button">Seleccionar Plan</button>
-                            </form>
+                            <button type="button" class="select-button" data-plan="Básico">Seleccionar Plan</button>
                         </div>
                     </div>
                     <div class="membership-card">
@@ -296,9 +327,7 @@
                             <li>Acceso a recetas avanzadas y tutoriales de cocina.</li>
                         </ul>
                         <div class="flex justify-end mt-auto">
-                            <form method="POST" action="{{ url_for('seleccionar_membresia', membresia='Media') }}">
-                                <button type="submit" class="select-button">Seleccionar Plan</button>
-                            </form>
+                            <button type="button" class="select-button" data-plan="Media">Seleccionar Plan</button>
                         </div>
                     </div>
                     <div class="membership-card">
@@ -312,29 +341,38 @@
                             <li>Regalos exclusivos y muestras de productos premium en fechas especiales y al alcanzar ciertos hitos de compra.</li>
                         </ul>
                         <div class="flex justify-end mt-auto">
-                            <form method="POST" action="{{ url_for('seleccionar_membresia', membresia='Avanzada') }}">
-                                <button type="submit" class="select-button">Seleccionar Plan</button>
-                            </form>
+                            <button type="button" class="select-button" data-plan="Avanzada">Seleccionar Plan</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <!-- Modal for selecting payment method -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('paymentModal').style.display='none'">&times;</span>
+            <h2>Seleccionar Método de Pago</h2>
+            <form id="paymentForm" method="POST" action="">
+                <div class="form-group">
+                    <label for="payment_method">Método de Pago</label>
+                    <select id="payment_method" name="payment_method" class="w-full p-2 border rounded">
+                        {% for metodo in metodos_pago %}
+                        <option value="{{ metodo.id }}">{{ metodo.tipo_tarjeta }}: **** **** **** {{ metodo.numero_tarjeta[-4:] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="popup-button">Confirmar Pago</button>
+            </form>
+        </div>
+    </div>
     <script>
         document.querySelectorAll('.select-button').forEach(button => {
-            button.addEventListener('click', function(event) {
-                event.preventDefault();
-                fetch(this.closest('form').action, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    }
-                }).then(response => {
-                    if (response.ok) {
-                        document.getElementById('popup').classList.add('active');
-                    }
-                });
+            button.addEventListener('click', function() {
+                const plan = this.getAttribute('data-plan');
+                const form = document.getElementById('paymentForm');
+                form.action = `/seleccionar_membresia/${plan}`;
+                document.getElementById('paymentModal').style.display = 'block';
             });
         });
 

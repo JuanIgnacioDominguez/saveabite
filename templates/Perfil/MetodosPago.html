@@ -166,15 +166,10 @@
                     <!-- Payment Methods List -->
                     {% for metodo in metodos_pago %}
                     <div class="profile-options">
-                        <strong>
-                            {% if metodo.tipo_metodo == 'Efectivo' %}
-                                <i class="fas fa-money-bill-wave"></i>
-                                Efectivo
-                            {% else %}
-                                <i class="fas fa-credit-card"></i>
-                                Tarjeta de Crédito - {{ metodo.tipo_tarjeta }}: **** **** **** {{ metodo.numero_tarjeta[-4:] }}
-                            {% endif %}
-                        </strong>
+                        <div>
+                            <strong>{{ metodo.tipo_tarjeta }}</strong> - {{ metodo.nombre_titular }}<br>
+                            **** **** **** {{ metodo.numero_tarjeta[-4:] }}
+                        </div>
                         <form action="{{ url_for('borrar_metodo_pago', id=metodo.id) }}" method="post">
                             <button type="submit" class="text-red-500">
                                 <i class="fas fa-trash-alt"></i>
@@ -195,24 +190,27 @@
             <h2 class="text-xl font-bold mb-4">Agregar Método de Pago</h2>
             <form action="{{ url_for('metodos_pago') }}" method="post">
                 <div class="form-group">
-                    <label for="tipo_metodo">Tipo de Método</label>
-                    <select id="tipo_metodo" name="tipo_metodo" class="w-full p-2 border rounded" onchange="toggleCardDetails(this)">
-                        <option value="Efectivo">Efectivo</option>
-                        <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
+                    <label for="tipo_tarjeta">Marca de Tarjeta</label>
+                    <select id="tipo_tarjeta" name="tipo_tarjeta" class="w-full p-2 border rounded">
+                        <option value="Visa">Visa</option>
+                        <option value="Mastercard">Mastercard</option>
                     </select>
                 </div>
-                <div id="cardDetails" style="display: none;">
-                    <div class="form-group">
-                        <label for="tipo_tarjeta">Tipo de Tarjeta</label>
-                        <select id="tipo_tarjeta" name="tipo_tarjeta" class="w-full p-2 border rounded">
-                            <option value="Visa">Visa</option>
-                            <option value="Mastercard">Mastercard</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="numero_tarjeta">Número de Tarjeta</label>
-                        <input type="text" id="numero_tarjeta" name="numero_tarjeta" class="w-full p-2 border rounded">
-                    </div>
+                <div class="form-group">
+                    <label for="nombre_titular">Nombre del Titular</label>
+                    <input type="text" id="nombre_titular" name="nombre_titular" class="w-full p-2 border rounded">
+                </div>
+                <div class="form-group">
+                    <label for="numero_tarjeta">Número de Tarjeta</label>
+                    <input type="text" id="numero_tarjeta" name="numero_tarjeta" maxlength="16" oninput="this.value=this.value.replace(/[^0-9]/g,'');" class="w-full p-2 border rounded">
+                </div>
+                <div class="form-group">
+                    <label for="fecha_vencimiento">Fecha de Vencimiento</label>
+                    <input type="text" id="fecha_vencimiento" name="fecha_vencimiento" maxlength="5" placeholder="MM/AA" oninput="formatDate(this)" class="w-full p-2 border rounded">
+                </div>
+                <div class="form-group">
+                    <label for="codigo_seguridad">Código de Seguridad</label>
+                    <input type="text" id="codigo_seguridad" name="codigo_seguridad" maxlength="3" oninput="this.value=this.value.replace(/[^0-9]/g,'');" class="w-full p-2 border rounded">
                 </div>
                 <button type="submit" class="submit-button">Agregar</button>
             </form>
@@ -226,6 +224,14 @@
             } else {
                 document.getElementById('cardDetails').style.display = 'none';
             }
+        }
+
+        function formatDate(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            input.value = value.substring(0, 5);
         }
     </script>
 </body>

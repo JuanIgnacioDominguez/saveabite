@@ -118,11 +118,11 @@
         .toggle-switch .toggle-label::before {
             content: "";
             position: absolute;
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
-            top: 2px;
-            left: 2px;
+            top: 3px;
+            left: 3px;
             background-color: #ffffff;
             box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s;
@@ -173,11 +173,28 @@
             color: #27a2e8;
             text-decoration: underline;
         }
+        .flex-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .fixed-size {
+            width: 520px;
+        }
+        .spacing {
+            margin-top: 20px;
+        }
+        .btn-align {
+            margin-top: 10px;
+        }
+        .mb-20px {
+            margin-bottom: 20px;
+        }
 
     </style>
 </head>
 <body class="flex justify-center items-center h-screen">
-    <div class="bg-white rounded-lg shadow-2xl overflow-hidden w-full max-w-lg mx-4">
+    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden fixed-size p-8">
         <div class="relative flex justify-center items-center bg-white">
             <img src="{{ url_for('static', filename='img/logo.png') }}" class="logo w-44"/>
         </div>
@@ -215,15 +232,18 @@
                             </svg>
                         </span>
                     </div>
-                    <div class="flex items-center mb-4">
-                        <input type="checkbox" id="rememberMe" name="remember_me" class="mr-2">
-                        <label for="rememberMe" class="text-gray-700">Recuérdame</label>
+                    <div class="spacing"></div>
+                    <div class="flex-center mb-2">
+                        <div class="toggle-switch">
+                            <input class="toggle-input" id="rememberMe" name="remember_me" type="checkbox">
+                            <label class="toggle-label" for="rememberMe"></label>
+                        </div>
+                        <label for="rememberMe" class="text-gray-700 ml-2">Recuérdame</label>
                     </div>
-                    <div class="mb-4">
+                    <div class="flex-center mb-4 mb-20px">
                         <span class="forgot-password-link" onclick="toggleForms('forgotPasswordForm')">¿Olvidaste tu contraseña?</span>
                     </div>
-                    <button type="submit" class="w-full bg-custom-blue text-white p-2 rounded-md hover:bg-blue-700">Iniciar Sesión</button>
-                    <br><br><br>
+                    <button type="submit" class="w-full bg-custom-blue text-white p-2 rounded-md hover:bg-blue-700 mb-20px">Iniciar Sesión</button>
                 </form>
                 <form id="registerForm" class="form-transition form-hidden" method="POST" action="{{ url_for('register') }}">
                     <h2 class="text-2xl font-bold mb-2">Crear una Cuenta</h2>
@@ -246,7 +266,7 @@
                             </svg>
                         </span>
                     </div>
-                    <div class="mb-4 flex items-center justify-center">
+                    <div class="mb-4 flex-center">
                         <div class="toggle-switch">
                             <input class="toggle-input" id="toggle" type="checkbox" name="is_vendor">
                             <label class="toggle-label" for="toggle"></label>
@@ -254,7 +274,7 @@
                         <label for="toggle" class="text-gray-700 ml-2">¿Eres un Restaurante/Vendedor?</label>
                     </div>
                     <div>
-                        <button type="submit" class="w-full bg-custom-blue text-white p-2 rounded-md hover:bg-blue-700">Crear Cuenta</button>
+                        <button type="submit" class="w-full bg-custom-blue text-white p-2 rounded-md hover:bg-blue-700 mb-20px">Crear Cuenta</button>
                     </div>
                 </form>
 
@@ -269,8 +289,6 @@
                         <button type="submit" class="w-full bg-custom-blue text-white p-2 rounded-md hover:bg-blue-700">Enviar Mensaje</button>
                     </div>
                 </form>
-
-
             </div>
         </div>
     </div>
@@ -282,7 +300,6 @@
         const formContainer = document.querySelector('.form-container');
 
         const forgotPasswordForm = document.getElementById('forgotPasswordForm');
-
 
         registerTab.addEventListener('click', () => {
             registerTab.classList.add('active');
@@ -319,7 +336,7 @@
             form.classList.remove('form-hidden');
             form.classList.add('form-visible');
         }
-function togglePasswordVisibility(id) {
+        function togglePasswordVisibility(id) {
             const input = document.getElementById(id);
             if (input.type === 'password') {
                 input.type = 'text';
@@ -328,6 +345,5 @@ function togglePasswordVisibility(id) {
             }
         }
     </script>
-
 </body>
 </html>

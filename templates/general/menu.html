@@ -234,42 +234,13 @@
 </head>
 <body class="flex">
     <!-- Sidebar -->
-    <div class="flex flex-col h-screen bg-white w-64 p-6 shadow-lg fixed">
-        <div class="flex justify-center mb-8">
-            <img src="{{ url_for('static', filename='img/logo.png') }}" class="logo w-44" alt="Save a Bite Logo"/>
-        </div>
-        <div class="nav-item {% if request.path == url_for('menu') %}active{% endif %}">
-            <i class="fas fa-home"></i>
-            <a href="{{ url_for('menu') }}" class="text-decoration-none">Inicio</a>
-        </div>
-        <div class="nav-item {% if request.path == url_for('carrito') %}active{% endif %}">
-            <i class="fas fa-shopping-bag"></i>
-            <a href="{{ url_for('carrito') }}" class="text-decoration-none">Carrito</a>
-        </div>
-        <div class="nav-item {% if request.path == url_for('favoritos') %}active{% endif %}">
-            <i class="fas fa-heart"></i>
-            <a href="{{ url_for('favoritos') }}" class="text-decoration-none">Favoritos</a>
-        </div>
-        <div class="nav-item {% if request.path == url_for('perfil_usuario') %}active{% endif %}">
-            <i class="fas fa-user"></i>
-            <a href="{{ url_for('perfil_usuario') }}" class="text-decoration-none">Perfil</a>
-        </div>
-        <div class="nav-item {% if request.path == url_for('informacion') %}active{% endif %}">
-            <i class="fas fa-info-circle"></i>
-            <a href="{{ url_for('informacion') }}" class="text-decoration-none">Información</a>
-        </div>
-        <div class="profile mt-auto">
-            <img src="{{ url_for('static', filename='uploads/' ~ user_image) }}" alt="Profile">
-            <div class="profile-text">
-                <div class="name">{{ user_name }}</div>
-                <a href="{{ url_for('perfil_usuario') }}" class="edit-profile">Edit Profile</a>
-            </div>
-        </div>
-    </div>
+    {% include 'Sidebars/SidebarUsuario.html' %}
+    
     <!-- Main content -->
     <div class="flex-1 p-6 content ml-64">
+        <h1 class="text-4xl font-bold text-custom-blue">Menu Principal</h1>
         <div class="header">
-            <h1 class="text-4xl font-bold text-custom-blue">Menu Principal</h1>
+            
             <div class="search">
                 <input type="text" placeholder="Buscar...">
                 <button type="submit"><i class="fas fa-search"></i></button>

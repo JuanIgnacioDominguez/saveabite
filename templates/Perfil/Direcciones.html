@@ -13,10 +13,19 @@
         }
         .content-container {
             height: 90vh;
-            margin: 1rem 1rem 3rem 1rem;
+            margin-left: 16rem;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
+        }
+        .sidebar {      /* cuadro blanco de la sidebar */
+            height: 100vh;
+            background-color: white;
+            width: 16rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            flex: 0 0 16rem;
         }
         .profile-container {
             flex-grow: 1;
@@ -121,40 +130,20 @@
             text-decoration: none;
             cursor: pointer;
         }
+
+        .ml-16rem {
+            margin-left: 16rem;
+        }
+
     </style>
 </head>
 <body class="flex h-screen">
     <!-- Sidebar -->
-    <aside class="w-64 bg-white text-black shadow-lg">
-        <div class="p-4">
-            <img src="/static/img/logo.png" alt="Logo" class="w-full h-auto">
-        </div>
-        <nav class="mt-4 sidebar">
-            <a href="{{ url_for('menu') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-home mr-2 text-gray-500"></i>
-                Inicio
-            </a>
-            <a href="{{ url_for('pedidos_cliente') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-box mr-2 text-gray-500"></i>
-                Mis Pedidos
-            </a>
-            <a href="/favoritos" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-heart mr-2 text-gray-500"></i>
-                Favoritos
-            </a>
-            <a href="{{ url_for('perfil_usuario') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 text-blue-500 active">
-                <i class="fas fa-user mr-2"></i>
-                Perfil
-            </a>
-            <a href="{{ url_for('informacion') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-info-circle mr-2 text-gray-500"></i>
-                Información
-            </a>
-        </nav>
-    </aside>
+    {% include 'Sidebars/SidebarUsuario.html' %}
+        
     <!-- Main content -->
     <div class="flex-1 p-6">
-        <h1 class="text-2xl font-bold mb-4">Direcciones</h1>
+        <h1 class="text-2xl font-bold mb-4 ml-16rem">Direcciones</h1>
         <div class="content-container bg-white p-6 rounded shadow-md">
             <a href="{{ url_for('perfil_usuario') }}" class="back-button">
                 <i class="fas fa-arrow-left"></i>

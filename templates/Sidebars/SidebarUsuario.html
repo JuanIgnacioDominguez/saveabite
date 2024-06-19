@@ -82,9 +82,9 @@
             <i class="fas fa-user"></i>
             <a href="{{ url_for('perfil_usuario') }}" class="text-decoration-none">Perfil</a>
         </div>
-        <div class="nav-item {% if request.path == url_for('informacion') %}active{% endif %}">
+        <div class="nav-item {% if request.path == url_for('informacionUsuario') %}active{% endif %}">
             <i class="fas fa-info-circle"></i>
-            <a href="{{ url_for('informacion') }}" class="text-decoration-none">Información</a>
+            <a href="{{ url_for('informacionUsuario') }}" class="text-decoration-none">Información</a>
         </div>
         <div class="profile mt-auto">
             <img src="{{ url_for('static', filename='uploads/' ~ user_image) }}" alt="Profile">

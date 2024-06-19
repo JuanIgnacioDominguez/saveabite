@@ -508,6 +508,10 @@ def pedidos_cliente():
 def informacion():
     return render_template('general/informacionEmpresas.html')
 
+@app.route("/informacionUsuario", methods=['GET'])
+def informacionUsuario():
+    return render_template('general/informacionUsuario.html')
+
 @app.route("/perfil_usuario", methods=['GET', 'POST'])
 def perfil_usuario():
     user = {'name': session.get('user_name'), 'email': session.get('user_email'), 'image': session.get('user_image')}

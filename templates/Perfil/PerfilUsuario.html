@@ -99,7 +99,7 @@
                 <div class="profile-info">
                     <!-- Profile Info -->
                     <div class="text-center">
-                        <img src="/static/img/perfil.png" alt="User Avatar" class="profile-avatar rounded-full mx-auto">
+                        <img src="/static/img/perfil2.png" alt="User Avatar" class="profile-avatar rounded-full mx-auto">
                         <h2 class="profile-name mt-4">{{ user.name }}</h2>
                         <p class="profile-email">{{ user.email }}</p>
                     </div>
@@ -126,7 +126,7 @@
                         </a>
                     </div>
                 </div>
-                <button class="logout-button w-full text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200 mt-6">Cerrar Sesión</button>
+                <a href="{{ url_for('logout') }}" class="logout-button w-full text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200 mt-6 text-center">Cerrar Sesión</a>
             </div>
         </div>
     </div>

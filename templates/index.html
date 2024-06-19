@@ -149,18 +149,15 @@
         </nav>
         <a href="{{ url_for('login') }}" class="btn-custom rounded-full mr-4">Acceder</a>
     </div>
-    <main class="main-content flex flex-col items-center justify-center text-center p-4" id="main-section">
-        <div class="text-center mb-6">
-            <h1 class="text-4xl text-white font-bold">¡Disfruta comida deliciosa a precios increíbles!</h1>
-            <p class="text-xl text-white mt-2">Ayuda a reducir el desperdicio de alimentos mientras ahorras</p>
-        </div>
+    <main class="main-content flex flex-col items-center justify-center text-center p-2" id="main-section">
         <div class="flex-container max-w-4xl flex-row justify-center items-center">
             <div class="w-full main-image-container">
                 <img src="{{ url_for('static', filename='img/salad_intro.png') }}" alt="Food" class="main-image">
             </div>
             <div class="w-full text-container flex items-center justify-center">
                 <div class="w-full text-center">
-                    <p class="text-lg mb-6 text-white">Encuentra platos frescos y de calidad que de otro modo se desperdiciarían. ¡Aprovecha la oportunidad de comer bien y cuidar el planeta!</p>
+                    <h1 class="text-4xl text-white font-bold">¡Disfruta comida deliciosa a precios increíbles!</h1>
+                    <p class="text-lg mb-6 text-white">Encuentra platos frescos y de calidad que de otro modo se desperdiciarían.</p>
                     <a href="{{ url_for('login') }}" class="bg-white text-custom-blue rounded-full py-2 px-4">Comprar ahora</a> <!-- Ajuste del botón -->
                 </div>
             </div>

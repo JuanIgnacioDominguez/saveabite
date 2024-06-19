@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Producto</title>
+    <title>{{ producto['nombre'] }}</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -235,19 +235,19 @@
     </aside>
     <!-- Main content -->
     <div class="flex-1 p-6 overflow-y-auto">
-        <h1 class="text-2xl font-bold mb-4">Producto</h1>
+        <h1 class="text-2xl font-bold mb-4">{{ producto['nombre'] }}</h1>
         <div class="content-container bg-white p-6 rounded shadow-md">
             <a href="/templates/general/menu.html" class="back-button mb-4">
                 <i class="fas fa-arrow-left"></i> Volver al menú
             </a>
             <div class="product-details">
-                <img src="https://via.placeholder.com/300" alt="Product Image" class="product-image">
+                <img src="{{ url_for('static', filename=producto['imagen']) }}" alt="{{ producto['nombre'] }}" class="product-image">
                 <div>
-                    <h2 class="text-xl font-bold">Pizza Napolitana</h2>
+                    <h2 class="text-xl font-bold">{{ producto['nombre'] }}</h2>
                     <br>
-                    <p>Precio: $5200</p>
+                    <p>Precio: ${{ producto['precio'] }}</p>
                     <br>
-                    <p>Descripción: Delicious pizza with tomatoes, mozzarella, and basil.</p>
+                    <p>Descripción: {{ producto['descripcion'] }}</p>
                     <br>
                 </div>
             </div>

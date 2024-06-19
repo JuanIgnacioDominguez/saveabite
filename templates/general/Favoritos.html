@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favoritos</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
+        }
+        .content-container {
+            max-height: 100vh;
+            margin: 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .product-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 16px;
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+        .product-card img {
+            border-radius: 8px;
+            margin-bottom: 16px;
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .product-card .info {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            padding: 10px;
+            background-color: #f9fafb;
+            border-radius: 8px;
+        }
+        .product-card .info div {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .info-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e2e8f0;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            margin-bottom: 4px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .header h1 {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #27a2e8;
+        }
+        .remove-button {
+            background-color: #e3342f;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            text-align: center;
+            margin-top: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s;
+        }
+        .remove-button:hover {
+            background-color: #cc1f1a;
+        }
+        .product-title {
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body class="flex h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white text-black shadow-lg">
+        <div class="p-4">
+            <img src="/static/img/logo.png" alt="Logo" class="w-full h-auto">
+        </div>
+        <nav class="mt-4 sidebar">
+            <hr>
+            <a href="/templates/general/menu_usuario" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-home mr-2 text-gray-500"></i>
+                Inicio
+            </a>
+            <hr>
+            <a href="/carrito" class="flex items-center py-2.5 px-4 rounded transition duration-200 text-blue-500 active">
+                <i class="fas fa-shopping-cart mr-2"></i>
+                Carrito
+            </a>
+            <hr>
+            <a href="/mis-pedidos" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-box mr-2 text-gray-500"></i>
+                Mis Pedidos
+            </a>
+            <hr>
+            <a href="/favoritos" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-heart mr-2 text-gray-500"></i>
+                Favoritos
+            </a>
+            <hr>
+            <a href="/perfil-usuario" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-user mr-2 text-gray-500"></i>
+                Perfil
+            </a>
+            <hr>
+            <a href="/informacion" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+                <i class="fas fa-info-circle mr-2 text-gray-500"></i>
+                Información
+            </a>
+            <hr>
+        </nav>
+    </aside>
+    <!-- Main content -->
+    <div class="flex-1 p-6 overflow-y-auto">
+        <div class="header">
+            <h1 class="text-4xl font-bold text-custom-blue" style="text-align: left;">Favoritos</h1>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for producto in productos %}
+            <div class="product-card">
+                <a href="{{ url_for('producto', producto_id=producto['id']) }}" style="text-decoration: none; color: inherit; display: block; width: 100%;">
+                    <img src="{{ url_for('static', filename=producto['imagen']) }}" alt="{{ producto['nombre'] }}">
+                    <h3 class="product-title">{{ producto['nombre'] }}</h3>
+                    <div class="info">
+                        <div>
+                            <div class="info-icon"><i class="fas fa-clock"></i></div>
+                            <p class="text-gray-600">{{ producto['tiempoEstimado'] }}</p>
+                        </div>
+                        <div>
+                            <div class="info-icon"><i class="fas fa-user"></i></div>
+                            <p class="text-gray-600">Para {{ producto['tipoComida'] }}</p>
+                        </div>
+                        <div>
+                            <div class="info-icon"><i class="fas fa-dollar-sign"></i></div>
+                            <p class="text-gray-600">$ {{ producto['precio'] }}</p>
+                        </div>
+                    </div>
+                </a>
+                <form action="{{ url_for('remove_favorito', producto_id=producto['id']) }}" method="post">
+                    <button type="submit" class="remove-button">Eliminar de Favoritos</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

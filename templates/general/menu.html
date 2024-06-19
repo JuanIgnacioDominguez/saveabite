@@ -11,8 +11,8 @@
     <style>
         body {
             font-family: 'Nunito', sans-serif;
-            background: linear-gradient(to bottom right, #f1f5f9, #0284c7); /* bg-gradient-to-br from-slate-50 to-sky-600 */
-            overflow: hidden; /* Para evitar el desplazamiento de la barra lateral */
+            background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
+            overflow: hidden;
         }
         .bg-custom-blue {
             background-color: #27a2e8;
@@ -89,12 +89,12 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 16px;
             transition: transform 0.2s;
-            overflow: hidden; /* Para asegurarse de que los elementos hijos no se desborden */
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
-            height: 100%; /* Para asegurarse de que todas las tarjetas tengan la misma altura */
-            cursor: pointer; /* Agregar un puntero de cursor para indicar clicabilidad */
+            height: 100%;
+            cursor: pointer;
         }
         .recipe-card:hover {
             transform: translateY(-5px);
@@ -103,7 +103,7 @@
             border-radius: 8px;
             margin-bottom: 16px;
             width: 100%;
-            height: 200px; /* Fijar la altura de las imágenes */
+            height: 200px;
             object-fit: cover;
         }
         .recipe-card .info {
@@ -133,24 +133,25 @@
         .header {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             margin-bottom: 1rem;
-            position: relative;
         }
         .header h1 {
             font-size: 2rem;
             font-weight: bold;
             color: #27a2e8;
-            position: absolute;
-            left: 0;
-            margin-left: 20px;
+        }
+        .search-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
         }
         .search {
-            display: inline-block;
             position: relative;
+            width: 600px;
         }
         .search input[type="text"] {
-            width: 600px;
+            width: 100%;
             padding: 10px;
             border: none;
             border-radius: 20px;
@@ -198,11 +199,6 @@
             height: 100vh;
         }
     </style>
-    <script>
-        function goToProductDetail(productId) {
-            window.location.href = "Producto.html";
-        }
-    </script>
 </head>
 <body class="flex">
     <!-- Sidebar -->
@@ -242,9 +238,11 @@
     <div class="flex-1 p-6 content ml-64">
         <div class="header">
             <h1 class="text-4xl font-bold text-custom-blue">Menu Principal</h1>
-            <div class="search">
-                <input type="text" placeholder="Buscar...">
-                <button type="submit"><i class="fas fa-search"></i></button>
+            <div class="search-container">
+                <div class="search">
+                    <input type="text" placeholder="Buscar...">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </div>
             </div>
         </div>
         <div class="flex justify-center space-x-4 mb-6">
@@ -261,7 +259,7 @@
                 Pizzas
             </button>
             <button class="btn-custom" onclick="filterCategory('pastas')">
-                <i class="material-icons">ramen_dining</i> <!-- Ícono de noodles -->
+                <i class="material-icons">ramen_dining</i>
                 Pasta
             </button>
             <button class="btn-custom" onclick="filterCategory('ensaladas')">
@@ -278,134 +276,59 @@
             </button>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="recipe-card pizzas" onclick="goToProductDetail('pizza-napolitana')">
-                <img src="{{ url_for('static', filename='img/PIZZA2.jpg') }}" alt="Pizza Napolitana">
-                <h3 class="text-xl font-bold mb-2">Pizza Napolitana</h3>
+            {% for producto in productos %}
+            <div class="recipe-card {{ producto['tipoComida'] }}" onclick="goToProductDetail('{{ producto['id'] }}')">
+                <img src="{{ url_for('static', filename=producto['imagen']) }}" alt="{{ producto['nombre'] }}">
+                <h3 class="text-xl font-bold mb-2">{{ producto['nombre'] }}</h3>
                 <div class="info">
                     <div>
                         <div class="info-icon"><i class="fas fa-clock"></i></div>
-                        <p class="text-gray-600">40 min</p>
+                        <p class="text-gray-600">{{ producto['tiempoEstimado'] }}</p>
                     </div>
                     <div>
                         <div class="info-icon"><i class="fas fa-user"></i></div>
-                        <p class="text-gray-600">Para 4 personas</p>
+                        <p class="text-gray-600">Para {{ producto['cantidadPersonas'] }} personas</p>
                     </div>
                     <div>
                         <div class="info-icon"><i class="fas fa-dollar-sign"></i></div>
-                        <p class="text-gray-600">$ 5200</p>
+                        <p class="text-gray-600">$ {{ producto['precio'] }}</p>
                     </div>
                 </div>
                 <div class="button-container">
-                    <button class="action-button">Favoritos</button>
-                    <button class="action-button">Añadir al carrito</button>
+                    <form action="{{ url_for('add_favorito', producto_id=producto['id']) }}" method="post">
+                        <button type="submit" class="action-button">Favoritos</button>
+                    </form>
+                    <form action="{{ url_for('add_carrito', producto_id=producto['id']) }}" method="post">
+                        <button type="submit" class="action-button">Añadir al carrito</button>
+                    </form>
                 </div>
             </div>
-            <!-- Añadir más tarjetas de recetas -->
-            <div class="recipe-card carnes" onclick="goToProductDetail('milanesa-napolitana')">
-                <img src="{{ url_for('static', filename='img/milanapo.jpg') }}" alt="Receta 2">
-                <h3 class="text-xl font-bold mb-2">Milanesa Napolitana</h3>
-                <div class="info">
-                    <div>
-                        <div class="info-icon"><i class="fas fa-clock"></i></div>
-                        <p class="text-gray-600">30 min</p>
-                    </div>
-                    <div>
-                        <div class="info-icon"><i class="fas fa-user"></i></div>
-                        <p class="text-gray-600">Para 2 personas</p>
-                    </div>
-                    <div>
-                        <div class="info-icon"><i class="fas fa-dollar-sign"></i></div>
-                        <p class="text-gray-600">$ 4500</p>
-                    </div>
-                </div>
-                <div class="button-container">
-                    <button class="action-button">Favoritos</button>
-                    <button class="action-button">Añadir al carrito</button>
-                </div>
-            </div>
-            <div class="recipe-card hamburguesas" onclick="goToProductDetail('hamburguesa-con-papas')">
-                <img src="{{ url_for('static', filename='img/hamburguesa.jpg') }}" alt="Receta 3">
-                <h3 class="text-xl font-bold mb-2">Hamburguesa c/ papas</h3>
-                <div class="info">
-                    <div>
-                        <div class="info-icon"><i class="fas fa-clock"></i></div>
-                        <p class="text-gray-600">25 min</p>
-                    </div>
-                    <div>
-                        <div class="info-icon"><i class="fas fa-user"></i></div>
-                        <p class="text-gray-600">Para 1 personas</p>
-                    </div>
-                    <div>
-                        <div class="info-icon"><i class="fas fa-dollar-sign"></i></div>
-                        <p class="text-gray-600">$ 3800</p>
-                    </div>
-                </div>
-                <div class="button-container">
-                    <button class="action-button">Favoritos</button>
-                    <button class="action-button">Añadir al carrito</button>
-                </div>
-            </div>
-            <div class="recipe-card pastas" onclick="goToProductDetail('pasta-bolognesa')">
-                <img src="{{ url_for('static', filename='img/pastabolo.jpg') }}" alt="Receta 4">
-                <h3 class="text-xl font-bold mb-2">Pasta bolognesa</h3>
-                <div class="info">
-                    <div>
-                        <div class="info-icon"><i class="fas fa-clock"></i></div>
-                        <p class="text-gray-600">40 min</p>
-                    </div>
-                    <div>
-                        <div class="info-icon"><i class="fas fa-user"></i></div>
-                        <p class="text-gray-600">Para 1 personas</p>
-                    </div>
-                    <div>
-                        <div class="info-icon"><i class="fas fa-dollar-sign"></i></div>
-                        <p class="text-gray-600">$ 5000</p>
-                    </div>
-                </div>
-                <div class="button-container">
-                    <button class="action-button">Favoritos</button>
-                    <button class="action-button">Añadir al carrito</button>
-                </div>
-            </div>
-            <div class="recipe-card carnes" onclick="goToProductDetail('bife-con-pure')">
-                <img src="{{ url_for('static', filename='img/bife.jpg') }}" alt="Receta 5">
-                <h3 class="text-xl font-bold mb-2">Bife con pure</h3>
-                <div class="info">
-                    <div>
-                        <div class="info-icon"><i class="fas fa-clock"></i></div>
-                        <p class="text-gray-600">45 min</p>
-                    </div>
-                    <div>
-                        <div class="info-icon"><i class="fas fa-user"></i></div>
-                        <p class="text-gray-600">Para 1 personas</p>
-                    </div>
-                    <div>
-                        <div class="info-icon"><i class="fas fa-dollar-sign"></i></div>
-                        <p class="text-gray-600">$ 5200</p>
-                    </div>
-                </div>
-                <div class="button-container">
-                    <button class="action-button">Favoritos</button>
-                    <button class="action-button">Añadir al carrito</button>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
     <script>
         function filterCategory(category) {
-            // Obtener todas las tarjetas de productos
             const cards = document.querySelectorAll('.recipe-card');
-    
-            // Mostrar solo las tarjetas de la categoría seleccionada y ocultar las demás
+            const buttons = document.querySelectorAll('.btn-custom');
+            
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+
             cards.forEach(card => {
                 if (category === 'todos' || card.classList.contains(category)) {
-                    card.style.display = 'block'; // Mostrar tarjeta si es de la categoría seleccionada
+                    card.style.display = 'block';
                 } else {
-                    card.style.display = 'none'; // Ocultar tarjeta si no es de la categoría seleccionada
+                    card.style.display = 'none';
                 }
             });
+
+            document.querySelector(`.btn-custom[onclick="filterCategory('${category}')"]`).classList.add('active');
+        }
+
+        function goToProductDetail(productId) {
+            window.location.href = "{{ url_for('producto') }}" + "?producto_id=" + productId;
         }
     </script>
-    
 </body>
 </html>

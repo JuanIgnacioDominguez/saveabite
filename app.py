@@ -64,7 +64,26 @@ def create_tables():
             precio REAL NOT NULL,
             descripcion TEXT NOT NULL,
             imagen TEXT NOT NULL,
-            tipoComida TEXT NOT NULL
+            tipoComida TEXT NOT NULL,
+            cantidadPersonas INTEGER NOT NULL
+        )
+    ''')
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS favoritos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            usuario_id INTEGER NOT NULL,
+            producto_id INTEGER NOT NULL,
+            FOREIGN KEY (usuario_id) REFERENCES usuarios (id),
+            FOREIGN KEY (producto_id) REFERENCES Productos (id)
+        )
+    ''')
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS carrito (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            usuario_id INTEGER NOT NULL,
+            producto_id INTEGER NOT NULL,
+            FOREIGN KEY (usuario_id) REFERENCES usuarios (id),
+            FOREIGN KEY (producto_id) REFERENCES Productos (id)
         )
     ''')
     conn.execute('''
@@ -134,6 +153,35 @@ def upload_image():
         flash('Image uploaded successfully', 'success')
         return redirect(url_for('perfil_usuario'))
 
+@app.route('/upload_company_image', methods=['POST'])
+def upload_company_image():
+    if 'profile_image' not in request.files:
+        flash('No file part', 'error')
+        return redirect(url_for('perfil_empresa'))
+    file = request.files['profile_image']
+    if file.filename == '':
+        flash('No selected file', 'error')
+        return redirect(url_for('perfil_empresa'))
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+        
+        conn = get_db_connection()
+        company_id = session['user_id']
+        conn.execute('UPDATE usuarioEmpresa SET imagen = ? WHERE id = ?', (filepath, company_id))
+        conn.commit()
+        conn.close()
+
+        session['user_image'] = filepath  # Update session with new image path
+        flash('Image uploaded successfully', 'success')
+        return redirect(url_for('perfil_empresa'))
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
+
 @app.route("/", methods=['GET', 'POST'])
 def index():
     return render_template('index.html')
@@ -171,7 +219,7 @@ def register():
         email = request.form['email']
         password = request.form['password']
         is_vendor = 'is_vendor' in request.form
-        image = 'static/uploads/defaultuser.png'  # Ruta a la imagen predeterminada
+        image = 'static/img/defaultUser.png'  # Ruta a la imagen predeterminada
         hashed_password = generate_password_hash(password)
 
         if not name or not email or not password:
@@ -316,11 +364,40 @@ def seleccionar_membresia(membresia):
     flash('Membresía seleccionada con éxito', 'success')
     return '', 204
 
-@app.route("/menu", methods=['GET', 'POST'])
+@app.route("/menu", methods=['GET'])
 def menu():
-    user_name = session.get('user_name')
-    user_image = session.get('user_image')
-    return render_template('general/menu.html', user_name=user_name, user_image=user_image)
+    conn = get_db_connection()
+    productos = conn.execute('SELECT * FROM Productos').fetchall()
+    conn.close()
+    return render_template('menu.html', productos=productos)
+
+@app.route("/producto", methods=['GET'])
+def producto():
+    producto_id = request.args.get('producto_id')
+    conn = get_db_connection()
+    producto = conn.execute('SELECT * FROM Productos WHERE id = ?', (producto_id,)).fetchone()
+    conn.close()
+    return render_template('Producto.html', producto=producto)
+
+@app.route("/add_favorito/<int:producto_id>", methods=['POST'])
+def add_favorito(producto_id):
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    conn.execute('INSERT INTO favoritos (usuario_id, producto_id) VALUES (?, ?)', (user_id, producto_id))
+    conn.commit()
+    conn.close()
+    flash('Producto añadido a favoritos', 'success')
+    return redirect(url_for('menu'))
+
+@app.route("/add_carrito/<int:producto_id>", methods=['POST'])
+def add_carrito(producto_id):
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    conn.execute('INSERT INTO carrito (usuario_id, producto_id) VALUES (?, ?)', (user_id, producto_id))
+    conn.commit()
+    conn.close()
+    flash('Producto añadido al carrito', 'success')
+    return redirect(url_for('menu'))
 
 @app.route("/pedidos_cliente", methods=['GET'])
 def pedidos_cliente():
@@ -349,7 +426,11 @@ def informacion():
 
 @app.route("/perfil_usuario", methods=['GET', 'POST'])
 def perfil_usuario():
-    user = {'name': session.get('user_name'), 'email': session.get('user_email'), 'image': session.get('user_image')}
+    user = {
+        'name': session.get('user_name'),
+        'email': session.get('user_email'),
+        'image': session.get('user_image') or url_for('static', filename='img/defaultUser.png')
+    }
     return render_template('Perfil/PerfilUsuario.html', user=user)
 
 @app.route("/menu_restaurant")
@@ -424,7 +505,7 @@ def soporte():
 
 @app.route("/perfil_empresa")
 def perfil_empresa():
-    company = {'name': session.get('user_name'), 'email': session.get('user_email'), 'password': '********'}
+    company = {'name': session.get('user_name'), 'email': session.get('user_email'), 'image': session.get('user_image') or url_for('static', filename='img/defaultUser.png')}
     return render_template('Perfil/PerfilEmpresa.html', company=company)
 
 @app.route("/direcciones_empresa")
@@ -442,6 +523,272 @@ def membresia_empresa():
 @app.route("/soporte_empresa")
 def soporte_empresa():
     return render_template('Perfil/SoporteEmpresa.html')
+
+@app.route("/favoritos")
+def favoritos():
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    productos_favoritos = conn.execute('''
+        SELECT Productos.* FROM Productos
+        INNER JOIN favoritos ON Productos.id = favoritos.producto_id
+        WHERE favoritos.usuario_id = ?
+    ''', (user_id,)).fetchall()
+    conn.close()
+    return render_template('Favoritos.html', productos=productos_favoritos)
+
+@app.route("/add_favorito/<int:producto_id>", methods=['POST'])
+def add_favorito(producto_id):
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    conn.execute('INSERT INTO favoritos (usuario_id, producto_id) VALUES (?, ?)', (user_id, producto_id))
+    conn.commit()
+    conn.close()
+    flash('Producto añadido a favoritos', 'success')
+    return redirect(url_for('menu'))
+
+@app.route("/remove_favorito/<int:producto_id>", methods=['POST'])
+def remove_favorito(producto_id):
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+import sqlite3
+
+app = Flask(__name__)
+app.secret_key = 'your_secret_key'
+
+def get_db_connection():
+    conn = sqlite3.connect('database.db')
+    conn.row_factory = sqlite3.Row
+    return conn
+
+@app.route('/')
+def home():
+    return render_template('home.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        
+        conn = get_db_connection()
+        user = conn.execute('SELECT * FROM usuarioEmpresa WHERE correo_electronico = ?', (email,)).fetchone()
+        conn.close()
+        
+        if user and check_password_hash(user['contrasena'], password):
+            session['user_id'] = user['id']
+            session['user_name'] = user['nombre_usuario']
+            session['user_email'] = user['correo_electronico']
+            session['user_image'] = user.get('imagen', 'img/defaultUser.png')
+            flash('Login successful!', 'success')
+            return redirect(url_for('menu_restaurant'))
+        else:
+            flash('Invalid credentials', 'error')
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('You have been logged out.', 'success')
+    return redirect(url_for('login'))
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        password = generate_password_hash(request.form['password'])
+
+        conn = get_db_connection()
+        conn.execute('INSERT INTO usuarioEmpresa (nombre_usuario, correo_electronico, contrasena) VALUES (?, ?, ?)',
+                     (name, email, password))
+        conn.commit()
+        conn.close()
+        flash('Registration successful!', 'success')
+        return redirect(url_for('login'))
+    return render_template('register.html')
+
+@app.route('/menu_restaurant')
+def menu_restaurant():
+    conn = get_db_connection()
+    productos = conn.execute('SELECT * FROM Productos').fetchall()
+    conn.close()
+    return render_template('menu.html', productos=productos)
+
+@app.route('/perfil_empresa', methods=['GET', 'POST'])
+def perfil_empresa():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        current_password = request.form['current_password']
+        new_password = request.form['new_password']
+
+        conn = get_db_connection()
+        company_id = session['user_id']
+        company = conn.execute('SELECT * FROM usuarioEmpresa WHERE id = ?', (company_id,)).fetchone()
+
+        if company and check_password_hash(company['contrasena'], current_password):
+            hashed_password = generate_password_hash(new_password) if new_password else company['contrasena']
+            conn.execute('UPDATE usuarioEmpresa SET nombre_usuario =
+python
+Copiar código
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+import sqlite3
+from werkzeug.security import generate_password_hash, check_password_hash
+
+app = Flask(__name__)
+app.secret_key = 'your_secret_key'
+
+def get_db_connection():
+    conn = sqlite3.connect('database.db')
+    conn.row_factory = sqlite3.Row
+    return conn
+
+@app.route('/')
+def home():
+    return render_template('home.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        
+        conn = get_db_connection()
+        user = conn.execute('SELECT * FROM usuarioEmpresa WHERE correo_electronico = ?', (email,)).fetchone()
+        conn.close()
+        
+        if user and check_password_hash(user['contrasena'], password):
+            session['user_id'] = user['id']
+            session['user_name'] = user['nombre_usuario']
+            session['user_email'] = user['correo_electronico']
+            session['user_image'] = user.get('imagen', 'img/defaultUser.png')
+            flash('Login successful!', 'success')
+            return redirect(url_for('menu_restaurant'))
+        else:
+            flash('Invalid credentials', 'error')
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('You have been logged out.', 'success')
+    return redirect(url_for('login'))
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        password = generate_password_hash(request.form['password'])
+
+        conn = get_db_connection()
+        conn.execute('INSERT INTO usuarioEmpresa (nombre_usuario, correo_electronico, contrasena) VALUES (?, ?, ?)',
+                     (name, email, password))
+        conn.commit()
+        conn.close()
+        flash('Registration successful!', 'success')
+        return redirect(url_for('login'))
+    return render_template('register.html')
+
+@app.route('/menu_restaurant')
+def menu_restaurant():
+    conn = get_db_connection()
+    productos = conn.execute('SELECT * FROM Productos').fetchall()
+    conn.close()
+    return render_template('menu.html', productos=productos)
+
+@app.route('/perfil_empresa', methods=['GET', 'POST'])
+def perfil_empresa():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        current_password = request.form['current_password']
+        new_password = request.form['new_password']
+
+        conn = get_db_connection()
+        company_id = session['user_id']
+        company = conn.execute('SELECT * FROM usuarioEmpresa WHERE id = ?', (company_id,)).fetchone()
+
+        if company and check_password_hash(company['contrasena'], current_password):
+            hashed_password = generate_password_hash(new_password) if new_password else company['contrasena']
+            conn.execute('UPDATE usuarioEmpresa SET nombre_usuario = ?, correo_electronico = ?, contrasena = ? WHERE id = ?',
+                         (name, email, hashed_password, company_id))
+            conn.commit()
+            conn.close()
+            flash('Profile updated successfully!', 'success')
+            return redirect(url_for('perfil_empresa'))
+        else:
+            flash('Invalid current password', 'error')
+    return render_template('perfil_empresa.html')
+
+@app.route('/ver_comidas')
+def ver_comidas():
+    empresa_id = session.get('user_id')  # Assuming user_id is the empresa_id
+    conn = get_db_connection()
+    productos = conn.execute('SELECT * FROM Productos WHERE empresa_id = ?', (empresa_id,)).fetchall()
+    conn.close()
+    return render_template('VerComidas.html', productos=productos)
+
+@app.route('/add_favorito/<int:producto_id>', methods=['POST'])
+def add_favorito(producto_id):
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    conn.execute('INSERT INTO favoritos (usuario_id, producto_id) VALUES (?, ?)', (user_id, producto_id))
+    conn.commit()
+    conn.close()
+    flash('Producto añadido a favoritos', 'success')
+    return redirect(url_for('menu_restaurant'))
+
+@app.route('/remove_favorito/<int:producto_id>', methods=['POST'])
+def remove_favorito(producto_id):
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    conn.execute('DELETE FROM favoritos WHERE usuario_id = ? AND producto_id = ?', (user_id, producto_id))
+    conn.commit()
+    conn.close()
+    flash('Producto eliminado de favoritos', 'success')
+    return redirect(url_for('menu_restaurant'))
+
+@app.route('/add_carrito/<int:producto_id>', methods=['POST'])
+def add_carrito(producto_id):
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    conn.execute('INSERT INTO carrito (usuario_id, producto_id) VALUES (?, ?)', (user_id, producto_id))
+    conn.commit()
+    conn.close()
+    flash('Producto añadido al carrito', 'success')
+    return redirect(url_for('menu_restaurant'))
+
+@app.route('/producto/<int:producto_id>')
+def producto(producto_id):
+    conn = get_db_connection()
+    producto = conn.execute('SELECT * FROM Productos WHERE id = ?', (producto_id,)).fetchone()
+    conn.close()
+    return render_template('Producto.html', producto=producto)
+
+if __name__ == "__main__":
+    app.run(debug=True)    conn.commit()
+    conn.close()
+    flash('Producto eliminado de favoritos', 'success')
+    return redirect(url_for('favoritos'))
+
+@app.route("/add_carrito/<int:producto_id>", methods=['POST'])
+def add_carrito(producto_id):
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    conn.execute('INSERT INTO carrito (usuario_id, producto_id) VALUES (?, ?)', (user_id, producto_id))
+    conn.commit()
+    conn.close()
+    flash('Producto añadido al carrito', 'success')
+    return redirect(url_for('menu'))
+
+@app.route("/producto/<int:producto_id>")
+def producto(producto_id):
+    conn = get_db_connection()
+    producto = conn.execute('SELECT * FROM Productos WHERE id = ?', (producto_id,)).fetchone()
+    conn.close()
+    return render_template('Producto.html', producto=producto)
 
 if __name__ == "__main__":
     app.run(debug=True)

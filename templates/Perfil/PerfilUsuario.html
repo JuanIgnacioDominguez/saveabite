@@ -91,7 +91,7 @@
             <div class="profile-container">
                 <div class="profile-info">
                     <div class="text-center">
-                        <img src="{{ user.image }}" alt="User Avatar" class="profile-avatar rounded-full mx-auto" id="profile-image">
+                        <img src="{{ user.image if user.image else url_for('static', filename='img/defaultUser.png') }}" alt="User Avatar" class="profile-avatar rounded-full mx-auto" id="profile-image">
                         <form id="image-form" action="{{ url_for('upload_image') }}" method="POST" enctype="multipart/form-data" style="display:none;">
                             <input type="file" name="profile_image" id="file-input" accept="image/*">
                         </form>
@@ -116,7 +116,7 @@
                         </a>
                     </div>
                 </div>
-                <button class="logout-button w-full text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200 mt-6">Cerrar Sesión</button>
+                <button class="logout-button w-full text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200 mt-6" onclick="location.href='{{ url_for('logout') }}'">Cerrar Sesión</button>
             </div>
         </div>
     </div>

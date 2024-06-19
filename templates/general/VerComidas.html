@@ -31,6 +31,7 @@
             margin: 1rem 0;
             text-align: center;
             transition: transform 0.2s;
+            cursor: pointer;
         }
         .card:hover {
             transform: translateY(-5px);
@@ -116,10 +117,11 @@
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const categoryItems = document.querySelectorAll('.category-item');
-            categoryItems.forEach(item => {
-                item.addEventListener('click', () => {
-                    item.classList.toggle('selected');
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const productoId = this.getAttribute('data-id');
+                    window.location.href = "{{ url_for('producto') }}" + "/" + productoId;
                 });
             });
 
@@ -128,7 +130,8 @@
             const closeModal = document.getElementsByClassName('close')[0];
 
             editButtons.forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function(event) {
+                    event.stopPropagation(); // Prevent card click event
                     modal.style.display = 'block';
                     // Load product data into the modal form
                     const card = this.closest('.card');
@@ -160,27 +163,27 @@
             <img src="/static/img/logo.png" alt="Logo" class="w-full h-auto">
         </div>
         <nav class="mt-4 sidebar">
-            <a href="/templates/general/menu_empresas" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="{{ url_for('menu_restaurant') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-home mr-2 text-gray-500"></i>
                 Inicio
             </a>
-            <a href="/agregar-comida" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="{{ url_for('agregar_comida') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-plus mr-2"></i>
                 Agregar Comida
             </a>
-            <a href="/ver-comidas" class="flex items-center py-2.5 px-4 rounded transition duration-200 text-blue-500 active">
+            <a href="{{ url_for('ver_comidas') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 text-blue-500 active">
                 <i class="fas fa-list mr-2"></i>
                 Ver Comidas
             </a>
-            <a href="/pedidos-en-curso" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="{{ url_for('pedidos_en_curso') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-shopping-cart mr-2 text-gray-500"></i>
                 Pedidos en Curso
             </a>
-            <a href="/perfil-empresa" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="{{ url_for('perfil_empresa') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-user mr-2 text-gray-500"></i>
                 Perfil
             </a>
-            <a href="/informacion" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="{{ url_for('informacion') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-info-circle mr-2 text-gray-500"></i>
                 Información
             </a>
@@ -191,28 +194,15 @@
         <h1 class="text-2xl font-bold mb-4">Ver Comidas</h1>
         <div class="content-container bg-transparent p-6 rounded">
             <div class="form-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="card">
-                    <img src="/static/img/receta1.png" alt="Comida 1">
-                    <h2 class="text-xl font-bold product-name">Pizza Napolitana</h2>
-                    <div class="text-gray-600 product-people">Para 4 personas</div>
-                    <div class="text-gray-600 product-price">$5200</div>
+                {% for producto in productos %}
+                <div class="card" data-id="{{ producto['id'] }}">
+                    <img src="{{ url_for('static', filename=producto['imagen']) }}" alt="{{ producto['nombre'] }}">
+                    <h2 class="text-xl font-bold product-name">{{ producto['nombre'] }}</h2>
+                    <div class="text-gray-600 product-people">Para {{ producto['cantidadPersonas'] }} personas</div>
+                    <div class="text-gray-600 product-price">$ {{ producto['precio'] }}</div>
                     <button class="mt-4 edit-button">Editar Producto</button>
                 </div>
-                <div class="card">
-                    <img src="/static/img/receta2.png" alt="Comida 2">
-                    <h2 class="text-xl font-bold product-name">Milanesa Napolitana</h2>
-                    <div class="text-gray-600 product-people">Para 2 personas</div>
-                    <div class="text-gray-600 product-price">$4500</div>
-                    <button class="mt-4 edit-button">Editar Producto</button>
-                </div>
-                <div class="card">
-                    <img src="/static/img/receta3.png" alt="Comida 3">
-                    <h2 class="text-xl font-bold product-name">Hamburguesa con papas</h2>
-                    <div class="text-gray-600 product-people">Para 1 persona</div>
-                    <div class="text-gray-600 product-price">$3800</div>
-                    <button class="mt-4 edit-button">Editar Producto</button>
-                </div>
-                <!-- Add more cards as needed -->
+                {% endfor %}
             </div>
         </div>
     </div>

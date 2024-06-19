@@ -1,31 +1,84 @@
-<aside class="w-64 bg-white text-black shadow-lg">
-    <div class="p-4">
-        <img src="/static/img/logo.png" alt="Logo" class="w-full h-auto">
-    </div>
-    <nav class="mt-4 sidebar">
-        <a href="/templates/general/menu_usuario" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-            <i class="fas fa-home mr-2 text-gray-500"></i>
-            Inicio
-        </a>
-        <a href="/carrito" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-            <i class="fas fa-shopping-cart mr-2 text-gray-500"></i>
-            Carrito
-        </a>
-        <a href="/mis-pedidos" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-            <i class="fas fa-box mr-2 text-gray-500"></i>
-            Mis Pedidos
-        </a>
-        <a href="/favoritos" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-            <i class="fas fa-heart mr-2 text-gray-500"></i>
-            Favoritos
-        </a>
-        <a href="/perfil-usuario" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-            <i class="fas fa-user mr-2 text-gray-500"></i>
-            Perfil
-        </a>
-        <a href="/informacion" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-            <i class="fas fa-info-circle mr-2 text-gray-500"></i>
-            Información
-        </a>
-    </nav>
-</aside>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save a Bite - Sidebar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: white;
+            overflow: hidden;
+        }
+        .sidebar {
+            height: 100vh;
+            background-color: white;
+            width: 16rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+        }
+        .nav-item {
+            margin: 2rem 0;
+            display: flex;
+            align-items: center;
+            color: #6b7280;
+            transition: color 0.3s ease;
+        }
+        .nav-item i {
+            height: 24px;
+            width: 24px;
+            margin-right: 0.5rem;
+        }
+        .nav-item a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .nav-item:hover,
+        .nav-item.active {
+            color: #27a2e8;
+        }
+        .bg-custom-blue {
+            background-color: #27a2e8;
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="flex justify-center mb-8">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" class="logo w-44" alt="Save a Bite Logo"/>
+        </div>
+        <div class="nav-item {% if request.path == url_for('menu') %}active{% endif %}">
+            <i class="fas fa-home"></i>
+            <a href="{{ url_for('menu') }}" class="text-decoration-none">Inicio</a>
+        </div>
+        <div class="nav-item {% if request.path == url_for('carrito') %}active{% endif %}">
+            <i class="fas fa-shopping-bag"></i>
+            <a href="{{ url_for('carrito') }}" class="text-decoration-none">Carrito</a>
+        </div>
+        <div class="nav-item {% if request.path == url_for('favoritos') %}active{% endif %}">
+            <i class="fas fa-heart"></i>
+            <a href="{{ url_for('favoritos') }}" class="text-decoration-none">Favoritos</a>
+        </div>
+        <div class="nav-item {% if request.path == url_for('perfil_usuario') %}active{% endif %}">
+            <i class="fas fa-user"></i>
+            <a href="{{ url_for('perfil_usuario') }}" class="text-decoration-none">Perfil</a>
+        </div>
+        <div class="nav-item {% if request.path == url_for('informacion') %}active{% endif %}">
+            <i class="fas fa-info-circle"></i>
+            <a href="{{ url_for('informacion') }}" class="text-decoration-none">Información</a>
+        </div>
+        <div class="profile">
+            <img src="{{ url_for('static', filename=user_image) }}" alt="Profile">
+            <div class="profile-text">
+                <div class="name">{{ user_name }}</div>
+                <a href="{{ url_for('perfil_usuario') }}" class="edit-profile">Edit Profile</a>
+            </div>
+        </div>
+    </aside>
+</body>
+</html>

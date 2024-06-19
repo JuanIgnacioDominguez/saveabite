@@ -195,6 +195,21 @@
         .footer {
             flex-shrink: 0;
         }
+        .cancel-button {
+            background-color: #ff4d4d; /* Red background */
+            color: white;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            text-align: center;
+            display: inline-block;
+            margin-top: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s;
+            width: 100%;
+        }
+        .cancel-button:hover {
+            background-color: #cc0000; /* Darker red on hover */
+        }
     </style>
 </head>
 <body class="flex">
@@ -240,6 +255,9 @@
             <div class="membership-card membership-current">
                 <h3>Membresía Actual</h3>
                 <p>{{ membresia }}</p>
+                <form method="POST" action="{{ url_for('cancelar_membresia') }}">
+                    <button type="submit" class="cancel-button">Dar de Baja</button>
+                </form>
             </div>
             {% else %}
             <div class="membership-card membership-current">

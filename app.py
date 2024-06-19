@@ -1,8 +1,11 @@
+import os
 import datetime
 import uuid
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_mail import Mail, Message
 import sqlite3
+from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -17,6 +20,14 @@ app.config['MAIL_DEFAULT_SENDER'] = 'saveabite.sip@gmail.com'
 
 mail = Mail(app)
 
+# Configuración de subida de archivos
+UPLOAD_FOLDER = 'static/uploads/'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 def get_db_connection():
     conn = sqlite3.connect('flask_db.db')
     conn.row_factory = sqlite3.Row
@@ -24,29 +35,26 @@ def get_db_connection():
 
 def create_tables():
     conn = get_db_connection()
-    # Crear tabla usuarios
     conn.execute('''
         CREATE TABLE IF NOT EXISTS usuarios (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nombre_usuario TEXT NOT NULL,
             correo_electronico TEXT NOT NULL UNIQUE,
             contrasena TEXT NOT NULL,
-            imagen TEXT  -- Columna para almacenar imágenes
+            imagen TEXT,
             membresia TEXT
         )
     ''')
-    # Crear tabla usuarioEmpresa
     conn.execute('''
         CREATE TABLE IF NOT EXISTS usuarioEmpresa (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nombre_usuario TEXT NOT NULL,
             correo_electronico TEXT NOT NULL UNIQUE,
             contrasena TEXT NOT NULL,
-            imagen TEXT  -- Columna para almacenar imágenes
+            imagen TEXT,
             membresia TEXT 
         )
     ''')
-    # Crear tabla Productos
     conn.execute('''
         CREATE TABLE IF NOT EXISTS Productos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -59,7 +67,6 @@ def create_tables():
             tipoComida TEXT NOT NULL
         )
     ''')
-    # Crear tabla métodos de pago
     conn.execute('''
         CREATE TABLE IF NOT EXISTS metodos_pago (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -70,7 +77,6 @@ def create_tables():
             FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
         )
     ''')
-    # Crear tabla direcciones
     conn.execute('''
         CREATE TABLE IF NOT EXISTS direcciones (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -81,7 +87,6 @@ def create_tables():
             FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
         )
     ''')
-    # Crear tabla PasswordResetTokens
     conn.execute('''
         CREATE TABLE IF NOT EXISTS PasswordResetTokens (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -89,37 +94,12 @@ def create_tables():
             token TEXT NOT NULL,
             expiration DATETIME NOT NULL,
             FOREIGN KEY (user_id) REFERENCES usuarios (id)
-            )
+        )
     ''')
-
-    conn.commit()
-    conn.close()
-
-def add_membership_field():
-    conn = get_db_connection()
-    # Añadir el campo membresia a la tabla usuarios
-    try:
-        conn.execute('''
-            ALTER TABLE usuarios
-            ADD COLUMN membresia TEXT
-        ''')
-    except sqlite3.OperationalError:
-        # La columna ya existe
-        pass
-    # Añadir el campo membresia a la tabla usuarioEmpresa
-    try:
-        conn.execute('''
-            ALTER TABLE usuarioEmpresa
-            ADD COLUMN membresia TEXT
-        ''')
-    except sqlite3.OperationalError:
-        # La columna ya existe
-        pass
     conn.commit()
     conn.close()
 
 create_tables()
-add_membership_field()
 
 def generate_token():
     return str(uuid.uuid4())
@@ -129,6 +109,30 @@ def send_reset_email(email, token):
     msg = Message('Restablecer Contraseña', recipients=[email])
     msg.body = f'Para restablecer su contraseña, haga clic en el siguiente enlace: {reset_link}'
     mail.send(msg)
+
+@app.route('/upload_image', methods=['POST'])
+def upload_image():
+    if 'profile_image' not in request.files:
+        flash('No file part', 'error')
+        return redirect(url_for('perfil_usuario'))
+    file = request.files['profile_image']
+    if file.filename == '':
+        flash('No selected file', 'error')
+        return redirect(url_for('perfil_usuario'))
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+        
+        conn = get_db_connection()
+        user_id = session['user_id']
+        conn.execute('UPDATE usuarios SET imagen = ? WHERE id = ?', (filepath, user_id))
+        conn.commit()
+        conn.close()
+
+        session['user_image'] = filepath  # Update session with new image path
+        flash('Image uploaded successfully', 'success')
+        return redirect(url_for('perfil_usuario'))
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
@@ -140,16 +144,16 @@ def login():
         email = request.form['email']
         password = request.form['password']
         conn = get_db_connection()
-        user = conn.execute('SELECT * FROM usuarios WHERE correo_electronico = ? AND contrasena = ?', (email, password)).fetchone()
-        vendor = conn.execute('SELECT * FROM usuarioEmpresa WHERE correo_electronico = ? AND contrasena = ?', (email, password)).fetchone()
+        user = conn.execute('SELECT * FROM usuarios WHERE correo_electronico = ?', (email,)).fetchone()
+        vendor = conn.execute('SELECT * FROM usuarioEmpresa WHERE correo_electronico = ?', (email,)).fetchone()
         conn.close()
-        if user:
+        if user and check_password_hash(user['contrasena'], password):
             session['user_id'] = user['id']
             session['user_name'] = user['nombre_usuario']
             session['user_email'] = user['correo_electronico']
             session['user_image'] = user['imagen']
             return redirect(url_for('menu'))
-        elif vendor:
+        elif vendor and check_password_hash(vendor['contrasena'], password):
             session['user_id'] = vendor['id']
             session['user_name'] = vendor['nombre_usuario']
             session['user_email'] = vendor['correo_electronico']
@@ -167,7 +171,8 @@ def register():
         email = request.form['email']
         password = request.form['password']
         is_vendor = 'is_vendor' in request.form
-        image = 'img/defaultuser.png'  # Ruta a la imagen predeterminada
+        image = 'static/uploads/defaultuser.png'  # Ruta a la imagen predeterminada
+        hashed_password = generate_password_hash(password)
 
         if not name or not email or not password:
             flash('Por favor, complete todas las casillas', 'error')
@@ -176,18 +181,18 @@ def register():
         conn = get_db_connection()
         try:
             if is_vendor:
-                conn.execute('INSERT INTO usuarioEmpresa (nombre_usuario, correo_electronico, contrasena, imagen) VALUES (?, ?, ?, ?)', (name, email, password, image))
+                conn.execute('INSERT INTO usuarioEmpresa (nombre_usuario, correo_electronico, contrasena, imagen) VALUES (?, ?, ?, ?)', (name, email, hashed_password, image))
                 conn.commit()
-                vendor = conn.execute('SELECT * FROM usuarioEmpresa WHERE correo_electronico = ? AND contrasena = ?', (email, password)).fetchone()
+                vendor = conn.execute('SELECT * FROM usuarioEmpresa WHERE correo_electronico = ?', (email,)).fetchone()
                 conn.close()
                 session['user_id'] = vendor['id']
                 session['user_name'] = vendor['nombre_usuario']
                 session['user_image'] = vendor['imagen']
                 return redirect(url_for('menu_restaurant'))
             else:
-                conn.execute('INSERT INTO usuarios (nombre_usuario, correo_electronico, contrasena, imagen) VALUES (?, ?, ?, ?)', (name, email, password, image))
+                conn.execute('INSERT INTO usuarios (nombre_usuario, correo_electronico, contrasena, imagen) VALUES (?, ?, ?, ?)', (name, email, hashed_password, image))
                 conn.commit()
-                user = conn.execute('SELECT * FROM usuarios WHERE correo_electronico = ? AND contrasena = ?', (email, password)).fetchone()
+                user = conn.execute('SELECT * FROM usuarios WHERE correo_electronico = ?', (email,)).fetchone()
                 conn.close()
                 session['user_id'] = user['id']
                 session['user_name'] = user['nombre_usuario']
@@ -258,12 +263,10 @@ def forgot_password():
     conn = get_db_connection()
     user = conn.execute('SELECT * FROM usuarios WHERE correo_electronico = ?', (email,)).fetchone()
     if user:
-        # Generar un token y almacenarlo en la base de datos
         token = generate_token()
         expiration = datetime.datetime.now() + datetime.timedelta(hours=1)
         conn.execute('INSERT INTO PasswordResetTokens (user_id, token, expiration) VALUES (?, ?, ?)', (user['id'], token, expiration))
         conn.commit()
-        # Enviar un correo electrónico con el enlace de restablecimiento
         send_reset_email(email, token)
         flash('Se ha enviado un enlace para restablecer la contraseña a su email', 'success')
     else:
@@ -282,8 +285,9 @@ def reset_password(token):
 
     if request.method == 'POST':
         new_password = request.form['password']
+        hashed_password = generate_password_hash(new_password)
         user_id = token_data['user_id']
-        conn.execute('UPDATE usuarios SET contrasena = ? WHERE id = ?', (new_password, user_id))
+        conn.execute('UPDATE usuarios SET contrasena = ? WHERE id = ?', (hashed_password, user_id))
         conn.execute('DELETE FROM PasswordResetTokens WHERE user_id = ?', (user_id,))
         conn.commit()
         flash('Contraseña actualizada con éxito', 'success')
@@ -311,8 +315,6 @@ def seleccionar_membresia(membresia):
     conn.close()
     flash('Membresía seleccionada con éxito', 'success')
     return '', 204
-
-
 
 @app.route("/menu", methods=['GET', 'POST'])
 def menu():
@@ -345,7 +347,6 @@ def pedidos_cliente():
 def informacion():
     return render_template('general/informacion.html')
 
-
 @app.route("/perfil_usuario", methods=['GET', 'POST'])
 def perfil_usuario():
     user = {'name': session.get('user_name'), 'email': session.get('user_email'), 'image': session.get('user_image')}
@@ -361,15 +362,61 @@ def menu_restaurant():
     }
     return render_template('general/menu_empresas.html', restaurant=restaurant)
 
-
-@app.route("/editar_perfil")
+@app.route("/editar_perfil", methods=['GET', 'POST'])
 def editar_perfil():
-    user = {
-        'name': session.get('user_name'), 
-        'email': session.get('user_email')
-    }
-    return render_template('Perfil/EditarPerfil.html', user=user)
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        current_password = request.form['current_password']
+        new_password = request.form['new_password']
 
+        conn = get_db_connection()
+        user_id = session['user_id']
+        user = conn.execute('SELECT * FROM usuarios WHERE id = ?', (user_id,)).fetchone()
+
+        if user and check_password_hash(user['contrasena'], current_password):
+            hashed_password = generate_password_hash(new_password) if new_password else user['contrasena']
+            conn.execute('UPDATE usuarios SET nombre_usuario = ?, correo_electronico = ?, contrasena = ? WHERE id = ?', (name, email, hashed_password, user_id))
+            conn.commit()
+            flash('Perfil actualizado con éxito', 'success')
+        else:
+            flash('Contraseña actual incorrecta', 'error')
+
+        conn.close()
+        return redirect(url_for('perfil_usuario'))
+    else:
+        conn = get_db_connection()
+        user_id = session['user_id']
+        user = conn.execute('SELECT * FROM usuarios WHERE id = ?', (user_id,)).fetchone()
+        conn.close()
+        user = {'name': user['nombre_usuario'], 'email': user['correo_electronico'], 'password': user['contrasena']}
+        return render_template('Perfil/EditarPerfil.html', user=user)
+
+@app.route("/editar_perfil_empresa", methods=['GET', 'POST'])
+def editar_perfil_empresa():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        current_password = request.form['current_password']
+        new_password = request.form['new_password']
+
+        conn = get_db_connection()
+        company_id = session['user_id']
+        company = conn.execute('SELECT * FROM usuarioEmpresa WHERE id = ?', (company_id,)).fetchone()
+
+        if company and check_password_hash(company['contrasena'], current_password):
+            hashed_password = generate_password_hash(new_password) if new_password else company['contrasena']
+            conn.execute('UPDATE usuarioEmpresa SET nombre_usuario = ?, correo_electronico = ?, contrasena = ? WHERE id = ?', (name, email, hashed_password, company_id))
+            conn.commit()
+            flash('Perfil de empresa actualizado con éxito', 'success')
+        else:
+            flash('Contraseña actual incorrecta', 'error')
+
+        conn.close()
+        return redirect(url_for('perfil_empresa'))
+    else:
+        company = conn.execute('SELECT * FROM usuarioEmpresa WHERE id = ?', (session['user_id'],)).fetchone()
+        return render_template('Perfil/EditarPerfilEmpresa.html', company=company)
 
 @app.route("/soporte")
 def soporte():
@@ -377,7 +424,7 @@ def soporte():
 
 @app.route("/perfil_empresa")
 def perfil_empresa():
-    company = {'name': session.get('user_name'), 'email': session.get('user_email')}
+    company = {'name': session.get('user_name'), 'email': session.get('user_email'), 'password': '********'}
     return render_template('Perfil/PerfilEmpresa.html', company=company)
 
 @app.route("/direcciones_empresa")
@@ -387,11 +434,6 @@ def direcciones_empresa():
         {'name': 'Sucursal', 'address': '101 Avenida Comercial'}
     ]
     return render_template('Perfil/DireccionesEmpresa.html', addresses=addresses)
-
-@app.route("/editar_perfil_empresa")
-def editar_perfil_empresa():
-    company = {'name': session.get('user_name'), 'email': session.get('user_email')}
-    return render_template('Perfil/EditarPerfilEmpresa.html', company=company)
 
 @app.route("/membresia_empresa")
 def membresia_empresa():

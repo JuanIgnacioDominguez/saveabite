@@ -61,6 +61,7 @@
         }
         .form-group {
             margin-bottom: 1.5rem;
+            position: relative;
         }
         .form-group label {
             display: block;
@@ -73,6 +74,13 @@
             border: 1px solid #e2e8f0;
             border-radius: 0.375rem;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .form-group .password-eye {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
         }
         .submit-button {
             background-color: #27a2e8;
@@ -123,55 +131,6 @@
         .form-content {
             flex-grow: 1;
         }
-        /* Styles for the modal */
-        .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1; /* Sit on top */
-            left: 0;
-            top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgb(0,0,0); /* Fallback color */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-            padding-top: 60px;
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto; /* 15% from the top and centered */
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; /* Could be more or less, depending on screen size */
-            border-radius: 0.375rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .add-button {
-            background-color: #27a2e8;
-            color: white;
-            padding: 0.75rem;
-            border-radius: 0.375rem;
-            text-align: center;
-            display: inline-block;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.2s;
-            margin-top: 1rem;
-        }
-        .add-button:hover {
-            background-color: #1b7fbf;
-        }
     </style>
 </head>
 <body class="flex h-screen">
@@ -181,7 +140,7 @@
             <img src="/static/img/logo.png" alt="Logo" class="w-full h-auto">
         </div>
         <nav class="mt-4 sidebar">
-            <a href="/general/menu.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="{{ url_for('menu') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-home mr-2 text-gray-500"></i>
                 Inicio
             </a>
@@ -197,11 +156,11 @@
                 <i class="fas fa-shopping-cart mr-2 text-gray-500"></i>
                 Pedidos en Curso
             </a>
-            <a href="/perfil-empresa" class="flex items-center py-2.5 px-4 rounded transition duration-200 text-blue-500 active">
+            <a href="{{ url_for('perfil_empresa') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 text-blue-500 active">
                 <i class="fas fa-user mr-2"></i>
                 Perfil
             </a>
-            <a href="/informacion" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
+            <a href="{{ url_for('informacion') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
                 <i class="fas fa-info-circle mr-2 text-gray-500"></i>
                 Información
             </a>
@@ -211,7 +170,7 @@
     <div class="flex-1 p-6">
         <h1 class="text-2xl font-bold mb-4">Editar Perfil Empresa</h1>
         <div class="content-container bg-white p-6 rounded shadow-md">
-            <a href="PerfilEmpresa.html" class="back-button">
+            <a href="{{ url_for('perfil_empresa') }}" class="back-button">
                 <i class="fas fa-arrow-left"></i>
                 Volver al Perfil
             </a>
@@ -219,7 +178,7 @@
             <div class="profile-container">
                 <div class="profile-info form-container">
                     <!-- Edit Profile Form -->
-                    <form id="edit-profile-form" class="flex flex-col h-full">
+                    <form action="{{ url_for('guardar_perfil_empresa') }}" method="post" class="flex flex-col h-full">
                         <div class="form-content">
                             <div class="form-group">
                                 <label for="name">Nombre</label>
@@ -230,91 +189,30 @@
                                 <input type="email" id="email" name="email" value="{{ company.email }}">
                             </div>
                             <div class="form-group">
-                                <label for="password">Contraseña</label>
-                                <input type="password" id="password" name="password">
+                                <label for="current_password">Contraseña Actual</label>
+                                <input type="text" id="current_password" name="current_password" value="{{ company.password }}" readonly>
+                                <i class="fas fa-eye password-eye" id="togglePassword"></i>
+                            </div>
+                            <div class="form-group">
+                                <label for="new_password">Nueva Contraseña</label>
+                                <input type="password" id="new_password" name="new_password">
                             </div>
                         </div>
                         <div class="mt-6">
-                            <button type="button" class="submit-button" onclick="openConfirmModal()">Guardar Cambios</button>
+                            <button type="submit" class="submit-button">Guardar Cambios</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Confirm Modal -->
-    <div id="confirmModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2 class="text-xl mb-4">Confirmar Cambios</h2>
-            <p>¿Está seguro que desea guardar los cambios?</p>
-            <div class="flex justify-end mt-4">
-                <button class="add-button mr-2" onclick="submitForm()">Sí, guardar</button>
-                <button class="add-button bg-gray-500" onclick="closeConfirmModal()">Cancelar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Success Modal -->
-    <div id="successModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2 class="text-xl mb-4">Éxito</h2>
-            <p>Los cambios se han guardado correctamente.</p>
-            <div class="flex justify-end mt-4">
-                <button class="add-button" onclick="closeSuccessModal()">Cerrar</button>
-            </div>
-        </div>
-    </div>
-    
     <script>
-        // Get the modals
-        var confirmModal = document.getElementById("confirmModal");
-        var successModal = document.getElementById("successModal");
-        
-        // Get the <span> elements that close the modals
-        var spans = document.getElementsByClassName("close");
-        
-        // When the user clicks on <span> (x), close the modals
-        for (var i = 0; i < spans.length; i++) {
-            spans[i].onclick = function() {
-                confirmModal.style.display = "none";
-                successModal.style.display = "none";
-            }
-        }
-        
-        // When the user clicks anywhere outside of the modals, close them
-        window.onclick = function(event) {
-            if (event.target == confirmModal || event.target == successModal) {
-                confirmModal.style.display = "none";
-                successModal.style.display = "none";
-            }
-        }
-        
-        // Function to open the confirm modal
-        function openConfirmModal() {
-            confirmModal.style.display = "block";
-        }
-        
-        // Function to close the confirm modal
-        function closeConfirmModal() {
-            confirmModal.style.display = "none";
-        }
-        
-        // Function to close the success modal
-        function closeSuccessModal() {
-            successModal.style.display = "none";
-        }
-
-        // Function to submit the form
-        function submitForm() {
-            // Simulate form submission
-            setTimeout(() => {
-                closeConfirmModal();
-                successModal.style.display = "block";
-            }, 500); // Simulate a short delay for the submission
-        }
+        document.getElementById('togglePassword').addEventListener('click', function (e) {
+            const passwordInput = document.getElementById('current_password');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
     </script>
 </body>
 </html>

@@ -10,6 +10,20 @@
     <style>
         body {
             background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
+            display: flex;
+        }
+        .sidebar {
+            height: 100vh;
+            background-color: white;
+            width: 16rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+        }
+        .main-content {
+            margin-left: 16rem; /* Ensure this matches the sidebar width */
+            flex: 1;
+            padding: 2rem;
         }
         .content-container {
             margin: 1rem 1rem 3rem 1rem;
@@ -78,58 +92,33 @@
         .active {
             color: #27a2e8 !important;
         }
-        aside {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 16rem;
-            background: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            overflow-y: auto;
+        .nav-item {
+            margin: 2rem 0;
+            display: flex;
+            align-items: center;
+            color: #6b7280;
+            transition: color 0.3s ease;
         }
-        .main-content {
-            margin-left: 16rem;
-            padding: 1rem;
-            width: calc(100% - 16rem);
+        .nav-item i {
+            height: 24px;
+            width: 24px;
+            margin-right: 0.5rem;
+        }
+        .nav-item a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .nav-item:hover,
+        .nav-item.active {
+            color: #27a2e8;
+        }
+        .bg-custom-blue {
+            background-color: #27a2e8;
         }
     </style>
 </head>
-<body class="min-h-screen">
-    <!-- Sidebar -->
-    <aside>
-        <div class="p-4">
-            <img src="/static/img/logo.png" alt="Logo" class="w-full h-auto">
-        </div>
-        <nav class="mt-4 sidebar">
-            <a href="inicio.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-home mr-2 text-gray-500"></i>
-                Inicio
-            </a>
-            <a href="agregar-comida.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-plus mr-2 text-gray-500"></i>
-                Agregar Comida
-            </a>
-            <a href="ver-comidas.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-list mr-2 text-gray-500"></i>
-                Ver Comidas
-            </a>
-            <a href="pedidos-en-curso.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-shopping-cart mr-2 text-gray-500"></i>
-                Pedidos en Curso
-            </a>
-            <a href="perfil-empresa.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-user mr-2 text-gray-500"></i>
-                <span class="text-gray-500">Perfil</span>
-            </a>
-            <a href="informacion.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 active">
-                <i class="fas fa-info-circle mr-2 text-27a2e8"></i>
-                <span class="text-27a2e8">Información</span>
-            </a>
-        </nav>
-    </aside>
-    <!-- Main content -->
+<body>
+    {% include 'Sidebars/sidebarEmpresa.html' %}
     <div class="main-content">
         <h1 class="text-3xl font-bold mb-4">Información sobre el Desperdicio de Alimentos</h1>
         <div class="content-container bg-white p-6 rounded shadow-md">

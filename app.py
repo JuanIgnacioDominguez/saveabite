@@ -325,6 +325,11 @@ def forgot_password():
     conn.close()
     return redirect(url_for('login'))
 
+@app.route("/resumen_empresa", methods=['GET'])
+def resumen_empresa():
+    # Add your logic to handle the resumen_empresa page here
+    return render_template('perfiles_empresa/resumen_empresa.html')
+
 @app.route("/reset_password/<token>", methods=['GET', 'POST'])
 def reset_password(token):
     conn = get_db_connection()
@@ -480,7 +485,7 @@ def pedidos_cliente():
 
 @app.route("/informacion", methods=['GET'])
 def informacion():
-    return render_template('general/informacion.html')
+    return render_template('general/informacionEmpresas.html')
 
 @app.route("/perfil_usuario", methods=['GET', 'POST'])
 def perfil_usuario():

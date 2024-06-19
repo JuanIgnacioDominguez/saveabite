@@ -99,12 +99,40 @@
         p {
             margin-bottom: 2rem;
         }
-        .sidebar a.active {
+        .sidebar {      /* cuadro blanco de la sidebar */
+            height: 100vh;
+            background-color: white;
+            width: 16rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+        }
+        .main-content {
+            margin-left: 2rem; /* creo y lo agrego al div */
+            flex: 0.13;
+            padding: 1rem;
+        }
+        .nav-item {
+            margin: 2rem 0;
+            display: flex;
+            align-items: center;
+            color: #6b7280;
+            transition: color 0.3s ease;
+        }
+        .nav-item i {
+            height: 24px;
+            width: 24px;
+            margin-right: 0.5rem;
+        }
+        .nav-item a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .nav-item:hover,
+        .nav-item.active {
             color: #27a2e8;
         }
-        .sidebar a.active i {
-            color: #27a2e8;
-        }
+        
         /* Modal styles */
         .modal {
             display: none; 
@@ -201,86 +229,56 @@
     </script>
 </head>
 <body class="flex h-screen">
-    <!-- Sidebar -->
-    <aside class="w-64 bg-white text-black shadow-lg">
-        <div class="p-4">
-            <img src="/static/img/logo.png" alt="Logo" class="w-full h-auto">
-        </div>
-        <nav class="mt-4 sidebar">
-            <a href="{{ url_for('menu_empresas') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-home mr-2 text-gray-500"></i>
-                Inicio
-            </a>
-            <a href="{{ url_for('crear_producto') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 text-blue-500 active">
-                <i class="fas fa-plus mr-2"></i>
-                Agregar Comida
-            </a>
-            <a href="{{ url_for('VerComidas') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-list mr-2 text-gray-500"></i>
-                Ver Comidas
-            </a>
-            <a href="{{ url_for('pedidos_cliente') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-shopping-cart mr-2 text-gray-500"></i>
-                Pedidos en Curso
-            </a>
-            <a href="{{ url_for('perfil_empresa') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-user mr-2 text-gray-500"></i>
-                Perfil
-            </a>
-            <a href="{{ url_for('informacion') }}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-info-circle mr-2 text-gray-500"></i>
-                Información
-            </a>
-        </nav>
-    </aside>
-    <!-- Main content -->
-    <div class="flex-1 p-6 overflow-y-auto">
-        <h1 class="text-2xl font-bold mb-4">Crear Producto</h1>
-        <h2 class="text-xl mb-4">Complete los campos para crear y publicar su producto</h2>
-        <div class="content-container bg-white p-6 rounded shadow-md">
-            <div class="form-container">
-                <form method="post" enctype="multipart/form-data">
-                    <label class="block mb-6">
-                        <span class="text-gray-700">Imagen del Producto</span>
-                        <input type="file" name="imagen" accept="image/png, image/jpeg" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                    </label>
-                    <label class="block mb-6">
-                        <span class="text-gray-700">Nombre del Producto</span>
-                        <input type="text" name="nombre" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                    </label>
-                    <label class="block mb-6">
-                        <span class="text-gray-700">Precio del Producto</span>
-                        <input type="text" name="precio" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                    </label>
-                    <label class="block mb-6">
-                        <span class="text-gray-700">Descripción</span>
-                        <textarea name="descripcion" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" rows="5"></textarea>
-                    </label>
-                    <input type="hidden" id="categoria" name="categoria" value="">
-                    <span class="text-gray-700">Categoría del Producto</span>
-                    <div class="flex flex-wrap mb-6">
-                        <span class="category-item" data-category="Todos">Todos</span>
-                        <span class="category-item" data-category="Hamburguesas">Hamburguesas</span>
-                        <span class="category-item" data-category="Pizzas">Pizzas</span>
-                        <span class="category-item" data-category="Pasta">Pasta</span>
-                        <span class="category-item" data-category="Ensaladas">Ensaladas</span>
-                        <span class="category-item" data-category="Cafeteria">Cafeteria</span>
-                        <span class="category-item" data-category="Carnes">Carnes</span>
-                    </div>
-                    <button type="submit" class="create-button">Crear Producto</button>
-                </form>
+    {% include 'Sidebars/sidebarEmpresa.html' %}
+    <div class="main-content"></div>
+        <div class="flex-1 p-6 overflow-y-auto">
+            <h1 class="text-2xl font-bold mb-4">Crear Producto</h1>
+            <h2 class="text-xl mb-4">Complete los campos para crear y publicar su producto</h2>
+            <div class="content-container bg-white p-6 rounded shadow-md">
+                <div class="form-container">
+                    <form method="post" enctype="multipart/form-data">
+                        <label class="block mb-6">
+                            <span class="text-gray-700">Imagen del Producto</span>
+                            <input type="file" name="imagen" accept="image/png, image/jpeg" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        </label>
+                        <label class="block mb-6">
+                            <span class="text-gray-700">Nombre del Producto</span>
+                            <input type="text" name="nombre" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        </label>
+                        <label class="block mb-6">
+                            <span class="text-gray-700">Precio del Producto</span>
+                            <input type="text" name="precio" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        </label>
+                        <label class="block mb-6">
+                            <span class="text-gray-700">Descripción</span>
+                            <textarea name="descripcion" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" rows="5"></textarea>
+                        </label>
+                        <input type="hidden" id="categoria" name="categoria" value="">
+                        <span class="text-gray-700">Categoría del Producto</span>
+                        <div class="flex flex-wrap mb-6">
+                            <span class="category-item" data-category="Todos">Todos</span>
+                            <span class="category-item" data-category="Hamburguesas">Hamburguesas</span>
+                            <span class="category-item" data-category="Pizzas">Pizzas</span>
+                            <span class="category-item" data-category="Pasta">Pasta</span>
+                            <span class="category-item" data-category="Ensaladas">Ensaladas</span>
+                            <span class="category-item" data-category="Cafeteria">Cafeteria</span>
+                            <span class="category-item" data-category="Carnes">Carnes</span>
+                        </div>
+                        <button type="submit" class="create-button">Crear Producto</button>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- The Modal -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <img src="/static/img/check.png" alt="Producto Creado" class="modal-image">
-            <p>Producto Creado!</p>
-            <br>
-            <button class="modal-button" onclick="window.location.href='/templates/general/menu_empresas'">Volver al Menu!</button>
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <img src="/static/img/check.png" alt="Producto Creado" class="modal-image">
+                <p>Producto Creado!</p>
+                <br>
+                <button class="modal-button" onclick="window.location.href='/templates/general/menu_empresas'">Volver al Menu!</button>
+            </div>
         </div>
     </div>
 </body>

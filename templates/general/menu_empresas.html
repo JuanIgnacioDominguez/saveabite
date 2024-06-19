@@ -11,15 +11,26 @@
         body {
             font-family: 'Nunito', sans-serif;
             background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
+            display: flex;
+            height: 100vh;
+            margin: 0;
         }
-        .bg-custom-blue {
-            background-color: #27a2e8;
+
+        .sidebar { /* Ajustes de la barra lateral */
+            height: 100vh;
+            background-color: white;
+            width: 16rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
         }
-        .text-custom-blue {
-            color: #27a2e8;
+        .main-content {
+            margin-left: 16rem; /* Ajuste del margen izquierdo */
+            flex: 1;
+            padding: 2rem;
         }
         .nav-item {
-            margin: 1rem 0;
+            margin: 2rem 0;
             display: flex;
             align-items: center;
             color: #6b7280;
@@ -30,14 +41,19 @@
             width: 24px;
             margin-right: 0.5rem;
         }
+        .nav-item a {
+            color: inherit;
+            text-decoration: none;
+        }
         .nav-item:hover,
         .nav-item.active {
             color: #27a2e8;
         }
+        
         .profile {
             display: flex;
             align-items: center;
-            margin-top: auto;
+            margin-top: 1rem;
             margin-bottom: 1rem;
         }
         .profile img {
@@ -123,50 +139,17 @@
         .active-link {
             color: #27a2e8 !important;
         }
+        
     </style>
 </head>
-<body class="flex">
-    <!-- Sidebar -->
-    <div class="flex flex-col h-screen bg-white w-64 p-6 shadow-lg">
-        <div class="flex justify-center mb-8">
-            <img src="{{ url_for('static', filename='img/logo.png') }}" class="logo w-44" alt="Save a Bite Logo"/>
-        </div>
-        <div class="nav-item {% if request.path == url_for('menu_empresas') %}active{% endif %}">
-            <i class="fas fa-home"></i>
-            <a href="{{ url_for('menu_empresas') }}" class="text-decoration-none">Inicio</a>
-        </div>
-        <!-- menu_empresas.html -->
-<div class="nav-item {% if request.path == url_for('crear_producto') %}active{% endif %}">
-    <i class="fas fa-plus"></i>
-    <a href="{{ url_for('crear_producto') }}" class="text-decoration-none">Agregar Comida</a>
-</div>
-        <div class="nav-item {% if request.path == url_for('VerComidas') %}active{% endif %}">
-            <i class="fas fa-list"></i>
-            <a href="{{ url_for('VerComidas') }}" class="text-decoration-none">Ver Comidas</a>
-        </div>
-        <div class="nav-item {% if request.path == url_for('pedidos') %}active{% endif %}">
-            <i class="fas fa-shopping-cart"></i>
-            <a href="{{ url_for('pedidos') }}" class="text-decoration-none">Pedidos en Curso</a>
-        </div>
-        <div class="nav-item {% if request.path == url_for('perfil_empresa') %}active{% endif %}">
-            <i class="fas fa-user"></i>
-            <a href="{{ url_for('perfil_empresa') }}" class="text-decoration-none">Perfil Empresa</a>
-        </div>
-        <div class="profile">
-            <img src="{{ url_for('static', filename=restaurant.image) }}" alt="Profile">
-            <div class="profile-text">
-                <div class="name">{{ restaurant.name }}</div>
-                <a href="{{ url_for('perfil_empresa') }}" class="edit-profile">Edit Profile</a>
-            </div>
-        </div>
-    </div>
-    <!-- Main content -->
-    <div class="flex-1 p-6">
+<body>
+    {% include 'Sidebars/sidebarEmpresa.html' %}
+    <div class="main-content">
         <div class="profile">
             <img src="{{ url_for('static', filename=restaurant['image']) }}" alt="Profile">
             <div class="profile-text">
                 <div class="name">{{ restaurant['name'] }}</div>
-                <a href="{{ url_for('perfil_empresa') }}" class="edit-profile">Edit Profile</a>
+                <a href="{{ url_for('perfil_empresa') }}" class="edit-profile">Editar Perfil</a>
             </div>
         </div>
         <form id="image-form" action="{{ url_for('upload_company_image') }}" method="POST" enctype="multipart/form-data" style="display:none;">

@@ -24,6 +24,8 @@
             margin-left: 16rem; /* Ensure this matches the sidebar width */
             flex: 1;
             padding: 2rem;
+            overflow-y: auto; /* Habilita el scroll vertical cuando sea necesario */
+            -webkit-overflow-scrolling: touch; /* Añade desplazamiento suave en iOS */
         }
         .content-container {
             margin: 1rem 1rem 3rem 1rem;
@@ -117,7 +119,7 @@
         }
     </style>
 </head>
-<body>
+<body class="flex h-screen">
     {% include 'Sidebars/sidebarEmpresa.html' %}
     <div class="main-content">
         <h1 class="text-3xl font-bold mb-4">Información sobre el Desperdicio de Alimentos</h1>

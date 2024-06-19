@@ -222,7 +222,7 @@ def register():
                 session['user_id'] = vendor['id']
                 session['user_name'] = vendor['nombre_usuario']
                 session['user_image'] = vendor['imagen']
-                return redirect(url_for('menu_restaurant'))
+                return redirect(url_for('menu_empresas'))
             else:
                 conn.execute('INSERT INTO usuarios (nombre_usuario, correo_electronico, contrasena, imagen) VALUES (?, ?, ?, ?)', (name, email, password, image))
                 conn.commit()

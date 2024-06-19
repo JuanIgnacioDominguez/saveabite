@@ -748,7 +748,7 @@ def agregar_al_carrito(producto_id):
     conn.commit()
     conn.close()
     flash('Producto agregado al carrito', 'success')
-    return redirect(url_for('menu'))
+    return redirect(url_for('producto', id=producto_id))
 
 @app.route("/eliminar_del_carrito/<int:producto_id>", methods=['POST'])
 def eliminar_del_carrito(producto_id):

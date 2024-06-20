@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,19 +8,21 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        
         body {
             font-family: 'Nunito', sans-serif;
             margin: 0;
             padding: 0;
         }
+
         .bg-custom-blue {
             background-color: #27a2e8;
             position: relative;
         }
+
         .text-custom-blue {
             color: #27a2e8;
         }
+
         .btn-custom {
             background-color: #27a2e8;
             color: white;
@@ -27,15 +30,18 @@
             padding: 1rem 2rem;
             font-size: 1.25rem;
         }
+
         .btn-custom:hover {
             background-color: #1e91d6;
         }
+
         .white-background {
             background-color: white;
             padding: 1rem 2rem;
             position: relative;
             z-index: 10;
         }
+
         .wave {
             position: fixed;
             bottom: 0;
@@ -43,21 +49,25 @@
             width: 100%;
             z-index: -1;
         }
+
         .wave svg {
             position: relative;
             display: block;
             width: calc(100% + 1.3px);
             height: auto;
         }
+
         .main-content {
             height: auto;
         }
+
         .main-image {
             max-width: 600px;
             width: 80%;
             height: auto;
             object-fit: contain;
         }
+
         .flex-container {
             display: flex;
             flex-direction: column;
@@ -65,18 +75,21 @@
             justify-content: center;
             height: 100%;
         }
+
         .main-image-container {
             width: 100%;
             display: flex;
             justify-content: center;
         }
+
         .contact-form {
             background-color: #ffffff;
             border: 2px solid #27a2e8;
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 900px;
+            width: 90%;
+            max-width: 900px;
             margin-top: 50px;
             display: none;
             position: absolute;
@@ -84,15 +97,18 @@
             left: 50%;
             transform: translate(-50%, -30%);
         }
+
         .contact-form h2 {
             color: #27a2e8;
             text-align: center;
         }
+
         .contact-form label {
             display: block;
             margin-top: 10px;
             color: #27a2e8;
         }
+
         .contact-form input,
         .contact-form textarea {
             width: 100%;
@@ -102,6 +118,7 @@
             border-radius: 5px;
             font-size: 16px;
         }
+
         .contact-form button {
             width: 100%;
             padding: 12px;
@@ -113,11 +130,13 @@
             font-size: 16px;
             cursor: pointer;
         }
+
         .contact-form p {
             text-align: center;
             margin-top: 15px;
             color: #27a2e8;
         }
+
         .confirmation-message {
             display: none;
             text-align: center;
@@ -125,7 +144,9 @@
             font-size: 1.2rem;
             margin-top: 20px;
         }
-        .concientizacion-info, .acerca-de-nosotros {
+
+        .concientizacion-info,
+        .acerca-de-nosotros {
             display: none;
             max-height: 80vh;
             padding: 20px;
@@ -136,15 +157,23 @@
         }
     </style>
 </head>
+
 <body class="bg-custom-blue flex flex-col items-center min-h-screen relative">
     <div class="white-background w-full flex justify-between items-center">
         <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Save a Bite" class="h-14 ml-4">
-        <nav>
-            <ul class="flex space-x-4">
-                <li><a href="{{ url_for('index') }}" class="text-custom-blue">Menu</a></li>
-                <li><a href="#" class="text-custom-blue" id="acercadenosotros-link">Acerca de Nosotros</a></li>
-                <li><a href="#" class="text-custom-blue" id="concientizacion-link">Concientización</a></li>
-                <li><a href="#" class="text-custom-blue" id="consulta-link">Consultas</a></li>
+        <button id="menu-toggle" class="block md:hidden focus:outline-none mr-4">
+            <svg class="h-6 w-6 text-custom-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 6h16M4 12h16m-7 6h7" />
+            </svg>
+        </button>
+        <nav id="menu" class="hidden md:flex flex-col md:flex-row md:space-x-4 md:items-center">
+            <ul class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
+                <li><a href="{{ url_for('index') }}" class="text-custom-blue ml-10">Menu</a></li>
+                <li><a href="#" class="text-custom-blue ml-10" id="acercadenosotros-link">Acerca de Nosotros</a></li>
+                <li><a href="#" class="text-custom-blue ml-10" id="concientizacion-link">Concientización</a></li>
+                <li><a href="#" class="text-custom-blue ml-10" id="consulta-link">Consultas</a></li>
             </ul>
         </nav>
         <a href="{{ url_for('login') }}" class="btn-custom rounded-full mr-4">Acceder</a>
@@ -158,7 +187,8 @@
                 <div class="w-full text-center">
                     <h1 class="text-4xl text-white font-bold">¡Disfruta comida deliciosa a precios increíbles!</h1>
                     <p class="text-lg mb-6 text-white">Encuentra platos frescos y de calidad que de otro modo se desperdiciarían.</p>
-                    <a href="{{ url_for('login') }}" class="bg-white text-custom-blue rounded-full py-2 px-4">Comprar ahora</a> <!-- Ajuste del botón -->
+                    <a href="{{ url_for('login') }}" class="bg-white text-custom-blue rounded-full py-2 px-4">Comprar
+                        ahora</a> <!-- Ajuste del botón -->
                 </div>
             </div>
         </div>
@@ -172,22 +202,28 @@
             <div class="profile-container">
                 <div class="profile-info form-container">
                     <div class="form-content">
-                        <p>En Save a Bite, facilitamos la conexión entre los mejores restaurantes y los amantes de la buena mesa. Fundada en 2023, nuestra plataforma permite descubrir y disfrutar de una amplia variedad de opciones gastronómicas de calidad.</p>
-                            
+                        <p>En Save a Bite, facilitamos la conexión entre los mejores restaurantes y los amantes de la buena
+                            mesa. Fundada en 2023, nuestra plataforma permite descubrir y disfrutar de una amplia variedad de
+                            opciones gastronómicas de calidad.</p>
+
                         <h2 class="text-xl font-bold mt-4">Nuestra Misión</h2>
                         <ul class="list-disc pl-6">
-                            <li>Diversidad y Calidad: Colaboramos con restaurantes variados, asegurando una oferta rica y de alta calidad.</li>
+                            <li>Diversidad y Calidad: Colaboramos con restaurantes variados, asegurando una oferta rica y de
+                                alta calidad.</li>
                             <li>Innovación y Simplicidad: Creamos una experiencia de usuario fluida y agradable.</li>
                             <li>Satisfacción del Cliente: Prioridad en ofrecer un servicio excepcional y memorable.</li>
                         </ul>
-                
+
                         <h2 class="text-xl font-bold mt-4">Nuestro Compromiso</h2>
                         <ul class="list-disc pl-6">
-                            <li>Plataforma Inclusiva: Facilita el acceso a una amplia gama de restaurantes y tipos de cocina.</li>
+                            <li>Plataforma Inclusiva: Facilita el acceso a una amplia gama de restaurantes y tipos de cocina.
+                            </li>
                             <li>Experiencia Única: Soporte integral y personalizado en cada interacción.</li>
-                            <li>Sostenibilidad: Promovemos prácticas responsables y apoyamos a restaurantes con valores compartidos.</li>
+                            <li>Sostenibilidad: Promovemos prácticas responsables y apoyamos a restaurantes con valores
+                                compartidos.</li>
                         </ul>
-                        <p>Únete a Save a Bite y descubre nuevos restaurantes. Gracias por confiar en nosotros para tus aventuras culinarias. ¡Esperamos conectarte con tus próximos sabores favoritos!</p>
+                        <p>Únete a Save a Bite y descubre nuevos restaurantes. Gracias por confiar en nosotros para tus
+                            aventuras culinarias. ¡Esperamos conectarte con tus próximos sabores favoritos!</p>
                     </div>
                 </div>
             </div>
@@ -198,20 +234,39 @@
         <div class="text-center mb-6">
             <h1 class="text-2xl font-bold mb-4">Información sobre el Desperdicio de Alimentos</h1>
         </div>
-        
+
         <div class="content-container bg-white p-4 rounded shadow-md">
             <div class="profile-container">
                 <div class="profile-info form-container">
                     <div class="form-content">
                         <h2 class="text-xl font-bold">¿Qué es el Desperdicio de Alimentos?</h2>
-                        <p>El desperdicio de alimentos se refiere a todos aquellos alimentos que se producen y no llegan a ser consumidos. Este problema ocurre a lo largo de toda la cadena de suministro, desde la producción agrícola hasta el consumo final en los hogares. Incluye alimentos que se descartan, ya sea porque no cumplen con los estándares estéticos del mercado, por errores en la cadena de distribución, por mal almacenamiento, o porque simplemente no se consumen a tiempo y se deterioran.</p>
-                            
+                        <p>El desperdicio de alimentos se refiere a todos aquellos alimentos que se producen y no llegan a ser
+                            consumidos. Este problema ocurre a lo largo de toda la cadena de suministro, desde la producción
+                            agrícola hasta el consumo final en los hogares. Incluye alimentos que se descartan, ya sea porque
+                            no cumplen con los estándares estéticos del mercado, por errores en la cadena de distribución, por
+                            mal almacenamiento, o porque simplemente no se consumen a tiempo y se deterioran.</p>
+
                         <h2 class="text-xl font-bold mt-4">Impacto del Desperdicio de Alimentos</h2>
-                        <p>Socialmente, tiene implicaciones importantes para la seguridad alimentaria y el bienestar de las comunidades. A pesar de los avances en la producción de alimentos, según la Organización de las Naciones Unidas (ONU), “existen 821 millones de personas que padecen de hambre en el mundo. Una de cada nueve personas sufre de inseguridad alimentaria, pero en realidad se producen alimentos más que suficientes para todos” (ONU, 2018).</p>
-                        <p>Desde un enfoque ambiental, la producción de alimentos requiere enormes cantidades de agua, tierra y energía, y cuando se desperdician alimentos, se está utilizando de manera ineficiente estos recursos. Además, cuando los alimentos no consumidos terminan en vertederos, liberan metano, un gas de efecto invernadero potente que agrava el cambio climático. Esta práctica no solo es insostenible desde un punto de vista ambiental, sino que también tiene consecuencias negativas a largo plazo para el planeta y para las generaciones futuras.</p>
-                        <p>A nivel mundial, el desperdicio de alimentos afecta a todas las etapas de la cadena de suministro. Según la Organización de las Naciones Unidas para la Alimentación y la Agricultura (FAO), “anualmente se perdía o desperdiciaba en torno a un tercio de los alimentos a nivel mundial, es decir, unos 1 300 millones de toneladas de alimentos al año” (FAO, 2023). Teniendo así impactos significativos tanto en países desarrollados como en desarrollo.</p>
-                        <p>En los países desarrollados, se concentra principalmente en el nivel de consumo, mientras que en los países en desarrollo, ocurre mayormente en las etapas de producción y distribución debido a la falta de infraestructura adecuada (ONU, 2024).</p>
-                            
+                        <p>Socialmente, tiene implicaciones importantes para la seguridad alimentaria y el bienestar de las
+                            comunidades. A pesar de los avances en la producción de alimentos, según la Organización de las
+                            Naciones Unidas (ONU), “existen 821 millones de personas que padecen de hambre en el mundo. Una de
+                            cada nueve personas sufre de inseguridad alimentaria, pero en realidad se producen alimentos más que
+                            suficientes para todos” (ONU, 2018).</p>
+                        <p>Desde un enfoque ambiental, la producción de alimentos requiere enormes cantidades de agua, tierra y
+                            energía, y cuando se desperdician alimentos, se está utilizando de manera ineficiente estos
+                            recursos. Además, cuando los alimentos no consumidos terminan en vertederos, liberan metano, un gas
+                            de efecto invernadero potente que agrava el cambio climático. Esta práctica no solo es
+                            insostenible desde un punto de vista ambiental, sino que también tiene consecuencias negativas a
+                            largo plazo para el planeta y para las generaciones futuras.</p>
+                        <p>A nivel mundial, el desperdicio de alimentos afecta a todas las etapas de la cadena de suministro.
+                            Según la Organización de las Naciones Unidas para la Alimentación y la Agricultura (FAO), “anualmente
+                            se perdía o desperdiciaba en torno a un tercio de los alimentos a nivel mundial, es decir, unos 1 300
+                            millones de toneladas de alimentos al año” (FAO, 2023). Teniendo así impactos significativos tanto en
+                            países desarrollados como en desarrollo.</p>
+                        <p>En los países desarrollados, se concentra principalmente en el nivel de consumo, mientras que en los
+                            países en desarrollo, ocurre mayormente en las etapas de producción y distribución debido a la falta
+                            de infraestructura adecuada (ONU, 2024).</p>
+
                         <h2 class="text-xl font-bold mt-4">Consejos para Reducir el Desperdicio de Alimentos</h2>
                         <ul class="list-disc pl-6">
                             <li>Planificar las comidas y hacer una lista de compras para evitar comprar en exceso.</li>
@@ -231,22 +286,25 @@
         <form action="#" method="post" onsubmit="return submitForm()">
             <label for="name">Introduce tu nombre</label>
             <input type="text" id="name" name="name" required>
-            
+
             <label for="email">Introduce tu email</label>
             <input type="email" id="email" name="email" required>
-            
+
             <label for="message">Introduce tu mensaje</label>
             <textarea id="message" name="message" required></textarea>
-            
+
             <p>Déjanos tu consulta y nos contactaremos con usted a la brevedad</p>
-            
+
             <button type="submit">Enviar</button>
         </form>
-        <p class="confirmation-message" id="confirmation-message">Nos pondremos en contacto contigo a la brevedad posible.</p>
+        <p class="confirmation-message" id="confirmation-message">Nos pondremos en contacto contigo a la brevedad
+            posible.</p>
     </div>
     <div class="wave">
-        <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
-            <path d="M0 387L50 379.5C100 372 200 357 300 362.5C400 368 500 394 600 394.5C700 395 800 370 850 357.5L900 345L900 451L850 451C800 451 700 451 600 451C500 451 400 451 300 451C200 451 100 451 50 451L0 451Z" fill="#FFFFFF" stroke-linecap="round" stroke-linejoin="miter"></path>
+        <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+            version="1.1">
+            <path d="M0 387L50 379.5C100 372 200 357 300 362.5C400 368 500 394 600 394.5C700 395 800 370 850 357.5L900 345L900 451L850 451C800 451 700 451 600 451C500 451 400 451 300 451C200 451 100 451 50 451L0 451Z"
+                fill="#FFFFFF" stroke-linecap="round" stroke-linejoin="miter"></path>
         </svg>
     </div>
     <script>
@@ -255,34 +313,46 @@
             document.getElementById('confirmation-message').style.display = 'block';
             return false;
         }
- 
-        document.getElementById('consulta-link').addEventListener('click', function(event) {
+
+        document.getElementById('consulta-link').addEventListener('click', function (event) {
             event.preventDefault();
             hideAllSections();
             document.getElementById('contact-form').style.display = 'block';
-            document.getElementById('contact-form').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('contact-form').scrollIntoView({
+                behavior: 'smooth'
+            });
         });
- 
-        document.getElementById('concientizacion-link').addEventListener('click', function(event) {
+
+        document.getElementById('concientizacion-link').addEventListener('click', function (event) {
             event.preventDefault();
             hideAllSections();
             document.getElementById('concientizacion-section').style.display = 'block';
-            document.getElementById('concientizacion-section').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('concientizacion-section').scrollIntoView({
+                behavior: 'smooth'
+            });
         });
- 
-        document.getElementById('acercadenosotros-link').addEventListener('click', function(event) {
+
+        document.getElementById('acercadenosotros-link').addEventListener('click', function (event) {
             event.preventDefault();
             hideAllSections();
             document.getElementById('acercadenosotros-section').style.display = 'block';
-            document.getElementById('acercadenosotros-section').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('acercadenosotros-section').scrollIntoView({
+                behavior: 'smooth'
+            });
         });
- 
+
         function hideAllSections() {
             document.getElementById('main-section').style.display = 'none';
             document.getElementById('contact-form').style.display = 'none';
             document.getElementById('concientizacion-section').style.display = 'none';
             document.getElementById('acercadenosotros-section').style.display = 'none';
         }
+
+        document.getElementById('menu-toggle').addEventListener('click', function () {
+            const menu = document.getElementById('menu');
+            menu.classList.toggle('hidden');
+        });
     </script>
 </body>
+
 </html>

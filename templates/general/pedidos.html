@@ -109,6 +109,12 @@
             height: 100vh; /* Ocupa toda la altura visible del viewport */
             overflow-x: hidden; /* Oculta el desplazamiento horizontal */
         }
+        .content-container {
+            max-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+        }
         .nav-item {
             margin: 2rem 0;
             display: flex;
@@ -132,16 +138,18 @@
     </style>
 </head>
 <body class="flex h-screen">
-    <div class="flex">
-        {% include 'Sidebars/sidebarEmpresa.html' %}
-        <!-- Main content -->
-        <div class="main-content flex-1 p-6">
-            <h1 class="text-2xl font-bold mb-4">Lista de Pedidos</h1>
+    
+    {% include 'Sidebars/sidebarEmpresa.html' %}
+    <!-- Main content -->
+    <div class="main-content flex-1 p-6">
+        <h1 class="text-4xl font-bold text-custom-blue">Pedidos en Curso</h1>
+        <div class="content-container bg-transparent rounded">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="orders-list">
                 
             </div>
         </div>
     </div>
+   
 
     <script>
         const orders = [

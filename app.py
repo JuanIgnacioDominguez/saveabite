@@ -305,7 +305,7 @@ def borrar_direccion(id):
     registrar_accion(user_id, 'Eliminada dirección')
     return redirect(url_for('direcciones'))
 
-@app.route("/forgot_password", methods=['POST'])
+@app.route("/forgot_password",methods=['GET', 'POST'])
 def forgot_password():
     email = request.form['email']
     conn = get_db_connection()
@@ -334,7 +334,18 @@ def estadistica():
 def reset_password(token):
     conn = get_db_connection()
     token_data = conn.execute('SELECT * FROM PasswordResetTokens WHERE token = ?', (token,)).fetchone()
-    if not token_data or token_data['expiration'] < datetime.datetime.now():
+    
+    if not token_data:
+        flash('El token ha expirado o no es válido', 'error')
+        conn.close()
+        return redirect(url_for('forgot_password'))
+    
+    try:
+        expiration = datetime.datetime.strptime(token_data['expiration'], '%Y-%m-%d %H:%M:%S.%f')
+    except ValueError:
+        expiration = datetime.datetime.strptime(token_data['expiration'], '%Y-%m-%d %H:%M:%S')
+    
+    if expiration < datetime.datetime.now():
         flash('El token ha expirado o no es válido', 'error')
         conn.close()
         return redirect(url_for('forgot_password'))
@@ -351,7 +362,8 @@ def reset_password(token):
         return redirect(url_for('login'))
 
     conn.close()
-    return render_template('reset_password.html', token=token)
+    return render_template('general/reset_password.html', token=token)
+
 
 @app.route('/membresia', methods=['GET', 'POST'])
 def membresia():

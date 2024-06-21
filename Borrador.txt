@@ -1,6 +1,6 @@
 Cosas que faltan Usuarios:
 -Mis Pedidos
--Favoritos
+-Logica de favoritos
 
 Cosas que faltan Empresas:
 -Pedidos en Curso
@@ -10,6 +10,7 @@ Cosas que faltan General:
 -Agregar mas informacion e imagenes en el apartado de Informacion
 -Base de datos
 -De las barras laterales arreglar que te lleve a cada cosa bien
+-Recupero de contrasena cuando te redirige el mail
 
 
 Sidebar

@@ -4,9 +4,205 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Favoritos</title>
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
+            overflow: hidden; /* Evita el desplazamiento horizontal en toda la página */
+        }
+        .bg-custom-blue {
+            background-color: #27a2e8;
+        }
+        .text-custom-blue {
+            color: #27a2e8;
+        }
+        .recipe-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 16px;
+            transition: transform 0.2s;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+        }
+        .recipe-card:hover {
+            transform: translateY(-5px);
+        }
+        .recipe-card img {
+            border-radius: 8px;
+            margin-bottom: 16px;
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .recipe-card .info {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            padding: 10px;
+            background-color: #f9fafb;
+            border-radius: 8px;
+        }
+        .recipe-card .info div {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .info-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e2e8f0;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            margin-bottom: 4px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 10px 0;
+        }
+        .action-button {
+            background-color: #27a2e8;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .action-button:hover {
+            background-color: #1e81b0;
+        }
+        .content {
+            overflow-y: auto;
+            height: 100vh;
+            padding: 20px;
+        }
+        .sidebar {
+            height: 100vh;
+            background-color: white;
+            width: 16rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            left: 0; /* Asegura que la barra lateral esté fija a la izquierda */
+            top: 0; /* Ajusta la posición de la barra lateral */
+            overflow-y: auto; /* Habilita el desplazamiento vertical dentro de la barra lateral */
+        }
+        .main-content {
+            margin-left: 16rem; /* Alinea el contenido principal a la derecha de la barra lateral */
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto; /* Habilita el desplazamiento vertical en el contenido principal */
+            height: 100vh; /* Ocupa toda la altura visible del viewport */
+            overflow-x: hidden; /* Oculta el desplazamiento horizontal */
+        }
+        .content-container {
+            max-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+        }
+        .nav-item {
+            margin: 2rem 0;
+            display: flex;
+            align-items: center;
+            color: #6b7280;
+            transition: color 0.3s ease;
+        }
+        .nav-item i {
+            height: 24px;
+            width: 24px;
+            margin-right: 0.5rem;
+        }
+        .nav-item a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .nav-item:hover,
+        .nav-item.active {
+            color: #27a2e8;
+        }
+    </style>
 </head>
-<body>
-    <h1 class="text-4xl font-bold text-custom-blue">Favoritos</h1>
-    <p>Aquí se mostrarán los favoritos del usuario.</p>
+<body class="flex h-screen">
+    
+    {% include 'Sidebars/sidebarUsuario.html' %}
+    <!-- Main content -->
+    <div class="main-content flex-1 p-6">
+        <h1 class="text-4xl font-bold text-custom-blue">Tus favoritos</h1>
+        <div class="content-container bg-transparent rounded">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="orders-list">
+                
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const orders = [
+            {
+                description: 'Pizza Napolitana',
+                image: 'static/img/PIZZA2.jpg',
+                user: 'Juan Pérez',
+                price: 5200,
+            },
+            {
+                description: 'Milanesa Napolitana',
+                image: 'static/img/milanapo.jpg',
+                user: 'María García',
+                price: 4500,
+            },
+            {
+                description: 'Hamburguesa c/ papas',
+                image: 'static/img/hamburguesa.jpg',
+                user: 'Carlos López',
+                price: 3800,
+            },
+            {
+                description: 'Pasta bolognesa',
+                image: 'static/img/pastabolo.jpg',
+                user: 'Ana Fernández',
+                price: 5000,
+            },
+            {
+                description: 'Bife con puré',
+                image: 'static/img/bife.jpg',
+                user: 'Laura Martínez',
+                price: 5200,
+            },
+        ];
+
+        function loadOrders() {
+            const ordersList = document.getElementById('orders-list');
+            ordersList.innerHTML = ''; // Limpiar contenido previo
+
+            orders.forEach((order, index) => {
+                const orderCard = document.createElement('div');
+                orderCard.className = 'recipe-card';
+                orderCard.innerHTML = `
+                    <img src="${order.image}" alt="${order.description}">
+                    <h3 class="text-xl font-bold mb-2">${order.description}</h3>
+                    <p class="text-gray-600">Usuario: ${order.user}</p>
+                    <p class="text-gray-600">Precio: $${order.price}</p>
+                    <div class="button-container">
+                        <button class="action-button" onclick="removeFromFavorites(${index})">Quitar favorito</button>
+                        <button class="action-button" onclick="addToCart(${index})">Añadir al carrito</button>
+                    </div>
+                `;
+                ordersList.appendChild(orderCard);
+            });
+        }
+
+        // Cargar los pedidos al cargar la página
+        document.addEventListener('DOMContentLoaded', loadOrders);
+    </script>
 </body>
 </html>

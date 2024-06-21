@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,12 +15,15 @@
             background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
             overflow: hidden;
         }
+
         .bg-custom-blue {
             background-color: #27a2e8;
         }
+
         .text-custom-blue {
             color: #27a2e8;
         }
+
         .nav-item {
             margin: 1rem 0;
             display: flex;
@@ -27,38 +31,46 @@
             color: #6b7280;
             transition: color 0.3s ease;
         }
+
         .nav-item i {
             height: 24px;
             width: 24px;
             margin-right: 0.5rem;
         }
+
         .nav-item:hover,
         .nav-item.active {
             color: #27a2e8;
         }
+
         .profile {
             display: flex;
             align-items: center;
             margin-top: auto;
             margin-bottom: 1rem;
         }
+
         .profile img {
             height: 40px;
             width: 40px;
             border-radius: 50%;
             margin-right: 0.5rem;
         }
+
         .profile-text {
             display: flex;
             flex-direction: column;
         }
+
         .profile-text .name {
             font-weight: bold;
         }
+
         .profile-text .edit-profile {
             color: #6b7280;
             font-size: 0.875rem;
         }
+
         .btn-custom {
             background-color: white;
             color: #27a2e8;
@@ -73,16 +85,19 @@
             text-align: center;
             width: 120px;
         }
+
         .btn-custom i,
         .btn-custom .material-icons {
             font-size: 24px;
             margin-bottom: 0.5rem;
         }
+
         .btn-custom:hover,
         .btn-custom.active {
             background-color: #27a2e8;
             color: white;
         }
+
         .recipe-card {
             background-color: white;
             border-radius: 12px;
@@ -96,9 +111,11 @@
             height: 100%;
             cursor: pointer;
         }
+
         .recipe-card:hover {
             transform: translateY(-5px);
         }
+
         .recipe-card img {
             border-radius: 8px;
             margin-bottom: 16px;
@@ -106,6 +123,7 @@
             height: 200px;
             object-fit: cover;
         }
+
         .recipe-card .info {
             display: flex;
             justify-content: space-around;
@@ -114,12 +132,14 @@
             background-color: #f9fafb;
             border-radius: 8px;
         }
+
         .recipe-card .info div {
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
+
         .info-icon {
             display: flex;
             align-items: center;
@@ -130,6 +150,7 @@
             height: 36px;
             margin-bottom: 4px;
         }
+
         .header {
             display: flex;
             align-items: center;
@@ -137,6 +158,7 @@
             margin-bottom: 1rem;
             position: relative;
         }
+
         .header h1 {
             font-size: 2rem;
             font-weight: bold;
@@ -145,10 +167,12 @@
             left: 0;
             margin-left: 20px;
         }
+
         .search {
             display: inline-block;
             position: relative;
         }
+
         .search input[type="text"] {
             width: 600px;
             padding: 10px;
@@ -156,6 +180,7 @@
             border-radius: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+
         .search button[type="submit"] {
             background-color: #4e99e9;
             border: none;
@@ -169,11 +194,13 @@
             right: 0;
             transition: 0.3s ease;
         }
+
         .search button[type="submit"]:hover {
             transform: scale(1.1);
             color: rgb(255, 255, 255);
             background-color: blue;
         }
+
         .button-container {
             display: flex;
             justify-content: center;
@@ -181,6 +208,7 @@
             gap: 10px;
             padding: 10px 0;
         }
+
         .action-button {
             background-color: #27a2e8;
             color: white;
@@ -191,32 +219,39 @@
             font-weight: bold;
             transition: background-color 0.3s;
         }
+
         .action-button:hover {
             background-color: #1e81b0;
         }
+
         .content {
             overflow-y: auto;
             height: 100vh;
         }
+
         .profile {
             display: flex;
             align-items: center;
             margin-top: auto;
             margin-bottom: 1rem;
         }
+
         .profile img {
             height: 40px;
             width: 40px;
             border-radius: 50%;
             margin-right: 0.5rem;
         }
+
         .profile-text {
             display: flex;
             flex-direction: column;
         }
+
         .profile-text .name {
             font-weight: bold;
         }
+
         .profile-text .edit-profile {
             color: #6b7280;
             font-size: 0.875rem;
@@ -232,26 +267,27 @@
         }
     </script>
 </head>
+
 <body class="flex">
     <!-- Sidebar -->
     {% include 'Sidebars/SidebarUsuario.html' %}
-    
+
     <!-- Main content -->
     <div class="flex-1 p-6 content ml-64">
         <h1 class="text-4xl font-bold text-custom-blue">Menu Principal</h1>
         <div class="header">
-            
-            <div class="search">
-                <input type="text" placeholder="Buscar...">
+            <form class="search" method="GET" action="/menu">
+                <input type="text" name="query" placeholder="Buscar...">
                 <button type="submit"><i class="fas fa-search"></i></button>
-            </div>
+            </form>
         </div>
         <div class="button-container">
             <button class="btn-custom {% if tipo_comida == 'todos' %}active{% endif %}" onclick="filterCategory('todos')">
                 <i class="fas fa-utensils"></i>
                 Todos
             </button>
-            <button class="btn-custom {% if tipo_comida == 'Hamburguesas' %}active{% endif %}" onclick="filterCategory('Hamburguesas')">
+            <button class="btn-custom {% if tipo_comida == 'Hamburguesas' %}active{% endif %}"
+                onclick="filterCategory('Hamburguesas')">
                 <i class="fas fa-hamburger"></i>
                 Hamburguesas
             </button>
@@ -263,11 +299,13 @@
                 <i class="material-icons">ramen_dining</i>
                 Pasta
             </button>
-            <button class="btn-custom {% if tipo_comida == 'Ensaladas' %}active{% endif %}" onclick="filterCategory('Ensaladas')">
+            <button class="btn-custom {% if tipo_comida == 'Ensaladas' %}active{% endif %}"
+                onclick="filterCategory('Ensaladas')">
                 <i class="fas fa-leaf"></i>
                 Ensaladas
             </button>
-            <button class="btn-custom {% if tipo_comida == 'Cafeteria' %}active{% endif %}" onclick="filterCategory('Cafeteria')">
+            <button class="btn-custom {% if tipo_comida == 'Cafeteria' %}active{% endif %}"
+                onclick="filterCategory('Cafeteria')">
                 <i class="fas fa-coffee"></i>
                 Cafeteria
             </button>
@@ -306,4 +344,5 @@
         </div>
     </div>
 </body>
+
 </html>

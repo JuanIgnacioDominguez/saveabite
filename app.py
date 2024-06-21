@@ -436,8 +436,19 @@ def cancelar_membresia_empresa():
 def menu():
     user_name = session.get('user_name')
     user_image = session.get('user_image')
+    query = request.args.get('query', '').lower()
     conn = get_db_connection()
-    productos = conn.execute('SELECT * FROM Productos').fetchall()
+    
+    if query:
+        productos = conn.execute("""
+            SELECT * FROM Productos
+            WHERE LOWER(nombre) LIKE ?
+            OR LOWER(descripcion) LIKE ?
+            OR LOWER(tipoComida) LIKE ?
+        """, (f'%{query}%', f'%{query}%', f'%{query}%')).fetchall()
+    else:
+        productos = conn.execute('SELECT * FROM Productos').fetchall()
+    
     conn.close()
     return render_template('general/menu.html', user_name=user_name, user_image=user_image, productos=productos)
 

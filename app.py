@@ -122,6 +122,15 @@ def create_tables():
             FOREIGN KEY (producto_id) REFERENCES Productos (id)
         )
     ''')
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS favoritos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            usuario_id INTEGER NOT NULL,
+            producto_id INTEGER NOT NULL,
+            FOREIGN KEY (usuario_id) REFERENCES usuarios (id),
+            FOREIGN KEY (producto_id) REFERENCES Productos (id)
+        )
+    ''')
     conn.commit()
     conn.close()
 
@@ -614,7 +623,15 @@ def soporte_empresa():
 # Nuevo endpoint para 'favoritos'
 @app.route("/favoritos", methods=['GET'])
 def favoritos():
-    return render_template('general/favoritos.html')
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    fav_item = conn.execute('''
+        SELECT p.* FROM Productos p
+        JOIN favoritos f ON p.id = f.producto_id
+        WHERE f.usuario_id = ?
+    ''', (user_id,)).fetchall()
+    conn.close()
+    return render_template('general/favoritos.html', fav_item=fav_item)
 
 # Endpoint para subir imágenes
 @app.route('/upload_image', methods=['POST'])
@@ -812,6 +829,23 @@ def eliminar_del_carrito(producto_id):
     conn.close()
     flash('Producto eliminado del carrito', 'success')
     return redirect(url_for('carrito'))
+
+@app.route("/agregar_a_favoritos/<int:producto_id>", methods=['POST'])
+def agregar_a_favoritos(producto_id):
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    # Verifica si el producto ya está en favoritos para el usuario
+    item = conn.execute('SELECT * FROM favoritos WHERE usuario_id = ? AND producto_id = ?', (user_id, producto_id)).fetchone()
+    
+    if item is None:  # Si el producto no está en favoritos, lo agrega
+        conn.execute('INSERT INTO favoritos (usuario_id, producto_id) VALUES (?, ?)', (user_id, producto_id))
+        flash('Producto agregado a favoritos', 'success')
+    else:  # Si el producto ya está en favoritos, muestra un mensaje
+        flash('Producto ya está en favoritos', 'error')
+    
+    conn.commit()
+    conn.close()
+    return redirect(url_for('producto', id=producto_id))
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -334,7 +334,8 @@
                     </div>
                 </div>
                 <div class="button-container">
-                    <button class="action-button">Favoritos</button>
+                    <form method="POST" action="{{ url_for('agregar_a_favoritos', producto_id=producto.id) }}">
+                        <button type="submit" class="action-button">Favoritos</button>
                     <form method="POST" action="{{ url_for('agregar_al_carrito', producto_id=producto.id) }}">
                         <button type="submit" class="action-button">Añadir al carrito</button>
                     </form>

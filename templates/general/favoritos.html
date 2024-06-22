@@ -115,6 +115,11 @@
                     <h3 class="font-bold">{{ item.nombre }}</h3>
                     <p>S${{ item.precio }}</p>
                 </div>
+                <form method="POST" action="{{ url_for('eliminar_de_favoritos', producto_id=item.id) }}">
+                    <button type="submit" class="fav-item-remove">
+                        <i class="fas fa-trash-alt"></i> Eliminar
+                    </button>
+                </form>
             </div>
             {% endfor %}
         </div>

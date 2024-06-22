@@ -847,5 +847,15 @@ def agregar_a_favoritos(producto_id):
     conn.close()
     return redirect(url_for('producto', id=producto_id))
 
+@app.route("/eliminar_de_favoritos/<int:producto_id>", methods=['POST'])
+def eliminar_de_favoritos (producto_id):
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    conn.execute('DELETE FROM favoritos WHERE usuario_id = ? AND producto_id = ?', (user_id, producto_id))
+    conn.commit()
+    conn.close()
+    flash('Producto eliminado de favoritos', 'success')
+    return redirect(url_for('favoritos'))
+
 if __name__ == "__main__":
     app.run(debug=True)

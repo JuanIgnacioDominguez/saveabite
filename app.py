@@ -805,19 +805,27 @@ def carrito():
 @app.route("/agregar_al_carrito/<int:producto_id>", methods=['POST'])
 def agregar_al_carrito(producto_id):
     user_id = session.get('user_id')
+    cantidad = request.form.get('cantidad', type=int)  # Obtiene la cantidad del formulario y la convierte a entero
+    if not cantidad or cantidad < 1:
+        cantidad = 1  # Asegura que la cantidad sea al menos 1 si no se proporciona o es inválida
+
     conn = get_db_connection()
     item = conn.execute('SELECT * FROM carrito WHERE usuario_id = ? AND producto_id = ?', (user_id, producto_id)).fetchone()
     
     if item:
-        # Si el producto ya está en el carrito, incrementar la cantidad
-        conn.execute('UPDATE carrito SET cantidad = cantidad + 1 WHERE usuario_id = ? AND producto_id = ?', (user_id, producto_id))
+        # Actualiza la cantidad del producto en el carrito con la cantidad especificada
+        conn.execute('UPDATE carrito SET cantidad = cantidad + ? WHERE usuario_id = ? AND producto_id = ?', (cantidad, user_id, producto_id))
     else:
-        # Si el producto no está en el carrito, agregarlo con cantidad 1
-        conn.execute('INSERT INTO carrito (usuario_id, producto_id, cantidad) VALUES (?, ?, 1)', (user_id, producto_id))
+        # Agrega el producto al carrito con la cantidad especificada
+        conn.execute('INSERT INTO carrito (usuario_id, producto_id, cantidad) VALUES (?, ?, ?)', (user_id, producto_id, cantidad))
     
     conn.commit()
     conn.close()
     flash('Producto agregado al carrito', 'success')
+    return redirect(url_for('menu', id=producto_id))
+
+@app.route("/agregar_al_carrito1/<int:producto_id>", methods=['POST'])
+def agregar_al_carrito1(producto_id):
     return redirect(url_for('producto', id=producto_id))
 
 @app.route("/eliminar_del_carrito/<int:producto_id>", methods=['POST'])

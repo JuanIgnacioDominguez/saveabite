@@ -133,7 +133,11 @@
             </div>
             {% endfor %}
             <div class="cart-total">
-                <span>Total: ${{ carrito_items | map(attribute='precio') | sum }}</span>
+                {% set ns = namespace(total=0) %}
+                {% for item in carrito_items %}
+                    {% set ns.total = ns.total + (item.precio * item.cantidad) %}
+                {% endfor %}
+                <span>Total: ${{ ns.total }}</span>
                 <button class="create-button" onclick="openConfirmModal()">Confirmar Compra</button>
             </div>
         </div>

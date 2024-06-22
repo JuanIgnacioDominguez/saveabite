@@ -12,7 +12,7 @@
             background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
         }
         .content-container {
-            height: 90vh;
+            height: auto;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             margin-left: 16rem;
         }
@@ -55,8 +55,8 @@
             background-color: #cc1f1a;
         }
         .profile-avatar {
-            width: 100px; /* Tamaño ajustado de la imagen */
-            height: 100px;
+            width: 6rem; /* Tamaño ajustado de la imagen */
+            height: 6rem;
             object-fit: cover;
             border-radius: 50%;
         }
@@ -119,9 +119,12 @@
                     <a href="{{ url_for('editar_perfil_empresa') }}" class="flex items-center border-b">
                         <i class="fas fa-user-edit mr-2 text-gray-500"></i> Editar Perfil
                     </a>
+                    <!--
                     <a href="{{ url_for('estadistica') }}" class="flex items-center border-b">
                         <i class="fas fa-chart-line mr-2 text-gray-500"></i> Estadísticas
                     </a>
+                    DEPENDIENDO QUE HAGAMOS ACA, "estadistica.html" se borra o no
+                    -->
                     <a href="{{ url_for('membresia_empresa') }}" class="flex items-center border-b">
                         <i class="fas fa-star mr-2 text-gray-500"></i> Membresía
                     </a>

@@ -113,7 +113,7 @@
                 <img src="{{ url_for('static', filename='uploads/' ~ item.imagen) }}" alt="Product Image">
                 <div class="fav-item-details">
                     <h3 class="font-bold">{{ item.nombre }}</h3>
-                    <p>S${{ item.precio }}</p>
+                    <p>${{ item.precio }}</p>
                 </div>
                 <form method="POST" action="{{ url_for('eliminar_de_favoritos', producto_id=item.id) }}">
                     <button type="submit" class="fav-item-remove">

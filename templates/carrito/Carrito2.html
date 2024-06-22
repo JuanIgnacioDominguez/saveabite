@@ -123,7 +123,7 @@
                 <div class="cart-item-details">
                     <h3 class="font-bold">{{ item.nombre }}</h3>
                     <p>Cantidad: {{ item.cantidad }}</p>
-                    <p>S${{ item.precio }}</p>
+                    <p>${{ item.precio }}</p>
                 </div>
                 <form method="POST" action="{{ url_for('eliminar_del_carrito', producto_id=item.id) }}">
                     <button type="submit" class="cart-item-remove">

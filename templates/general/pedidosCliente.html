@@ -31,6 +31,7 @@
             flex-direction: column;
             align-items: center;
             height: 100%;
+            margin-bottom: 20px; /* Espacio entre tarjetas */
         }
         .order-card:hover {
             transform: translateY(-5px);
@@ -63,18 +64,31 @@
             overflow-y: auto;
             height: 100vh;
             padding: 20px;
+            margin-left: 16rem; /* Ajusta el margen izquierdo según tu barra lateral */
+        }
+        .sidebar {
+            height: 100vh;
+            background-color: white;
+            width: 16rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            flex: 0 0 16rem;
         }
     </style>
 </head>
 <body class="flex">
-
+    <!-- Sidebar -->
+    {% include 'Sidebars/SidebarUsuario.html' %}
+     
     <!-- Main content -->
     <div class="flex-1 p-6 content ml-64">
         <div class="header">
             <h1 class="text-4xl font-bold text-custom-blue">Historial de Pedidos</h1>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="history-list">
-            <!-- Aquí se insertarán los pedidos dinámicamente -->
+            <!-- Iterar sobre los pedidos y mostrar cada uno como una tarjeta -->
+            {% for order in pedidos %}
             <div class="order-card">
                 <div class="info">
                     <div>
@@ -91,103 +105,7 @@
                     </div>
                 </div>
             </div>
-            <div class="order-card">
-                <div class="info">
-                    <div>
-                        <div class="info-icon"><i class="fas fa-calendar-alt"></i></div>
-                        <p class="text-gray-600">{{ order.date }}</p>
-                    </div>
-                    <div>
-                        <div class="info-icon"><i class="fas fa-store"></i></div>
-                        <p class="text-gray-600">{{ order.restaurant }}</p>
-                    </div>
-                    <div>
-                        <div class="info-icon"><i class="fas fa-dollar-sign"></i></div>
-                        <p class="text-gray-600">${{ order.price }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="order-card">
-                <div class="info">
-                    <div>
-                        <div class="info-icon"><i class="fas fa-calendar-alt"></i></div>
-                        <p class="text-gray-600">{{ order.date }}</p>
-                    </div>
-                    <div>
-                        <div class="info-icon"><i class="fas fa-store"></i></div>
-                        <p class="text-gray-600">{{ order.restaurant }}</p>
-                    </div>
-                    <div>
-                        <div class="info-icon"><i class="fas fa-dollar-sign"></i></div>
-                        <p class="text-gray-600">${{ order.price }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="order-card">
-                <div class="info">
-                    <div>
-                        <div class="info-icon"><i class="fas fa-calendar-alt"></i></div>
-                        <p class="text-gray-600">{{ order.date }}</p>
-                    </div>
-                    <div>
-                        <div class="info-icon"><i class="fas fa-store"></i></div>
-                        <p class="text-gray-600">{{ order.restaurant }}</p>
-                    </div>
-                    <div>
-                        <div class="info-icon"><i class="fas fa-dollar-sign"></i></div>
-                        <p class="text-gray-600">${{ order.price }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="order-card">
-                <div class="info">
-                    <div>
-                        <div class="info-icon"><i class="fas fa-calendar-alt"></i></div>
-                        <p class="text-gray-600">{{ order.date }}</p>
-                    </div>
-                    <div>
-                        <div class="info-icon"><i class="fas fa-store"></i></div>
-                        <p class="text-gray-600">{{ order.restaurant }}</p>
-                    </div>
-                    <div>
-                        <div class="info-icon"><i class="fas fa-dollar-sign"></i></div>
-                        <p class="text-gray-600">${{ order.price }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="order-card">
-                <div class="info">
-                    <div>
-                        <div class="info-icon"><i class="fas fa-calendar-alt"></i></div>
-                        <p class="text-gray-600">{{ order.date }}</p>
-                    </div>
-                    <div>
-                        <div class="info-icon"><i class="fas fa-store"></i></div>
-                        <p class="text-gray-600">{{ order.restaurant }}</p>
-                    </div>
-                    <div>
-                        <div class="info-icon"><i class="fas fa-dollar-sign"></i></div>
-                        <p class="text-gray-600">${{ order.price }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="order-card">
-                <div class="info">
-                    <div>
-                        <div class="info-icon"><i class="fas fa-calendar-alt"></i></div>
-                        <p class="text-gray-600">{{ order.date }}</p>
-                    </div>
-                    <div>
-                        <div class="info-icon"><i class="fas fa-store"></i></div>
-                        <p class="text-gray-600">{{ order.restaurant }}</p>
-                    </div>
-                    <div>
-                        <div class="info-icon"><i class="fas fa-dollar-sign"></i></div>
-                        <p class="text-gray-600">${{ order.price }}</p>
-                    </div>
-                </div>
-            </div>
-         
+            {% endfor %}
         </div>
     </div>
 

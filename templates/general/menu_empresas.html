@@ -159,17 +159,23 @@
             display: flex;
             flex-wrap: wrap;
             gap: 1rem;
-            margin-top: 1rem;
+            margin-top: hidden;
+        }
+        .stat-container {
+            display: flex;
+            margin-top: hidden;
+            flex-direction: column;
+            flex: 1;
+            max-width: auto;
         }
         .stat-card {
             background-color: white;
             border-radius: 12px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 16px;
-            flex: 1;
-            min-width: 250px;
             text-align: center;
-            margin-right: 1rem;
+            height: 100px;
+            margin-bottom: 1rem;
         }
         .stat-card h4 {
             font-size: 1.25rem;
@@ -238,13 +244,17 @@
             border-radius: 12px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 16px;
-            margin-top: 1rem;
+            margin-top: hidden;
             width: 100%;
             max-width: 600px;
+            height: 450px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         .line-chart {
             width: 100%;
-            height: auto;
+            height: 400px; /* Ajuste la altura según sea necesario */
         }
     </style>
 </head>
@@ -268,92 +278,114 @@
             <input type="file" name="company_image" id="company_image">
             <button type="submit">Upload</button>
         </form>
-        
+
         <!-- Información del restaurante -->
-        <div class="card mt-6">
+        <div class="card">
             <h3 class="text-xl font-bold mb-2">Información del Restaurante</h3>
             <p><strong>Nombre:</strong> {{ restaurant['name'] }}</p>
             <p><strong>Dirección:</strong> {{ restaurant['address'] }}</p>
+            <p><strong>Teléfono:</strong> {{ restaurant['phone'] }}</p>
             <p><strong>Email:</strong> {{ restaurant['email'] }}</p>
-            <div class="profile-text">
-                <a href="{{ url_for('perfil_empresa') }}" class="edit-profile">Editar Perfil</a>
-            </div>
         </div>
-        
+
         <!-- Sección de Estadísticas -->
         <div class="statistics">
-            <!-- Ventas Diarias -->
-            <div class="stat-card">
-                <h4>Ventas Diarias</h4>
-                <p>{{ daily_sales }}</p>
-            </div>
-            <!-- Pedidos Pendientes -->
-            <div class="stat-card">
-                <h4>Pedidos Pendientes</h4>
-                <p>{{ pending_orders }}</p>
-            </div>
-            <!-- Pedidos Completados -->
-            <div class="stat-card">
-                <h4>Pedidos Completados</h4>
-                <p>{{ completed_orders }}</p>
-            </div>
-            
             <!-- Gráfico de Línea para Ventas Mensuales -->
             <div class="line-chart-container">
-                <h4 class="text-xl font-bold mb-2">Ingresos Mensuales</h4>
-                <canvas id="monthlySalesChart" class="line-chart" width="400" height="200"></canvas>
+                <canvas id="lineChart" class="line-chart"></canvas>
             </div>
             
+            <!-- Contenedor de estadísticas en columna -->
+            <div class="stat-container">
+                <!-- Ventas Diarias -->
+                <div class="stat-card">
+                    <h4>Nuevas Ventas</h4>
+                    <p>{{ daily_sales }} 8</p>
+                </div>
+                <!-- Pedidos Pendientes -->
+                <div class="stat-card">
+                    <h4>Pedidos Pendientes</h4>
+                    <p>{{ pending_orders }}2</p>
+                </div>
+                <!-- Pedidos Completados -->
+                <div class="stat-card">
+                    <h4>Pedidos Completados</h4>
+                    <p>{{ completed_orders }}10</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Productos en Inventario</h4>
+                    <p>{{ product_inventario }} 10</p>
+                </div>
+            </div>
         </div>
-        
     </div>
 
-    <!-- Script para inicializar el gráfico -->
     <script>
-        // Datos de ejemplo para el gráfico de línea (ventas mensuales)
-        const monthlySalesData = {
-            labels: ["0", "7", "12", "17", "22", "30"],
+        // Datos para el gráfico de línea
+        const data = {
+            labels: ['1', '7', '12', '17', '22', '30'],
             datasets: [{
-                label: 'Ventas Mensuales',
-                borderColor: '#27a2e8',
-                backgroundColor: 'rgba(39, 162, 232, 0.2)',
-                data: [5000, 7000, 3000, 9000, 6000, 8000] // Reemplazar con datos dinámicos {{ monthly_sales_data }}
+                label: 'Ingresos Mensuales',
+                data: [5000, 7000, 3000, 9000, 5000, 8000],
+                borderColor: 'rgba(0, 123, 255, 1)',
+                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.1,
+                pointBackgroundColor: 'rgba(0, 123, 255, 1)',
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointHitRadius: 10,
             }]
         };
 
         // Configuración del gráfico de línea
-        const monthlySalesConfig = {
+        const config = {
             type: 'line',
-            data: monthlySalesData,
+            data: data,
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        display: false, // Ocultar la leyenda
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(tooltipItem) {
-                                return tooltipItem.label + ': ' + tooltipItem.raw.toFixed(2); // Formato de etiqueta
-                            }
+                    title: {
+                        display: true,
+                        text: 'Ingresos Mensuales',
+                        font: {
+                            size: 18
+                        },
+                        padding: {
+                            top: 10,
+                            bottom: 30
                         }
+                    },
+                    legend: {
+                        display: false
                     }
                 },
                 scales: {
                     x: {
-                        grid: {
-                            display: false // Ocultar líneas de la cuadrícula en el eje X
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Días del Mes'
                         }
+                    },
+                    y: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Ingresos en $ARS'
+                        },
+                        beginAtZero: true,
+                        suggestedMax: 10000
                     }
                 }
             }
         };
 
-        // Renderizar el gráfico de línea en el canvas
-        const monthlySalesChart = new Chart(
-            document.getElementById('monthlySalesChart'),
-            monthlySalesConfig
-        );
+        // Renderizar el gráfico de línea
+        const ctx = document.getElementById('lineChart').getContext('2d');
+        new Chart(ctx, config);
     </script>
 </body>
 </html>

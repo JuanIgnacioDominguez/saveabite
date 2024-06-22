@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Save a Bite - Menu Empresas</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -16,7 +17,7 @@
             margin: 0;
         }
 
-        .sidebar { /* Ajustes de la barra lateral */
+        .sidebar {
             height: 100vh;
             background-color: white;
             width: 16rem;
@@ -25,9 +26,10 @@
             position: fixed;
         }
         .main-content {
-            margin-left: 16rem; /* Ajuste del margen izquierdo */
+            margin-left: 16rem;
             flex: 1;
             padding: 2rem;
+            overflow-y: auto;
         }
         .nav-item {
             margin: 2rem 0;
@@ -67,7 +69,7 @@
             flex-direction: column;
         }
         .profile-text .name {
-            font-weight: bold; /* Hace que el nombre se vea en negrita */
+            font-weight: bold;
         }
         .profile-text .edit-profile {
             background-color: white;
@@ -136,6 +138,7 @@
             padding: 16px;
             
             width: 100%;
+            margin-bottom: 1rem;
         }
         .card img {
             border-radius: 8px;
@@ -152,12 +155,105 @@
         .active-link {
             color: #27a2e8 !important;
         }
-        
+        .statistics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .stat-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 16px;
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+            margin-right: 1rem;
+        }
+        .stat-card h4 {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        .stat-card p {
+            font-size: 1.5rem;
+            color: #27a2e8;
+        }
+        .reviews {
+            margin-top: 2rem;
+        }
+        .reviews h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        .review-item {
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1rem 0;
+        }
+        .review-item:last-child {
+            border-bottom: none;
+        }
+        .review-item p {
+            margin: 0.5rem 0;
+        }
+        .notifications {
+            margin-top: 2rem;
+        }
+        .notifications h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        .notification-item {
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1rem 0;
+        }
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+        .notification-item p {
+            margin: 0.5rem 0;
+        }
+        .support {
+            margin-top: 2rem;
+        }
+        .support a {
+            color: #27a2e8;
+            font-weight: bold;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .support a:hover {
+            color: #1e40af;
+        }
+
+        /* Estilos adicionales para el gráfico de línea */
+        .line-chart-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 16px;
+            margin-top: 1rem;
+            width: 100%;
+            max-width: 600px;
+        }
+        .line-chart {
+            width: 100%;
+            height: auto;
+        }
     </style>
 </head>
 <body>
+    <!-- Aquí va tu barra lateral incluida -->
     {% include 'Sidebars/sidebarEmpresa.html' %}
     <div class="main-content">
+        <!-- Sección de perfil -->
+        <!-- Comentado temporalmente
         <div class="profile">
             <img src="{{ url_for('static', filename=restaurant['image']) }}" alt="Profile">
             <div class="profile-text">
@@ -165,19 +261,98 @@
                 <a href="{{ url_for('perfil_empresa') }}" class="edit-profile">Editar Perfil</a>
             </div>
         </div>
+        -->
+        
+        <!-- Formulario para subir imagen, oculto temporalmente -->
         <form id="image-form" action="{{ url_for('upload_company_image') }}" method="POST" enctype="multipart/form-data" style="display:none;">
             <input type="file" name="company_image" id="company_image">
             <button type="submit">Upload</button>
         </form>
+        
+        <!-- Información del restaurante -->
         <div class="card mt-6">
             <h3 class="text-xl font-bold mb-2">Información del Restaurante</h3>
             <p><strong>Nombre:</strong> {{ restaurant['name'] }}</p>
             <p><strong>Dirección:</strong> {{ restaurant['address'] }}</p>
             <p><strong>Email:</strong> {{ restaurant['email'] }}</p>
+            <div class="profile-text">
+                <a href="{{ url_for('perfil_empresa') }}" class="edit-profile">Editar Perfil</a>
+            </div>
         </div>
         
-        <!-- Aquí puedes agregar más contenido relevante para el perfil de la empresa -->
+        <!-- Sección de Estadísticas -->
+        <div class="statistics">
+            <!-- Ventas Diarias -->
+            <div class="stat-card">
+                <h4>Ventas Diarias</h4>
+                <p>{{ daily_sales }}</p>
+            </div>
+            <!-- Pedidos Pendientes -->
+            <div class="stat-card">
+                <h4>Pedidos Pendientes</h4>
+                <p>{{ pending_orders }}</p>
+            </div>
+            <!-- Pedidos Completados -->
+            <div class="stat-card">
+                <h4>Pedidos Completados</h4>
+                <p>{{ completed_orders }}</p>
+            </div>
+            
+            <!-- Gráfico de Línea para Ventas Mensuales -->
+            <div class="line-chart-container">
+                <h4 class="text-xl font-bold mb-2">Ventas Mensuales</h4>
+                <canvas id="monthlySalesChart" class="line-chart" width="400" height="200"></canvas>
+            </div>
+        </div>
+        
     </div>
+
+    <!-- Script para inicializar el gráfico -->
+    <script>
+        // Datos de ejemplo para el gráfico de línea (ventas mensuales)
+        const monthlySalesData = {
+            labels: ["0", "7", "12", "17", "22", "30"],
+            datasets: [{
+                label: 'Ventas Mensuales',
+                borderColor: '#27a2e8',
+                backgroundColor: 'rgba(39, 162, 232, 0.2)',
+                data: [5000, 7000, 3000, 9000, 6000, 8000] // Reemplazar con datos dinámicos {{ monthly_sales_data }}
+            }]
+        };
+
+        // Configuración del gráfico de línea
+        const monthlySalesConfig = {
+            type: 'line',
+            data: monthlySalesData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false, // Ocultar la leyenda
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return tooltipItem.label + ': ' + tooltipItem.raw.toFixed(2); // Formato de etiqueta
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false // Ocultar líneas de la cuadrícula en el eje X
+                        }
+                    }
+                }
+            }
+        };
+
+        // Renderizar el gráfico de línea en el canvas
+        const monthlySalesChart = new Chart(
+            document.getElementById('monthlySalesChart'),
+            monthlySalesConfig
+        );
+    </script>
 </body>
 </html>
-

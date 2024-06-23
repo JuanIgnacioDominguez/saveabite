@@ -79,7 +79,8 @@
             margin-bottom: 0.5rem;
             font-weight: 600;
         }
-        .form-group input {
+        .form-group input,
+        .form-group select {
             width: 100%;
             padding: 0.75rem;
             border: 1px solid #e2e8f0;
@@ -126,7 +127,7 @@
         }
         .separator {
             border-bottom: 1px solid #e2e8f0;
-            margin: 1rem 0;
+            margin: 1rem 0.
         }
         .sidebar a.active {
             color: #27a2e8;
@@ -163,7 +164,7 @@
             <div class="profile-container">
                 <div class="profile-info form-container">
                     <!-- Edit Profile Form -->
-                    <form action="{{ url_for('guardar_perfil') }}" method="post" class="flex flex-col h-full">
+                    <form action="{{ url_for('editar_perfil') }}" method="post" class="flex flex-col h-full">
                         <div class="form-content">
                             <div class="form-group">
                                 <label for="name">Nombre</label>
@@ -181,6 +182,16 @@
                             <div class="form-group">
                                 <label for="new_password">Nueva Contraseña</label>
                                 <input type="password" id="new_password" name="new_password">
+                            </div>
+                            <div class="form-group">
+                                <label for="tipo_dieta">Tipo de Dieta</label>
+                                <select id="tipo_dieta" name="tipo_dieta">
+                                    <option value="vegana" {% if user.tipo_dieta == 'vegana' %}selected{% endif %}>Vegana</option>
+                                    <option value="vegetariana" {% if user.tipo_dieta == 'vegetariana' %}selected{% endif %}>Vegetariana</option>
+                                    <option value="celiaco" {% if user.tipo_dieta == 'celiaco' %}selected{% endif %}>Celíaco</option>
+                                    <option value="paleo" {% if user.tipo_dieta == 'paleo' %}selected{% endif %}>Paleo</option>
+                                    <option value="keto" {% if user.tipo_dieta == 'keto' %}selected{% endif %}>Keto</option>
+                                </select>
                             </div>
                         </div>
                         <div class="mt-2">

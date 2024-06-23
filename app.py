@@ -5,8 +5,6 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_mail import Mail, Message
 import sqlite3
 from werkzeug.utils import secure_filename
-from datetime import datetime
-
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -41,7 +39,8 @@ def create_tables():
             correo_electronico TEXT NOT NULL UNIQUE,
             contrasena TEXT NOT NULL,
             imagen TEXT,  -- Columna para almacenar imágenes
-            membresia TEXT
+            membresia TEXT,
+            tipo_dieta TEXT  -- Nueva columna para tipo de dieta
         )
     ''')
     # Crear tabla usuarioEmpresa
@@ -65,7 +64,8 @@ def create_tables():
             precio REAL NOT NULL,
             descripcion TEXT NOT NULL,
             imagen TEXT NOT NULL,
-            tipoComida TEXT NOT NULL
+            tipoComida TEXT NOT NULL,
+            tipo_dieta TEXT  -- Nueva columna para tipo de dieta
         )
     ''')
     # Crear tabla métodos de pago
@@ -133,15 +133,6 @@ def create_tables():
             FOREIGN KEY (producto_id) REFERENCES Productos (id)
         )
     ''')
-    conn.execute('''
-        CREATE TABLE IF NOT EXISTS pedidos2 (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            usuario_id INTEGER NOT NULL,
-            fecha DATE NOT NULL,
-            total REAL NOT NULL,
-            FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
-        )
-    ''')
     conn.commit()
     conn.close()
 
@@ -161,6 +152,24 @@ def add_membership_field():
         conn.execute('''
             ALTER TABLE usuarioEmpresa
             ADD COLUMN membresia TEXT
+        ''')
+    except sqlite3.OperationalError:
+        # La columna ya existe
+        pass
+
+    try:
+        conn.execute('''
+            ALTER TABLE usuarios
+            ADD COLUMN tipo_dieta TEXT
+        ''')
+    except sqlite3.OperationalError:
+        # La columna ya existe
+        pass
+
+    try:
+        conn.execute('''
+            ALTER TABLE Productos
+            ADD COLUMN tipo_dieta TEXT
         ''')
     except sqlite3.OperationalError:
         # La columna ya existe
@@ -468,8 +477,13 @@ def cancelar_membresia_empresa():
 def menu():
     user_name = session.get('user_name')
     user_image = session.get('user_image')
+    user_id = session.get('user_id')
     query = request.args.get('query', '').lower()
     conn = get_db_connection()
+    
+     # Obtener el tipo de dieta del usuario
+    user = conn.execute('SELECT tipo_dieta FROM usuarios WHERE id = ?', (user_id,)).fetchone()
+    tipo_dieta = user['tipo_dieta'] if user else None
     
     if query:
         productos = conn.execute("""
@@ -481,8 +495,17 @@ def menu():
     else:
         productos = conn.execute('SELECT * FROM Productos').fetchall()
     
+    recomendados = []
+    if tipo_dieta:
+        recomendados = conn.execute("""
+            SELECT * FROM Productos
+            WHERE LOWER(tipo_dieta) = ?
+            LIMIT 6
+        """, (tipo_dieta.lower(),)).fetchall()
+    
     conn.close()
-    return render_template('general/menu.html', user_name=user_name, user_image=user_image, productos=productos)
+    return render_template('general/menu.html', user_name=user_name, user_image=user_image, productos=productos, recomendados=recomendados, tipo_dieta=tipo_dieta)
+
 
 @app.route('/filter_menu', methods=['GET'])
 def filter_menu():
@@ -526,22 +549,26 @@ def pedidos():
     ]
     return render_template('general/pedidos.html', pedidos=pedidos)
 
-@app.route("/pedidos_cliente")
+@app.route("/pedidos_cliente", methods=['GET'])
 def pedidos_cliente():
-    user_id = session.get('user_id')
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    pedidos = cursor.execute('''
-        SELECT id, fecha, total
-        FROM pedidos2
-        WHERE usuario_id = ?
-        ORDER BY fecha DESC
-    ''', (user_id,)).fetchall()
-
-    conn.close()
-
-    return render_template('general/pedidosCliente.html', pedidos=pedidos)
+    pedidos = [
+        {
+            'date': '2024-06-18',
+            'restaurant': 'Restaurante 1',
+            'price': 100.0
+        },
+        {
+            'date': '2024-06-19',
+            'restaurant': 'Restaurante 2',
+            'price': 200.0
+        },
+        {
+            'date': '2024-06-20',
+            'restaurant': 'Restaurante 3',
+            'price': 300.0
+        }
+    ]
+    return render_template('general/PedidosCliente.html', pedidos=pedidos)
 
 @app.route("/informacion", methods=['GET'])
 def informacion():
@@ -566,14 +593,15 @@ def menu_empresas():
     }
     return render_template('general/menu_empresas.html', restaurant=restaurant)
 
-@app.route("/editar_perfil", methods=['GET', 'POST'])
+@app.route('/editar_perfil', methods=['GET', 'POST'])
 def editar_perfil():
     user_id = session.get('user_id')
     if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
+        tipo_dieta = request.form['tipo_dieta']
         conn = get_db_connection()
-        conn.execute('UPDATE usuarios SET nombre_usuario = ?, correo_electronico = ? WHERE id = ?', (name, email, user_id))
+        conn.execute('UPDATE usuarios SET nombre_usuario = ?, correo_electronico = ?, tipo_dieta = ? WHERE id = ?', (name, email, tipo_dieta, user_id))
         conn.commit()
         registrar_accion(user_id, 'Editado perfil')
         conn.close()
@@ -581,11 +609,21 @@ def editar_perfil():
         session['user_email'] = email
         flash('Perfil actualizado con éxito', 'success')
         return redirect(url_for('perfil_usuario'))
-    user = {
-        'name': session.get('user_name'), 
-        'email': session.get('user_email')
-    }
-    return render_template('Perfil/EditarPerfil.html', user=user)
+    
+    conn = get_db_connection()
+    user = conn.execute('SELECT nombre_usuario, correo_electronico, tipo_dieta FROM usuarios WHERE id = ?', (user_id,)).fetchone()
+    conn.close()
+    if user:
+        user_data = {
+            'name': user['nombre_usuario'],
+            'email': user['correo_electronico'],
+            'tipo_dieta': user['tipo_dieta']
+        }
+    else:
+        user_data = {}
+    
+    return render_template('Perfil/EditarPerfil.html', user=user_data)
+
 
 @app.route("/soporte")
 def soporte():
@@ -700,6 +738,7 @@ def crear_producto():
         precio = request.form['precio']
         descripcion = request.form['descripcion']
         categoria = request.form['categoria']
+        tipo_dieta = request.form['tipo_dieta']
         file = request.files['imagen']
         
         if file and allowed_file(file.filename):
@@ -714,9 +753,9 @@ def crear_producto():
             # Guardar el producto en la base de datos
             conn = get_db_connection()
             conn.execute('''
-                INSERT INTO Productos (Empresa, nombre, tiempoEstimado, precio, descripcion, imagen, tipoComida) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            ''', (session.get('user_name'), nombre, '30 min', precio, descripcion, filename, categoria))
+                INSERT INTO Productos (Empresa, nombre, tiempoEstimado, precio, descripcion, imagen, tipoComida, tipo_dieta) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (session.get('user_name'), nombre, '30 min', precio, descripcion, filename, categoria, tipo_dieta))
             conn.commit()
             conn.close()
             
@@ -871,38 +910,6 @@ def eliminar_de_favoritos (producto_id):
     conn.close()
     flash('Producto eliminado de favoritos', 'success')
     return redirect(url_for('favoritos'))
-
-@app.route("/confirmar_compra", methods=['POST'])
-def confirmar_compra():
-    user_id = session.get('user_id')  # Asegúrate de que el user_id está correctamente establecido en la sesión
-    if not user_id:
-        # Considera redirigir al usuario a la página de inicio de sesión si user_id no está en la sesión
-        return redirect(url_for('login'))
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    carrito_items = cursor.execute('SELECT * FROM carrito WHERE usuario_id = ?', (user_id,)).fetchall()
-
-    total = 0
-    for item in carrito_items:
-        producto = cursor.execute('SELECT precio FROM Productos WHERE id = ?', (item['producto_id'],)).fetchone()
-        if producto:
-            total += item['cantidad'] * producto['precio']
-
-    ahora = datetime.now().date()
-
-    cursor.execute('''
-        INSERT INTO pedidos2 (usuario_id, fecha, total)
-        VALUES (?, ?, ?)
-    ''', (user_id, ahora, total))
-
-    cursor.execute('DELETE FROM carrito WHERE usuario_id = ?', (user_id,))
-
-    conn.commit()
-    conn.close()
-
-    return redirect(url_for('pedidos_cliente'))
 
 if __name__ == "__main__":
     app.run(debug=True)

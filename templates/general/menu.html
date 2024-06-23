@@ -281,10 +281,10 @@
             <h2 class="text-2xl font-bold text-custom-blue mb-4">Recomendados</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {% for producto in recomendados %}
-                <div class="recipe-card" onclick="goToProductDetail('{{ producto.id }}')">
+                <div class="recipe-card {{ producto.tipo_comida }}" onclick="goToProductDetail('{{ producto.id }}')">
                     <img src="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}" alt="{{ producto.nombre }}">
-                    <h3 class="text-xl font-bold mb-2">{{ producto.nombre }}</h3>
-                    <div class="info">
+                <h3 class="text-xl font-bold mb-2">{{ producto.nombre }}</h3>
+                <div class="info">
                         <div>
                             <div class="info-icon"><i class="fas fa-clock"></i></div>
                             <p class="text-gray-600">{{ producto.tiempoEstimado }}</p>
@@ -299,8 +299,10 @@
                         </div>
                     </div>
                     <div class="button-container">
-                        <button class="action-button">Favoritos</button>
-                        <form method="POST" action="{{ url_for('agregar_al_carrito', producto_id=producto.id) }}">
+                        <form method="POST" action="{{ url_for('agregar_a_favoritos', producto_id=producto.id) }}">
+                            <button type="submit" class="action-button">Añadir a favoritos</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('agregar_al_carrito1', producto_id=producto.id) }}">
                             <button type="submit" class="action-button">Añadir al carrito</button>
                         </form>
                     </div>

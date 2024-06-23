@@ -82,6 +82,7 @@
     {% include 'Sidebars/SidebarUsuario.html' %}
      
     <!-- Main content -->
+    <!-- Main content -->
     <div class="flex-1 p-6 content ml-64">
         <div class="header">
             <h1 class="text-4xl font-bold text-custom-blue">Historial de Pedidos</h1>
@@ -93,21 +94,16 @@
                 <div class="info">
                     <div>
                         <div class="info-icon"><i class="fas fa-calendar-alt"></i></div>
-                        <p class="text-gray-600">{{ order.date }}</p>
-                    </div>
-                    <div>
-                        <div class="info-icon"><i class="fas fa-store"></i></div>
-                        <p class="text-gray-600">{{ order.restaurant }}</p>
+                        <p class="text-gray-600">{{ order['fecha'] }}</p>
                     </div>
                     <div>
                         <div class="info-icon"><i class="fas fa-dollar-sign"></i></div>
-                        <p class="text-gray-600">${{ order.price }}</p>
+                        <p class="text-gray-600">${{ order['total'] }}</p>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
     </div>
-
 </body>
 </html>

@@ -138,7 +138,9 @@
                     {% set ns.total = ns.total + (item.precio * item.cantidad) %}
                 {% endfor %}
                 <span>Total: ${{ ns.total }}</span>
-                <button class="create-button" onclick="openConfirmModal()">Confirmar Compra</button>
+                <form method="POST" action="{{ url_for('confirmar_compra') }}">
+                    <button type="submit" class="create-button">Confirmar Compra</button>
+                </form>
             </div>
         </div>
     </div>

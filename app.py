@@ -5,6 +5,8 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_mail import Mail, Message
 import sqlite3
 from werkzeug.utils import secure_filename
+from datetime import datetime
+
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -129,6 +131,15 @@ def create_tables():
             producto_id INTEGER NOT NULL,
             FOREIGN KEY (usuario_id) REFERENCES usuarios (id),
             FOREIGN KEY (producto_id) REFERENCES Productos (id)
+        )
+    ''')
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS pedidos2 (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            usuario_id INTEGER NOT NULL,
+            fecha DATE NOT NULL,
+            total REAL NOT NULL,
+            FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
         )
     ''')
     conn.commit()
@@ -515,26 +526,22 @@ def pedidos():
     ]
     return render_template('general/pedidos.html', pedidos=pedidos)
 
-@app.route("/pedidos_cliente", methods=['GET'])
+@app.route("/pedidos_cliente")
 def pedidos_cliente():
-    pedidos = [
-        {
-            'date': '2024-06-18',
-            'restaurant': 'Restaurante 1',
-            'price': 100.0
-        },
-        {
-            'date': '2024-06-19',
-            'restaurant': 'Restaurante 2',
-            'price': 200.0
-        },
-        {
-            'date': '2024-06-20',
-            'restaurant': 'Restaurante 3',
-            'price': 300.0
-        }
-    ]
-    return render_template('general/PedidosCliente.html', pedidos=pedidos)
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    pedidos = cursor.execute('''
+        SELECT id, fecha, total
+        FROM pedidos2
+        WHERE usuario_id = ?
+        ORDER BY fecha DESC
+    ''', (user_id,)).fetchall()
+
+    conn.close()
+
+    return render_template('general/pedidosCliente.html', pedidos=pedidos)
 
 @app.route("/informacion", methods=['GET'])
 def informacion():
@@ -864,6 +871,38 @@ def eliminar_de_favoritos (producto_id):
     conn.close()
     flash('Producto eliminado de favoritos', 'success')
     return redirect(url_for('favoritos'))
+
+@app.route("/confirmar_compra", methods=['POST'])
+def confirmar_compra():
+    user_id = session.get('user_id')  # Asegúrate de que el user_id está correctamente establecido en la sesión
+    if not user_id:
+        # Considera redirigir al usuario a la página de inicio de sesión si user_id no está en la sesión
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    carrito_items = cursor.execute('SELECT * FROM carrito WHERE usuario_id = ?', (user_id,)).fetchall()
+
+    total = 0
+    for item in carrito_items:
+        producto = cursor.execute('SELECT precio FROM Productos WHERE id = ?', (item['producto_id'],)).fetchone()
+        if producto:
+            total += item['cantidad'] * producto['precio']
+
+    ahora = datetime.now().date()
+
+    cursor.execute('''
+        INSERT INTO pedidos2 (usuario_id, fecha, total)
+        VALUES (?, ?, ?)
+    ''', (user_id, ahora, total))
+
+    cursor.execute('DELETE FROM carrito WHERE usuario_id = ?', (user_id,))
+
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('pedidos_cliente'))
 
 if __name__ == "__main__":
     app.run(debug=True)

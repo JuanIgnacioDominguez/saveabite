@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ restaurant.nombre }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
+        }
+        .content-container {
+            max-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+        }
+        .form-container {
+            flex-grow: 1;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 0.375rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card img {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 1rem;
+            border-radius: 0.375rem;
+        }
+        .card button {
+            background-color: #27a2e8;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.375rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .card button:hover {
+            background-color: #1b7fbf;
+        }
+        
+        .sidebar {      /* cuadro blanco de la sidebar */
+            height: 100vh;
+            background-color: white;
+            width: 16rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            flex: 0 0 16rem;
+        }
+        .main-content {
+            margin-left: 16rem; /* Ensure this matches the width of the sidebar */
+            flex: 1;
+            padding: 1rem;
+        }
+        .nav-item {
+            margin: 2rem 0;
+            display: flex;
+            align-items: center;
+            color: #6b7280;
+            transition: color 0.3s ease;
+        }
+        .nav-item i {
+            height: 24px;
+            width: 24px;
+            margin-right: 0.5rem;
+        }
+        .nav-item a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .nav-item:hover,
+        .nav-item.active {
+            color: #27a2e8;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0, 0, 0, 0.4); 
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; 
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            border-radius: 10px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .modal-button {
+            background-color: #27a2e8;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.375rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .modal-button:hover {
+            background-color: #1b7fbf;
+        }
+        .modal-image {
+            width: 150px; /* Adjust the width as needed */
+            height: 150px; /* Adjust the height as needed */
+            display: block;
+            margin: 0 auto 1rem auto; /* Center the image and add margin */
+        }
+    </style>
+</head>
+<body class="flex h-screen">
+    <!-- SideBar -->
+    {% include 'Sidebars/sidebarEmpresa.html' %}
+    <!-- Main content -->
+    <div class="main-content flex-1 p-6 overflow-y-auto">
+        <img src="{{ url_for('static', filename='uploads/' ~ restaurant.imagen) }}" alt="{{ restaurant.nombre }}" class="rounded-lg mb-4">
+        <h1 class="text-3xl font-bold mb-4">{{ restaurant.nombre }}</h1>
+        <p class="text-gray-600 mb-2"><i class="fas fa-map-marker-alt"></i> {{ restaurant.direccion }}</p>
+        <p class="text-gray-600"><i class="fas fa-star"></i> {{ restaurant.rating }}</p>
+        <h2 class="text-2xl font-bold mt-6 mb-4">Comidas</h2>
+        <ul>
+            {% for comida in comidas %}
+            <li class="mb-2">
+                <div class="bg-gray-100 p-4 rounded-lg shadow">
+                    <h3 class="text-xl font-bold">{{ comida.nombre }}</h3>
+                    <p class="text-gray-600">{{ comida.descripcion }}</p>
+                    <p class="text-gray-600 font-bold">${{ comida.precio }}</p>
+                    <form action="/agregar_al_carrito" method="POST">
+                        <input type="hidden" name="producto_id" value="{{ producto.id }}">
+                        <button type="submit">Agregar al Carrito</button>
+                    </form>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

@@ -55,19 +55,30 @@ def create_tables():
             membresia TEXT 
         )
     ''')
+    # Crear tabla restaurantes
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS Restaurantes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT NOT NULL,
+            direccion TEXT NOT NULL,
+            descripcion TEXT,
+            imagen TEXT
+        );
+    ''')
     # Crear tabla Productos
     conn.execute('''
         CREATE TABLE IF NOT EXISTS Productos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             Empresa TEXT NOT NULL,
             nombre TEXT NOT NULL,
-            tiempoEstimado TEXT NOT NULL,
-            precio REAL NOT NULL,
-            descripcion TEXT NOT NULL,
+            descripcion TEXT,
+            tipo_comida TEXT,
             imagen TEXT NOT NULL,
-            tipoComida TEXT NOT NULL,
-            tipo_dieta TEXT  -- Nueva columna para tipo de dieta
-        )
+            tiempo_estimado TEXT,
+            precio REAL NOT NULL,
+            restaurante_id INTEGER,
+            FOREIGN KEY (restaurante_id) REFERENCES Restaurantes(id)
+        );
     ''')
     # Crear tabla métodos de pago
     conn.execute('''
@@ -491,31 +502,47 @@ def menu():
     query = request.args.get('query', '').lower()
     conn = get_db_connection()
     
-     # Obtener el tipo de dieta del usuario
+    # Obtener el tipo de dieta del usuario
     user = conn.execute('SELECT tipo_dieta FROM usuarios WHERE id = ?', (user_id,)).fetchone()
     tipo_dieta = user['tipo_dieta'] if user else None
     
+    # Consulta para obtener la lista de restaurantes
     if query:
-        productos = conn.execute("""
-            SELECT * FROM Productos
+        restaurantes = conn.execute("""
+            SELECT * FROM Restaurantes
             WHERE LOWER(nombre) LIKE ?
-            OR LOWER(descripcion) LIKE ?
-            OR LOWER(tipoComida) LIKE ?
-        """, (f'%{query}%', f'%{query}%', f'%{query}%')).fetchall()
+            OR LOWER(direccion) LIKE ?
+        """, (f'%{query}%', f'%{query}%')).fetchall()
     else:
-        productos = conn.execute('SELECT * FROM Productos').fetchall()
+        restaurantes = conn.execute('SELECT * FROM Restaurantes').fetchall()
     
     recomendados = []
     if tipo_dieta:
+        # Consulta para obtener restaurantes recomendados según tipo de dieta
         recomendados = conn.execute("""
-            SELECT * FROM Productos
-            WHERE LOWER(tipo_dieta) = ?
+            SELECT * FROM Restaurantes
+            WHERE id IN (
+                SELECT restaurante_id FROM Productos
+                WHERE LOWER(tipo_comida) = ?
+            )
             LIMIT 6
         """, (tipo_dieta.lower(),)).fetchall()
     
     conn.close()
-    return render_template('general/menu.html', user_name=user_name, user_image=user_image, productos=productos, recomendados=recomendados, tipo_dieta=tipo_dieta)
+    return render_template('general/menu.html', user_name=user_name, user_image=user_image, restaurantes=restaurantes, recomendados=recomendados, tipo_dieta=tipo_dieta)
 
+@app.route("/restaurante/<int:restaurante_id>", methods=['GET'])
+def restaurante(restaurante_id):
+    conn = get_db_connection()
+    
+    # Obtener el restaurante por su ID
+    restaurante = conn.execute('SELECT * FROM Restaurantes WHERE id = ?', (restaurante_id,)).fetchone()
+    
+    # Obtener los productos asociados a este restaurante
+    productos = conn.execute('SELECT * FROM Productos WHERE restaurante_id = ?', (restaurante_id,)).fetchall()
+    
+    conn.close()
+    return render_template('general/restaurant.html', restaurante=restaurante, productos=productos)
 
 @app.route('/filter_menu', methods=['GET'])
 def filter_menu():

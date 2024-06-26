@@ -248,6 +248,13 @@
                 <form id="registerForm" class="form-transition form-hidden" method="POST" action="{{ url_for('register') }}">
                     <h2 class="text-2xl font-bold mb-2">Crear una Cuenta</h2>
                     <p class="text-sm text-gray-600 mb-6">Complete con su información en las casillas de abajo para crear su cuenta</p>
+                    <div class="mb-4 flex-center">
+                        <div class="toggle-switch">
+                            <input class="toggle-input" id="toggle" type="checkbox" name="is_vendor">
+                            <label class="toggle-label" for="toggle"></label>
+                        </div>
+                        <label for="toggle" class="text-gray-700 ml-2">¿Eres un Restaurante/Vendedor?</label>
+                    </div>
                     <div class="inputContainer">
                         <input type="text" id="name" name="name" class="customInput" placeholder=" " required>
                         <label for="name" class="inputLabel">Nombre del Establecimiento</label>
@@ -265,13 +272,6 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-.638 1.846-1.892 3.418-3.467 4.5M15 12a3 3 0 01-6 0"></path>
                             </svg>
                         </span>
-                    </div>
-                    <div class="mb-4 flex-center">
-                        <div class="toggle-switch">
-                            <input class="toggle-input" id="toggle" type="checkbox" name="is_vendor">
-                            <label class="toggle-label" for="toggle"></label>
-                        </div>
-                        <label for="toggle" class="text-gray-700 ml-2">¿Eres un Restaurante/Vendedor?</label>
                     </div>
                     <div>
                         <button type="submit" class="w-full bg-custom-blue text-white p-2 rounded-md hover:bg-blue-700 mb-20px">Crear Cuenta</button>

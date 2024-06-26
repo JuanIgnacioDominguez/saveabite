@@ -228,8 +228,24 @@
         }
 
         function addToFavorites(restaurantId) {
-            // Aquí puedes implementar la lógica para agregar el restaurante a favoritos
-            alert(`Agregado a favoritos: ${restaurantId}`);
+            fetch(`/agregar_a_favoritos/${restaurantId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ restaurant_id: restaurantId })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Restaurante agregado a favoritos');
+                } else {
+                    alert('Error al agregar a favoritos');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al agregar a favoritos');
+            });
         }
     </script>
 </head>
@@ -259,6 +275,7 @@
                 <div class="button-container mt-4">
                     <button class="action-button" onclick="goToRestaurantDetail('{{ restaurant.id }}')">Ver Menú</button>
                     <button class="action-button" onclick="addToFavorites('{{ restaurant.id }}')">Agregar a Favoritos</button>
+
                 </div>
             </div>
             {% endfor %}

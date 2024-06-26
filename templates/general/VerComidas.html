@@ -282,6 +282,49 @@
                     }
                 });
             });
+
+            const s = document.querySelectorAll('.estado-select');
+            s.forEach(select => {
+                // Obtener el ID del producto
+                const productId = select.closest('.card').getAttribute('data-id');
+
+                // Verificar y establecer el estado guardado en Local Storage
+                const savedState = localStorage.getItem(`producto-${productId}-estado`);
+                if (savedState) {
+                    select.value = savedState;
+                    updateCardState(select.closest('.card'), savedState);
+                }
+
+                // Manejar cambio de estado
+                select.addEventListener('change', function(event) {
+                    const selectedValue = this.value;
+                    updateCardState(this.closest('.card'), selectedValue);
+                    localStorage.setItem(`producto-${productId}-estado`, selectedValue);
+                });
+
+                // Actualizar el color de fondo del select según el estado inicial
+                updateSelectBackground(select, select.value);
+            });
+
+            // Función para actualizar visualmente el estado de la tarjeta
+            function updateCardState(card, estado) {
+                if (estado === 'Disponible') {
+                    card.classList.remove('no-disponible');
+                } else if (estado === 'No Disponible') {
+                    card.classList.add('no-disponible');
+                }
+            }
+
+            // Función para actualizar el color de fondo del select según el estado
+            function updateSelectBackground(select, estado) {
+                if (estado === 'Disponible') {
+                    select.style.backgroundColor = '#22c55e';
+                } else if (estado === 'No Disponible') {
+                    select.style.backgroundColor = '#f87171';
+                }else if(estado == "ESTADO") {
+                    select.style.backgroundColor = '#1b7fbf';
+                }
+            }
         });
     </script>
 </head>
@@ -308,7 +351,9 @@
                             </select>
                         </div>
                     </div>
-                    <img src="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}" alt="{{ producto.nombre }}" class="imagen">
+                    <!-- Dentro del bucle for que muestra los productos -->
+                    <img src="{{ url_for('static', filename='uploads/' ~ producto['imagen']) }}" alt="{{ producto['nombre'] }}" class="imagen">
+
                 </div>
                 {% endfor %}
             </div>

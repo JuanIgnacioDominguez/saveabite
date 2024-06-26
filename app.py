@@ -851,6 +851,7 @@ def crear_producto():
             conn.commit()
             conn.close()
             
+            # Mostrar mensaje de éxito y redirigir o mostrar una nueva página
             flash('Producto creado con éxito', 'success')
             return redirect(url_for('menu_empresas'))
         
@@ -976,22 +977,23 @@ def eliminar_del_carrito(producto_id):
     flash('Producto eliminado del carrito', 'success')
     return redirect(url_for('carrito'))
 
-@app.route("/agregar_a_favoritos/<int:producto_id>", methods=['POST'])
-def agregar_a_favoritos(producto_id):
+@app.route("/agregar_a_favoritos/<int:restaurant_id>", methods=['POST'])
+def agregar_a_favoritos(restaurant_id):
     user_id = session.get('user_id')
     conn = get_db_connection()
-    # Verifica si el producto ya está en favoritos para el usuario
-    item = conn.execute('SELECT * FROM favoritos WHERE usuario_id = ? AND producto_id = ?', (user_id, producto_id)).fetchone()
+    # Verifica si el restaurante ya está en favoritos para el usuario
+    item = conn.execute('SELECT * FROM favoritos WHERE usuario_id = ? AND restaurant_id = ?', (user_id, restaurant_id)).fetchone()
     
-    if item is None:  # Si el producto no está en favoritos, lo agrega
-        conn.execute('INSERT INTO favoritos (usuario_id, producto_id) VALUES (?, ?)', (user_id, producto_id))
-        flash('Producto agregado a favoritos', 'success')
-    else:  # Si el producto ya está en favoritos, muestra un mensaje
-        flash('Producto ya está en favoritos', 'error')
+    if item is None:  # Si el restaurante no está en favoritos, lo agrega
+        conn.execute('INSERT INTO favoritos (usuario_id, restaurant_id) VALUES (?, ?)', (user_id, restaurant_id))
+        flash('Restaurante agregado a favoritos', 'success')
+    else:  # Si el restaurante ya está en favoritos, muestra un mensaje
+        flash('Restaurante ya está en favoritos', 'error')
     
     conn.commit()
     conn.close()
-    return redirect(url_for('producto', id=producto_id))
+    return redirect(url_for('restaurant', id=restaurant_id))
+
 
 @app.route("/eliminar_de_favoritos/<int:producto_id>", methods=['POST'])
 def eliminar_de_favoritos (producto_id):

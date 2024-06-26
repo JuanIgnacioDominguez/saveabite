@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Producto</title>
+    <title>Ver Comidas</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -19,41 +19,77 @@
         }
         .form-container {
             flex-grow: 1;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
         }
         .card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             background-color: #ffffff;
             border-radius: 0.375rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 1rem;
             margin: 1rem 0;
-            text-align: center;
+            text-align: left;
             transition: transform 0.2s;
             cursor: pointer;
         }
         .card:hover {
             transform: translateY(-5px);
         }
+        .card .card-content {
+            flex: 1;
+        }
         .card img {
             width: 100px;
             height: 100px;
-            margin-bottom: 1rem;
+            margin-left: 1rem;
             border-radius: 0.375rem;
         }
-        .card button {
-            background-color: #27a2e8;
+        .card h2 {
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        .card .product-descripcion, .card .product-price {
+            margin-bottom: 0.5rem;
+            color: #6b7280;
+        }
+        .card .actions {
+            display: flex;
+            align-items: center;
+        }
+        .card .actions button, .card .actions select {
+            background-color: #0278ae;
             color: white;
             padding: 0.5rem 1rem;
             border: none;
             border-radius: 0.375rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-right: 0.5rem;
             cursor: pointer;
             transition: background-color 0.2s;
         }
-        .card button:hover {
+        .card .actions button:hover {
             background-color: #1b7fbf;
         }
-        
-        .sidebar {      /* cuadro blanco de la sidebar */
+        .card .actions select {
+            background-color: #f8fafc;
+            color: #1f2937;
+            border: 1px solid #e5e7eb;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+        }
+        .card .actions select:not([value="ESTADO"]) {
+            color: white;
+            background-color: #1b7fbf;
+        }
+        .card.no-disponible .actions select:not([value="ESTADO"]) {
+            background-color: #f87171;
+        }
+        .sidebar {
             height: 100vh;
             background-color: white;
             width: 16rem;
@@ -63,7 +99,7 @@
             flex: 0 0 16rem;
         }
         .main-content {
-            margin-left: 16rem; /* Ensure this matches the width of the sidebar */
+            margin-left: 16rem;
             flex: 1;
             padding: 1rem;
         }
@@ -88,21 +124,30 @@
             color: #27a2e8;
         }
         
+        .imagen {
+            width: 300px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 0.375rem;
+            margin: 0 auto 1rem auto;
+            display: block;
+        }
+
         /* Modal styles */
         .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 1; 
+            display: none;
+            position: fixed;
+            z-index: 1;
             left: 0;
             top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0, 0, 0, 0.4); 
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
         }
         .modal-content {
             background-color: #fefefe;
-            margin: 15% auto; 
+            margin: 15% auto;
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
@@ -132,26 +177,35 @@
             cursor: pointer;
             transition: background-color 0.2s;
         }
+        .delete-button {
+            background-color: #f87171; /* Color de fondo rojo */
+            color: white; /* Texto en color blanco */
+            margin-left: 1rem; /* Espacio entre los botones */
+        }
         .modal-button:hover {
             background-color: #1b7fbf;
         }
         .modal-image {
-            width: 150px; /* Adjust the width as needed */
-            height: 150px; /* Adjust the height as needed */
+            width: 150px;
+            height: 150px;
             display: block;
-            margin: 0 auto 1rem auto; /* Center the image and add margin */
+            margin: 0 auto 1rem auto;
         }
+
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const cards = document.querySelectorAll('.card');
             const baseUrl = "{{ url_for('producto', id=0) }}";
-            const productBaseUrl = baseUrl.slice(0, -1); // Remove the trailing '0'
-            
+            const productBaseUrl = baseUrl.slice(0, -1);
+
             cards.forEach(card => {
-                card.addEventListener('click', function() {
-                    const productoId = this.getAttribute('data-id');
-                    window.location.href = productBaseUrl + productoId;
+                card.addEventListener('click', function(event) {
+                    // Verificar si el click se hizo en un select o en un botón de edición
+                    if (event.target.tagName.toLowerCase() !== 'select' && !event.target.classList.contains('edit-button')) {
+                        const productoId = this.getAttribute('data-id');
+                        window.location.href = productBaseUrl + productoId;
+                    }
                 });
             });
 
@@ -161,16 +215,45 @@
 
             editButtons.forEach(button => {
                 button.addEventListener('click', function(event) {
-                    event.stopPropagation(); // Prevent card click event
+                    event.stopPropagation(); // Detener la propagación del evento
                     modal.style.display = 'block';
-                    // Load product data into the modal form
                     const card = this.closest('.card');
                     const productName = card.querySelector('.product-name').textContent;
-                    const productPeople = card.querySelector('.product-people').textContent;
+                    const productPeople = card.querySelector('.product-descripcion').textContent;
                     const productPrice = card.querySelector('.product-price').textContent;
+                    const productId = card.getAttribute('data-id'); // Obtener el ID del producto
+
+                    // Setear valores en el formulario
                     document.getElementById('product-name').value = productName;
-                    document.getElementById('product-people').value = productPeople;
+                    document.getElementById('product-descripcion').value = productPeople;
                     document.getElementById('product-price').value = productPrice;
+
+                    // Manejar evento de eliminar producto
+                    const deleteButton = document.getElementById('delete-product-button');
+                    deleteButton.addEventListener('click', function() {
+                        // Aquí puedes implementar la lógica para eliminar el producto
+                        const confirmation = confirm(`¿Estás seguro de eliminar el producto "${productName}"?`);
+                        if (confirmation) {
+                            // Puedes enviar una solicitud AJAX para eliminar el producto
+                            // Por ejemplo, usando fetch o axios
+                            fetch(`/eliminar-producto/${productId}`, {
+                                method: 'DELETE',
+                            })
+                            .then(response => {
+                                if (response.ok) {
+                                    // Producto eliminado exitosamente
+                                    alert(`El producto "${productName}" ha sido eliminado.`);
+                                    window.location.reload(); // Recargar la página o actualizar la lista de productos
+                                } else {
+                                    throw new Error('Error al eliminar el producto.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('Hubo un problema al intentar eliminar el producto.');
+                            });
+                        }
+                    });
                 });
             });
 
@@ -183,6 +266,22 @@
                     modal.style.display = 'none';
                 }
             };
+
+            // Actualizar estado visualmente
+            const selects = document.querySelectorAll('.actions select');
+            selects.forEach(select => {
+                select.addEventListener('change', function(event) {
+                    const card = this.closest('.card');
+                    const selectedValue = this.value;
+                    if (selectedValue === 'Disponible') {
+                        card.classList.remove('no-disponible');
+                        this.style.backgroundColor = '#22c55e';
+                    } else if (selectedValue === 'No Disponible') {
+                        card.classList.add('no-disponible');
+                        this.style.backgroundColor = '#f87171';
+                    }
+                });
+            });
         });
     </script>
 </head>
@@ -193,14 +292,23 @@
     <div class="main-content flex-1 p-6 overflow-y-auto">
         <h1 class="text-4xl font-bold text-custom-blue">Ver Comidas</h1>
         <div class="content-container bg-transparent p-6 rounded">
-            <div class="form-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="form-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                 {% for producto in comidas %}
-                <div class="card" data-id="{{ producto['id'] }}">
-                    <img src="{{ url_for('static', filename=producto['imagen']) }}" alt="{{ producto['nombre'] }}">
-                    <h2 class="text-xl font-bold product-name">{{ producto['nombre'] }}</h2>
-                    <div class="text-gray-600 product-people">Para {{ producto['cantidadPersonas'] }} personas</div>
-                    <div class="text-gray-600 product-price">$ {{ producto['precio'] }}</div>
-                    <button class="mt-4 edit-button">Editar Producto</button>
+                <div class="card {% if producto['estado'] == 'No Disponible' %}no-disponible{% endif %}" data-id="{{ producto['id'] }}">
+                    <div class="card-content">
+                        <h2 class="product-name">{{ producto['nombre'] }}</h2>
+                        <div class="product-descripcion">{{ producto['descripcion'] }}</div>
+                        <div class="product-price">$ {{ producto['precio'] }}</div>
+                        <div class="actions">
+                            <button class="edit-button">Editar Producto</button>
+                            <select class="estado-select">
+                                <option value="ESTADO" {% if producto['estado'] == 'ESTADO' %}selected{% endif %}>Estado del Producto</option>
+                                <option value="Disponible" {% if producto['estado'] == 'Disponible' %}selected{% endif %}>Disponible</option>
+                                <option value="No Disponible" {% if producto['estado'] == 'No Disponible' %}selected{% endif %}>No Disponible</option>
+                            </select>
+                        </div>
+                    </div>
+                    <img src="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}" alt="{{ producto.nombre }}" class="imagen">
                 </div>
                 {% endfor %}
             </div>
@@ -219,14 +327,17 @@
                     <input type="text" id="product-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                 </label>
                 <label class="block mb-6">
-                    <span class="text-gray-700">Para cuántas personas</span>
-                    <input type="text" id="product-people" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    <span class="text-gray-700">Descripcion</span>
+                    <input type="text" id="product-descripcion" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                 </label>
                 <label class="block mb-6">
                     <span class="text-gray-700">Precio del Producto</span>
                     <input type="text" id="product-price" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                 </label>
-                <button type="submit" class="modal-button">Guardar Cambios</button>
+                <div class="flex justify-between">
+                    <button type="submit" class="modal-button">Guardar Cambios</button>
+                    <button type="button" id="delete-product-button" class="modal-button delete-button">Eliminar Producto</button>
+                </div>
             </form>
         </div>
     </div>

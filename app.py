@@ -986,5 +986,6 @@ def confirmar_compra():
 
     return redirect(url_for('pedidos_cliente'))
 
+
 if __name__ == "__main__":
     app.run(debug=True)

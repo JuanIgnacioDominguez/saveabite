@@ -248,17 +248,13 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for restaurant in restaurantes %}
             <div class="recipe-card">
-                <img src="{{ url_for('static', filename='uploads/' ~ restaurant.imagen) }}" alt="{{ restaurant.nombre }}">
+                <img src="{{ url_for('static', filename='uploads/' ~ restaurant.imagen) }}" alt="{{ restaurant.nombre_usuario }}">
                 <h3 class="text-xl font-bold mb-2">{{ restaurant.nombre_usuario }}</h3>
                 <div class="info">
                     <div>
                         <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
-                        <p class="text-gray-600">{{ restaurant.direccion }}</p>
+                        <p class="text-gray-600">{{ restaurant.calle }} {{ restaurant.altura }}, {{ restaurant.localidad }}</p>
                     </div>
-                    <!-- <div> HAY QUE PONERLE ALGO DE RATING EN LA TABLA PARA PODER HACER ESTO
-                        <div class="info-icon"><i class="fas fa-star"></i></div>
-                        <p class="text-gray-600">{{ restaurant.rating }}</p>
-                    </div> -->
                 </div>
                 <div class="button-container mt-4">
                     <button class="action-button" onclick="goToRestaurantDetail('{{ restaurant.id }}')">Ver Menú</button>

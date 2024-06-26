@@ -1,7 +1,7 @@
 import os
 import datetime
 import uuid
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, jsonify, render_template, request, redirect, url_for, flash, session
 from flask_mail import Mail, Message
 import sqlite3
 from werkzeug.utils import secure_filename
@@ -52,7 +52,19 @@ def create_tables():
             correo_electronico TEXT NOT NULL UNIQUE,
             contrasena TEXT NOT NULL,
             imagen TEXT,  -- Columna para almacenar imágenes
-            membresia TEXT 
+            membresia TEXT,
+            direccion_id INTEGER,
+            FOREIGN KEY (direccion_id) REFERENCES direccionEmpresa (id)
+        )
+    ''')
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS direccionEmpresa (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            usuario_id INTEGER NOT NULL,
+            calle TEXT NOT NULL,
+            altura INTEGER NOT NULL,
+            localidad TEXT NOT NULL,
+            FOREIGN KEY (usuario_id) REFERENCES usuarioEmpresa (id)
         )
     ''')
     # Crear tabla Productos
@@ -491,29 +503,35 @@ def menu():
     query = request.args.get('query', '').lower()
     conn = get_db_connection()
     
-     # Obtener el tipo de dieta del usuario
+    # Obtener el tipo de dieta del usuario
     user = conn.execute('SELECT tipo_dieta FROM usuarios WHERE id = ?', (user_id,)).fetchone()
     tipo_dieta = user['tipo_dieta'] if user else None
 
-    restaurantes = conn.execute('SELECT * FROM usuarioEmpresa').fetchall()
+    # Actualizar la consulta para unir usuarioEmpresa con direccionEmpresa
+    restaurantes = conn.execute('''
+        SELECT usuarioEmpresa.id, usuarioEmpresa.nombre_usuario, usuarioEmpresa.imagen,
+            direccionEmpresa.calle, direccionEmpresa.altura, direccionEmpresa.localidad
+        FROM usuarioEmpresa
+        LEFT JOIN direccionEmpresa ON usuarioEmpresa.id = direccionEmpresa.usuario_id
+    ''').fetchall()
     
     if query:
-        productos = conn.execute("""
+        productos = conn.execute('''
             SELECT * FROM Productos
             WHERE LOWER(nombre) LIKE ?
             OR LOWER(descripcion) LIKE ?
             OR LOWER(tipoComida) LIKE ?
-        """, (f'%{query}%', f'%{query}%', f'%{query}%')).fetchall()
+        ''', (f'%{query}%', f'%{query}%', f'%{query}%')).fetchall()
     else:
         productos = conn.execute('SELECT * FROM Productos').fetchall()
     
     recomendados = []
     if tipo_dieta:
-        recomendados = conn.execute("""
+        recomendados = conn.execute('''
             SELECT * FROM Productos
             WHERE LOWER(tipo_dieta) = ?
             LIMIT 6
-        """, (tipo_dieta.lower(),)).fetchall()
+        ''', (tipo_dieta.lower(),)).fetchall()
     
     conn.close()
     return render_template('general/menu.html', user_name=user_name, user_image=user_image, productos=productos, recomendados=recomendados, tipo_dieta=tipo_dieta, restaurantes=restaurantes)
@@ -642,13 +660,44 @@ def perfil_empresa():
     company = {'name': session.get('user_name'), 'email': session.get('user_email'), 'image': session.get('user_image')}
     return render_template('perfiles_empresa/PerfilEmpresa.html', company=company)
 
-@app.route("/direcciones_empresa")
+@app.route("/direcciones_empresa", methods=['GET', 'POST'])
 def direcciones_empresa():
-    addresses = [
-        {'name': 'Oficina Central', 'address': '789 Calle Empresarial'},
-        {'name': 'Sucursal', 'address': '101 Avenida Comercial'}
-    ]
-    return render_template('perfiles_empresa/DireccionesEmpresa.html', addresses=addresses)
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    
+    if request.method == 'POST':
+        calle = request.form['calle']
+        altura = request.form['altura']
+        localidad = request.form['localidad']
+        
+        # Verificar si ya existe una dirección para este usuario
+        existing_address = conn.execute('SELECT * FROM direccionEmpresa WHERE usuario_id = ?', (user_id,)).fetchone()
+        if existing_address:
+            # Actualizar la dirección existente
+            conn.execute('UPDATE direccionEmpresa SET calle = ?, altura = ?, localidad = ? WHERE usuario_id = ?', (calle, altura, localidad, user_id))
+        else:
+            # Insertar una nueva dirección
+            conn.execute('''
+                INSERT INTO direccionEmpresa (usuario_id, calle, altura, localidad)
+                VALUES (?, ?, ?, ?)
+            ''', (user_id, calle, altura, localidad))
+        
+        conn.commit()
+        registrar_accion(user_id, 'Añadida o actualizada dirección')
+    
+    direccion = conn.execute('SELECT * FROM direccionEmpresa WHERE usuario_id = ?', (user_id,)).fetchone()
+    conn.close()
+    return render_template('perfiles_empresa/DireccionesEmpresa.html', direccion=direccion)
+
+@app.route('/delete_direccionEmpresa/<int:id>', methods=['POST'])
+def delete_direccionEmpresa(id):
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    conn.execute('DELETE FROM direccionEmpresa WHERE id = ? AND usuario_id = ?', (id, user_id))
+    conn.commit()
+    conn.close()
+    registrar_accion(user_id, 'Eliminada dirección')
+    return redirect(url_for('direcciones_empresa'))
 
 @app.route("/editar_perfil_empresa", methods=['GET', 'POST'])
 def editar_perfil_empresa():

@@ -55,30 +55,19 @@ def create_tables():
             membresia TEXT 
         )
     ''')
-    # Crear tabla restaurantes
-    conn.execute('''
-        CREATE TABLE IF NOT EXISTS Restaurantes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nombre TEXT NOT NULL,
-            direccion TEXT NOT NULL,
-            descripcion TEXT,
-            imagen TEXT
-        );
-    ''')
     # Crear tabla Productos
     conn.execute('''
         CREATE TABLE IF NOT EXISTS Productos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             Empresa TEXT NOT NULL,
             nombre TEXT NOT NULL,
-            descripcion TEXT,
-            tipo_comida TEXT,
-            imagen TEXT NOT NULL,
-            tiempo_estimado TEXT,
+            tiempoEstimado TEXT NOT NULL,
             precio REAL NOT NULL,
-            restaurante_id INTEGER,
-            FOREIGN KEY (restaurante_id) REFERENCES Restaurantes(id)
-        );
+            descripcion TEXT NOT NULL,
+            imagen TEXT NOT NULL,
+            tipoComida TEXT NOT NULL,
+            tipo_dieta TEXT  -- Nueva columna para tipo de dieta
+        )
     ''')
     # Crear tabla métodos de pago
     conn.execute('''
@@ -502,47 +491,33 @@ def menu():
     query = request.args.get('query', '').lower()
     conn = get_db_connection()
     
-    # Obtener el tipo de dieta del usuario
+     # Obtener el tipo de dieta del usuario
     user = conn.execute('SELECT tipo_dieta FROM usuarios WHERE id = ?', (user_id,)).fetchone()
     tipo_dieta = user['tipo_dieta'] if user else None
+
+    restaurantes = conn.execute('SELECT * FROM usuarioEmpresa').fetchall()
     
-    # Consulta para obtener la lista de restaurantes
     if query:
-        restaurantes = conn.execute("""
-            SELECT * FROM Restaurantes
+        productos = conn.execute("""
+            SELECT * FROM Productos
             WHERE LOWER(nombre) LIKE ?
-            OR LOWER(direccion) LIKE ?
-        """, (f'%{query}%', f'%{query}%')).fetchall()
+            OR LOWER(descripcion) LIKE ?
+            OR LOWER(tipoComida) LIKE ?
+        """, (f'%{query}%', f'%{query}%', f'%{query}%')).fetchall()
     else:
-        restaurantes = conn.execute('SELECT * FROM Restaurantes').fetchall()
+        productos = conn.execute('SELECT * FROM Productos').fetchall()
     
     recomendados = []
     if tipo_dieta:
-        # Consulta para obtener restaurantes recomendados según tipo de dieta
         recomendados = conn.execute("""
-            SELECT * FROM Restaurantes
-            WHERE id IN (
-                SELECT restaurante_id FROM Productos
-                WHERE LOWER(tipo_comida) = ?
-            )
+            SELECT * FROM Productos
+            WHERE LOWER(tipo_dieta) = ?
             LIMIT 6
         """, (tipo_dieta.lower(),)).fetchall()
     
     conn.close()
-    return render_template('general/menu.html', user_name=user_name, user_image=user_image, restaurantes=restaurantes, recomendados=recomendados, tipo_dieta=tipo_dieta)
+    return render_template('general/menu.html', user_name=user_name, user_image=user_image, productos=productos, recomendados=recomendados, tipo_dieta=tipo_dieta, restaurantes=restaurantes)
 
-@app.route("/restaurante/<int:restaurante_id>", methods=['GET'])
-def restaurante(restaurante_id):
-    conn = get_db_connection()
-    
-    # Obtener el restaurante por su ID
-    restaurante = conn.execute('SELECT * FROM Restaurantes WHERE id = ?', (restaurante_id,)).fetchone()
-    
-    # Obtener los productos asociados a este restaurante
-    productos = conn.execute('SELECT * FROM Productos WHERE restaurante_id = ?', (restaurante_id,)).fetchall()
-    
-    conn.close()
-    return render_template('general/restaurant.html', restaurante=restaurante, productos=productos)
 
 @app.route('/filter_menu', methods=['GET'])
 def filter_menu():
@@ -664,7 +639,7 @@ def soporte():
 
 @app.route("/perfil_empresa", methods=['GET', 'POST'])
 def perfil_empresa():
-    company = {'name': session.get('user_name'), 'email': session.get('user_email')}
+    company = {'name': session.get('user_name'), 'email': session.get('user_email'), 'image': session.get('user_image')}
     return render_template('perfiles_empresa/PerfilEmpresa.html', company=company)
 
 @app.route("/direcciones_empresa")
@@ -746,6 +721,41 @@ def upload_image():
     else:
         flash('Tipo de archivo no permitido', 'error')
         return redirect(url_for('perfil_usuario'))
+    
+@app.route('/upload_imageEmpresa', methods=['POST'])
+def upload_imageEmpresa():
+    if 'profile_image' not in request.files:
+        flash('No file part', 'error')
+        return redirect(url_for('perfil_empresa'))
+    file = request.files['profile_image']
+    if file.filename == '':
+        flash('No selected file', 'error')
+        return redirect(url_for('perfil_empresa'))
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        
+        # Crear directorio si no existe
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+        
+        file.save(file_path)
+        
+        # Actualizar la imagen del usuario en la base de datos
+        user_id = session.get('user_id')
+        conn = get_db_connection()
+        conn.execute('UPDATE usuarioEmpresa SET imagen = ? WHERE id = ?', (filename, user_id))
+        conn.commit()
+        registrar_accion(user_id, 'Actualizada imagen de perfil')
+        conn.close()
+        
+        # Actualizar la sesión con la nueva imagen
+        session['user_image'] = filename
+        
+        flash('Imagen de perfil actualizada con éxito', 'success')
+        return redirect(url_for('perfil_empresa'))
+    else:
+        flash('Tipo de archivo no permitido', 'error')
+        return redirect(url_for('perfil_empresa'))
 
 @app.route("/ver_comidas", methods=['GET'])
 def VerComidas():

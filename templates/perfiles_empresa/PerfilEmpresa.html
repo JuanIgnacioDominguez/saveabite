@@ -101,9 +101,9 @@
             <div class="profile-container">
                 <div class="profile-info flex items-start"> <!-- Cambiado a flex y items-start para alinear elementos hacia la izquierda -->
                     <div class="text-center mr-4">
-                        <img src="{{ company.image if company.image else url_for('static', filename='img/defaultUser.png') }}" alt="Company Avatar" class="profile-avatar rounded-full mx-auto" id="profile-image">
+                        <img src="{{ url_for('static', filename='uploads/' + company.image) }}" alt="User Avatar" class="profile-avatar rounded-full mx-auto" id="profile-image">
                         <button class="edit-photo-button" onclick="openFileInput()">Editar Foto</button>
-                        <form id="image-form" action="{{ url_for('upload_company_image') }}" method="POST" enctype="multipart/form-data" style="display:none;">
+                        <form id="image-form" action="{{ url_for('upload_imageEmpresa') }}" method="POST" enctype="multipart/form-data" style="display:none;">
                             <input type="file" name="profile_image" id="file-input" accept="image/*">
                         </form>
                     </div>

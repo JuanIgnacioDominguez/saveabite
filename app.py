@@ -503,38 +503,31 @@ def menu():
     query = request.args.get('query', '').lower()
     conn = get_db_connection()
     
-    # Obtener el tipo de dieta del usuario
+     # Obtener el tipo de dieta del usuario
     user = conn.execute('SELECT tipo_dieta FROM usuarios WHERE id = ?', (user_id,)).fetchone()
     tipo_dieta = user['tipo_dieta'] if user else None
-
-    # Actualizar la consulta para unir usuarioEmpresa con direccionEmpresa
-    restaurantes = conn.execute('''
-        SELECT usuarioEmpresa.id, usuarioEmpresa.nombre_usuario, usuarioEmpresa.imagen,
-            direccionEmpresa.calle, direccionEmpresa.altura, direccionEmpresa.localidad
-        FROM usuarioEmpresa
-        LEFT JOIN direccionEmpresa ON usuarioEmpresa.id = direccionEmpresa.usuario_id
-    ''').fetchall()
     
     if query:
-        productos = conn.execute('''
+        productos = conn.execute("""
             SELECT * FROM Productos
             WHERE LOWER(nombre) LIKE ?
             OR LOWER(descripcion) LIKE ?
             OR LOWER(tipoComida) LIKE ?
-        ''', (f'%{query}%', f'%{query}%', f'%{query}%')).fetchall()
+        """, (f'%{query}%', f'%{query}%', f'%{query}%')).fetchall()
     else:
         productos = conn.execute('SELECT * FROM Productos').fetchall()
     
     recomendados = []
     if tipo_dieta:
-        recomendados = conn.execute('''
+        recomendados = conn.execute("""
             SELECT * FROM Productos
             WHERE LOWER(tipo_dieta) = ?
             LIMIT 6
-        ''', (tipo_dieta.lower(),)).fetchall()
+        """, (tipo_dieta.lower(),)).fetchall()
     
     conn.close()
-    return render_template('general/menu.html', user_name=user_name, user_image=user_image, productos=productos, recomendados=recomendados, tipo_dieta=tipo_dieta, restaurantes=restaurantes)
+    return render_template('general/menu.html', user_name=user_name, user_image=user_image, productos=productos, recomendados=recomendados, tipo_dieta=tipo_dieta)
+
 
 
 @app.route('/filter_menu', methods=['GET'])
@@ -977,7 +970,7 @@ def eliminar_del_carrito(producto_id):
     flash('Producto eliminado del carrito', 'success')
     return redirect(url_for('carrito'))
 
-@app.route("/agregar_a_favoritos/<int:restaurant_id>", methods=['POST'])
+@app.route("/agregar_a_favoritos/<int:producto_id>", methods=['POST'])
 def agregar_a_favoritos(restaurant_id):
     user_id = session.get('user_id')
     conn = get_db_connection()

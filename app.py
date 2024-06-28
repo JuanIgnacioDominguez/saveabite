@@ -78,6 +78,8 @@ def create_tables():
             descripcion TEXT NOT NULL,
             imagen TEXT NOT NULL,
             tipoComida TEXT NOT NULL,
+            stock INTEGER DEFAULT 0,
+            estad TEXT DEFAULT 'NoDisponible',
             tipo_dieta TEXT  -- Nueva columna para tipo de dieta
         )
     ''')
@@ -503,31 +505,38 @@ def menu():
     query = request.args.get('query', '').lower()
     conn = get_db_connection()
     
-     # Obtener el tipo de dieta del usuario
+    # Obtener el tipo de dieta del usuario
     user = conn.execute('SELECT tipo_dieta FROM usuarios WHERE id = ?', (user_id,)).fetchone()
     tipo_dieta = user['tipo_dieta'] if user else None
+
+    # Actualizar la consulta para unir usuarioEmpresa con direccionEmpresa
+    restaurantes = conn.execute('''
+        SELECT usuarioEmpresa.id, usuarioEmpresa.nombre_usuario, usuarioEmpresa.imagen,
+            direccionEmpresa.calle, direccionEmpresa.altura, direccionEmpresa.localidad
+        FROM usuarioEmpresa
+        LEFT JOIN direccionEmpresa ON usuarioEmpresa.id = direccionEmpresa.usuario_id
+    ''').fetchall()
     
     if query:
-        productos = conn.execute("""
+        productos = conn.execute('''
             SELECT * FROM Productos
             WHERE LOWER(nombre) LIKE ?
             OR LOWER(descripcion) LIKE ?
             OR LOWER(tipoComida) LIKE ?
-        """, (f'%{query}%', f'%{query}%', f'%{query}%')).fetchall()
+        ''', (f'%{query}%', f'%{query}%', f'%{query}%')).fetchall()
     else:
         productos = conn.execute('SELECT * FROM Productos').fetchall()
     
     recomendados = []
     if tipo_dieta:
-        recomendados = conn.execute("""
+        recomendados = conn.execute('''
             SELECT * FROM Productos
             WHERE LOWER(tipo_dieta) = ?
             LIMIT 6
-        """, (tipo_dieta.lower(),)).fetchall()
+        ''', (tipo_dieta.lower(),)).fetchall()
     
     conn.close()
-    return render_template('general/menu.html', user_name=user_name, user_image=user_image, productos=productos, recomendados=recomendados, tipo_dieta=tipo_dieta)
-
+    return render_template('general/menu.html', user_name=user_name, user_image=user_image, productos=productos, recomendados=recomendados, tipo_dieta=tipo_dieta, restaurantes=restaurantes)
 
 
 @app.route('/filter_menu', methods=['GET'])
@@ -823,7 +832,6 @@ def crear_producto():
         precio = request.form['precio']
         descripcion = request.form['descripcion']
         categoria = request.form['categoria']
-        cantidad_stock = request.form['cantidad_stock']
         tipo_dieta = request.form['tipo_dieta']
         file = request.files['imagen']
         
@@ -841,11 +849,10 @@ def crear_producto():
             conn.execute('''
                 INSERT INTO Productos (Empresa, nombre, tiempoEstimado, precio, descripcion, imagen, tipoComida, tipo_dieta) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (session.get('user_name'), nombre, '30 min', precio, descripcion, filename, categoria, cantidad_stock, tipo_dieta))
+            ''', (session.get('user_name'), nombre, '30 min', precio, descripcion, filename, categoria, tipo_dieta))
             conn.commit()
             conn.close()
             
-            # Mostrar mensaje de éxito y redirigir o mostrar una nueva página
             flash('Producto creado con éxito', 'success')
             return redirect(url_for('menu_empresas'))
         
@@ -972,22 +979,21 @@ def eliminar_del_carrito(producto_id):
     return redirect(url_for('carrito'))
 
 @app.route("/agregar_a_favoritos/<int:producto_id>", methods=['POST'])
-def agregar_a_favoritos(restaurant_id):
+def agregar_a_favoritos(producto_id):
     user_id = session.get('user_id')
     conn = get_db_connection()
-    # Verifica si el restaurante ya está en favoritos para el usuario
-    item = conn.execute('SELECT * FROM favoritos WHERE usuario_id = ? AND restaurant_id = ?', (user_id, restaurant_id)).fetchone()
+    # Verifica si el producto ya está en favoritos para el usuario
+    item = conn.execute('SELECT * FROM favoritos WHERE usuario_id = ? AND producto_id = ?', (user_id, producto_id)).fetchone()
     
-    if item is None:  # Si el restaurante no está en favoritos, lo agrega
-        conn.execute('INSERT INTO favoritos (usuario_id, restaurant_id) VALUES (?, ?)', (user_id, restaurant_id))
-        flash('Restaurante agregado a favoritos', 'success')
-    else:  # Si el restaurante ya está en favoritos, muestra un mensaje
-        flash('Restaurante ya está en favoritos', 'error')
+    if item is None:  # Si el producto no está en favoritos, lo agrega
+        conn.execute('INSERT INTO favoritos (usuario_id, producto_id) VALUES (?, ?)', (user_id, producto_id))
+        flash('Producto agregado a favoritos', 'success')
+    else:  # Si el producto ya está en favoritos, muestra un mensaje
+        flash('Producto ya está en favoritos', 'error')
     
     conn.commit()
     conn.close()
-    return redirect(url_for('restaurant', id=restaurant_id))
-
+    return redirect(url_for('producto', id=producto_id))
 
 @app.route("/eliminar_de_favoritos/<int:producto_id>", methods=['POST'])
 def eliminar_de_favoritos (producto_id):

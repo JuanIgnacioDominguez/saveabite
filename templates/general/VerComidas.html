@@ -221,12 +221,14 @@
                     const productName = card.querySelector('.product-name').textContent;
                     const productPeople = card.querySelector('.product-descripcion').textContent;
                     const productPrice = card.querySelector('.product-price').textContent;
+                    const productStock = card.querySelector('.product-stock').textContent;
                     const productId = card.getAttribute('data-id'); // Obtener el ID del producto
 
                     // Setear valores en el formulario
                     document.getElementById('product-name').value = productName;
                     document.getElementById('product-descripcion').value = productPeople;
                     document.getElementById('product-price').value = productPrice;
+                    document.getElementById('product-stock').value = productStock;
                 });
             });
 
@@ -310,17 +312,20 @@
         <div class="content-container bg-transparent p-6 rounded">
             <div class="form-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                 {% for producto in comidas %}
-                <div class="card {% if producto['estado'] == 'No Disponible' %}no-disponible{% endif %}" data-id="{{ producto['id'] }}">
+                <div class="card" data-id="{{ producto['id'] }}">
                     <div class="card-content">
                         <h2 class="product-name">{{ producto['nombre'] }}</h2>
                         <div class="product-descripcion">{{ producto['descripcion'] }}</div>
                         <div class="product-price">$ {{ producto['precio'] }}</div>
+                        <div class="product-stock">Stock: {{ producto['stock'] }}</div>
                         <div class="actions">
                             <button class="edit-button">Editar Producto</button>
+                            <form method="POST" action="{{ url_for('eliminar_producto', producto_id = producto.id) }}">
+                                <button type="submit" class="modal-button delete-button">Eliminar Producto</button>
+                            </form>
                             <select class="estado-select">
-                                <option value="ESTADO" {% if producto['estado'] == 'ESTADO' %}selected{% endif %}>Estado del Producto</option>
-                                <option value="Disponible" {% if producto['estado'] == 'Disponible' %}selected{% endif %}>Disponible</option>
-                                <option value="No Disponible" {% if producto['estado'] == 'No Disponible' %}selected{% endif %}>No Disponible</option>
+                                <option value="Disponible" {% if producto['estad'] == 'Disponible' %}selected{% endif %}>Disponible</option>
+                                <option value="NoDisponible" {% if producto['estad'] == 'NoDisponible' %}selected{% endif %}>No Disponible</option>
                             </select>
                         </div>
                     </div>
@@ -352,11 +357,12 @@
                     <span class="text-gray-700">Precio del Producto</span>
                     <input type="text" id="product-price" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                 </label>
+                <label class="block mb-6">
+                    <span class="text-gray-700">Stock del Producto</span>
+                    <input type="text" id="product-stock" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                </label>
                 <div class="flex justify-between">
                     <button type="submit" class="modal-button">Guardar Cambios</button>
-                    <form method="POST" action="{{ url_for('eliminar_producto', producto_id=producto.id) }}">
-                        <button type="submit" class="modal-button delete-button">Eliminar Producto</button>
-                    </form>
                 </div>
             </form>
         </div>

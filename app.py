@@ -858,6 +858,7 @@ def crear_producto():
         
     return render_template('crear_producto/CrearProducto.html')
 
+ 
 @app.route('/logout', methods=['POST'])
 def logout():
     session.clear()

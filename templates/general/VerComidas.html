@@ -227,33 +227,6 @@
                     document.getElementById('product-name').value = productName;
                     document.getElementById('product-descripcion').value = productPeople;
                     document.getElementById('product-price').value = productPrice;
-
-                    // Manejar evento de eliminar producto
-                    const deleteButton = document.getElementById('delete-product-button');
-                    deleteButton.addEventListener('click', function() {
-                        // Aquí puedes implementar la lógica para eliminar el producto
-                        const confirmation = confirm(`¿Estás seguro de eliminar el producto "${productName}"?`);
-                        if (confirmation) {
-                            // Puedes enviar una solicitud AJAX para eliminar el producto
-                            // Por ejemplo, usando fetch o axios
-                            fetch(`/eliminar-producto/${productId}`, {
-                                method: 'DELETE',
-                            })
-                            .then(response => {
-                                if (response.ok) {
-                                    // Producto eliminado exitosamente
-                                    alert(`El producto "${productName}" ha sido eliminado.`);
-                                    window.location.reload(); // Recargar la página o actualizar la lista de productos
-                                } else {
-                                    throw new Error('Error al eliminar el producto.');
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                alert('Hubo un problema al intentar eliminar el producto.');
-                            });
-                        }
-                    });
                 });
             });
 
@@ -381,7 +354,9 @@
                 </label>
                 <div class="flex justify-between">
                     <button type="submit" class="modal-button">Guardar Cambios</button>
-                    <button type="button" id="delete-product-button" class="modal-button delete-button">Eliminar Producto</button>
+                    <form method="POST" action="{{ url_for('eliminar_producto', producto_id=producto.id) }}">
+                        <button type="submit" class="modal-button delete-button">Eliminar Producto</button>
+                    </form>
                 </div>
             </form>
         </div>

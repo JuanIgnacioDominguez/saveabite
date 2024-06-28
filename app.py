@@ -823,6 +823,7 @@ def crear_producto():
         precio = request.form['precio']
         descripcion = request.form['descripcion']
         categoria = request.form['categoria']
+        cantidad_stock = request.form['cantidad_stock']
         tipo_dieta = request.form['tipo_dieta']
         file = request.files['imagen']
         
@@ -840,7 +841,7 @@ def crear_producto():
             conn.execute('''
                 INSERT INTO Productos (Empresa, nombre, tiempoEstimado, precio, descripcion, imagen, tipoComida, tipo_dieta) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (session.get('user_name'), nombre, '30 min', precio, descripcion, filename, categoria, tipo_dieta))
+            ''', (session.get('user_name'), nombre, '30 min', precio, descripcion, filename, categoria, cantidad_stock, tipo_dieta))
             conn.commit()
             conn.close()
             

@@ -815,6 +815,15 @@ def VerComidas():
     conn.close()
     return render_template('general/VerComidas.html', comidas=comidas)
 
+@app.route("/eliminar_producto<int:producto_id>", methods=['POST'])
+def eliminar_producto(producto_id):
+    conn = get_db_connection()
+    conn.execute('DELETE FROM Productos WHERE producto_id = ?', (producto_id))
+    conn.commit()
+    conn.close()
+    flash('Producto eliminado', 'success')
+    return redirect(url_for('ver_comidas'))
+
 @app.route("/producto/<int:id>", methods=['GET'])
 def producto(id):
     conn = get_db_connection()

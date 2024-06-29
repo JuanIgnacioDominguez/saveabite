@@ -326,6 +326,42 @@
                     select.style.backgroundColor = '#f87171';
                 }
             }
+
+            const deleteButtons = document.querySelectorAll('.delete-button');
+            const deleteModal = document.getElementById('deleteModal');
+            const cancelDelete = document.querySelector('.cancel-button');
+            const confirmDelete = document.querySelector('.confirm-delete-button');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault(); // Prevent default form submission
+                    event.stopPropagation(); // Stop event propagation
+
+                    // Show delete confirmation modal
+                    deleteModal.style.display = 'block';
+
+                    // Handle cancel button click
+                    cancelDelete.addEventListener('click', function() {
+                        deleteModal.style.display = 'none'; // Hide modal on cancel
+                    });
+
+                    // Handle confirm delete button click
+                    confirmDelete.addEventListener('click', function() {
+                        // Perform actual deletion here via AJAX or form submission
+                        const form = this.closest('form');
+                        form.submit(); // Submit the form to delete the product
+                    });
+                });
+            });
+
+            // Close the delete modal when clicking outside it
+            window.onclick = function(event) {
+                if (event.target == deleteModal) {
+                    deleteModal.style.display = 'none';
+                }
+            };
+
+            
         });
     </script>
 </head>
@@ -392,5 +428,17 @@
             </form>
         </div>
     </div>
+
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>¿Estás seguro de eliminar este producto?</h2>
+            <div class="flex justify-between">
+                <button class="modal-button cancel-button">Cancelar</button>
+                <button type="submit" class="modal-button delete-button" >Eliminar</button>
+            </div>
+        </div>
+    </div>
+    
 </body>
 </html>

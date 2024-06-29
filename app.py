@@ -707,14 +707,19 @@ def editar_perfil_empresa():
     if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
+        current_password = request.form['current_password']
         new_password = request.form['new_password']
         confirm_password = request.form['confirm_password']
 
-        if new_password and new_password != confirm_password:
-            flash('Las contraseñas no coinciden', 'error')
-            return redirect(url_for('editar_perfil_empresa'))
-
         conn = get_db_connection()
+        user = conn.execute('SELECT * FROM usuarioEmpresa WHERE id = ?', (user_id,)).fetchone()
+        
+        if not user or user['contrasena'] != current_password:
+            return jsonify(success=False, error='Contraseña actual incorrecta')
+
+        if new_password and new_password != confirm_password:
+            return jsonify(success=False, error='Las contraseñas no coinciden')
+
         conn.execute('UPDATE usuarioEmpresa SET nombre_usuario = ?, correo_electronico = ? WHERE id = ?', (name, email, user_id))
         if new_password:
             conn.execute('UPDATE usuarioEmpresa SET contrasena = ? WHERE id = ?', (new_password, user_id))
@@ -723,8 +728,8 @@ def editar_perfil_empresa():
         conn.close()
         session['user_name'] = name
         session['user_email'] = email
-        flash('Perfil de empresa actualizado con éxito', 'success')
-        return redirect(url_for('perfil_empresa'))
+        return jsonify(success=True)
+    
     company = {'name': session.get('user_name'), 'email': session.get('user_email')}
     return render_template('perfiles_empresa/EditarPerfilEmpresa.html', company=company)
 

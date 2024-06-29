@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ producto['nombre'] }}</title>
     <link rel="stylesheet" href="/static/css/style.css">
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
@@ -195,54 +194,52 @@
             display: block;
         }
         .product-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
             margin-bottom: 1rem;
-            text-align: center;
+        }
+        .product-details .details {
+            flex-grow: 1;
+            margin-left: 20px; /* Espacio entre imagen y detalles */
+        }
+        .product-details h2 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .product-details p {
+            margin-bottom: 10px;
         }
         .imagen {
-            width: 300px;
-            height: 300px;
+            width: 200px;
+            height: 200px;
             object-fit: cover;
             border-radius: 0.375rem;
             margin: 0 auto 1rem auto;
             display: block;
         }
+        .action-button {
+            background-color: #27a2e8;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 2rem;
+            transition: background-color 0.3s;
+        }
+        .action-button:hover {
+            background-color: #1e81b0;
+        }
     </style>
 </head>
 <body class="flex h-screen">
     <!-- Sidebar -->
-    <aside class="w-64 bg-white text-black shadow-lg">
-        <div class="p-4">
-            <img src="/static/img/logo.png" alt="Logo" class="w-full h-auto">
-        </div>
-        <nav class="mt-4 sidebar">
-            <a href="/templates/general/menu_usuario" class="flex items-center py-2.5 px-4 rounded transition duration-200 active">
-                <i class="fas fa-home mr-2" style="color: #27a2e8;"></i>
-                <span style="color: #27a2e8;">Inicio</span>
-            </a>
-            <a href="/carrito" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-shopping-cart mr-2 text-gray-500"></i>
-                Carrito
-            </a>
-            <a href="/mis-pedidos" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-box mr-2 text-gray-500"></i>
-                Mis Pedidos
-            </a>
-            <a href="/favoritos" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-heart mr-2 text-gray-500"></i>
-                Favoritos
-            </a>
-            <a href="/perfil-usuario" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-user mr-2 text-gray-500"></i>
-                Perfil
-            </a>
-            <a href="/informacion" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-200 hover:text-black">
-                <i class="fas fa-info-circle mr-2 text-gray-500"></i>
-                Información
-            </a>
-        </nav>
-    </aside>
+    {% include 'Sidebars/SidebarUsuario.html' %}
     <!-- Main content -->
-    <div class="flex-1 p-6 overflow-y-auto">
+    <div class="flex-1 p-6 overflow-y-auto ml-64">
         <h1 class="text-2xl font-bold mb-4">{{ producto['nombre'] }}</h1>
         <div class="content-container bg-white p-6 rounded shadow-md">
             <a href="{{ url_for('menu') }}" class="back-button">
@@ -251,24 +248,20 @@
             </a>
             <div class="product-details">
                 <img src="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}" alt="{{ producto.nombre }}" class="imagen">
-                <div>
-                    <h2 class="text-xl font-bold">{{ producto['nombre'] }}</h2>
-                    <br>
-                    <p>Precio: ${{ producto['precio'] }}</p>
-                    <br>
-                    <p>Descripción: {{ producto['descripcion'] }}</p>
-                    <br>
+                <div class="details">
+                    <h2>{{ producto['nombre'] }}</h2>
+                    <p><strong>Descripción:</strong> {{ producto['descripcion'] }}</p>
+                    <p><strong>Precio:</strong> ${{ producto['precio'] }}</p>
+                    <!-- Aquí incluirías el resto de la información de la base de datos -->
+                    <p><strong>Stock disponible:</strong> {{ producto['stock'] }}</p>
+                    <form method="POST" action="{{ url_for('agregar_al_carrito', producto_id=producto.id) }}">
+                        <label>
+                            <span>Cantidad:</span>
+                            <input type="number" name="cantidad" min="1" value="1">
+                        </label>
+                        <button type="submit" class="action-button">Añadir al carrito</button>
+                    </form>
                 </div>
-            </div>
-           
-            <div class="flex justify-between">
-                <form method="POST" action="{{ url_for('agregar_al_carrito', producto_id=producto.id) }}">
-                    <label class="block mb-6">
-                        <span class="text-gray-700">Cantidad:</span>
-                        <input type="number" name="cantidad" min="1" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                    </label>
-                    <button type="submit" class="action-button">Añadir al carrito</button>
-                </form>>
             </div>
         </div>
     </div>

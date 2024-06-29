@@ -707,8 +707,17 @@ def editar_perfil_empresa():
     if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
+        new_password = request.form['new_password']
+        confirm_password = request.form['confirm_password']
+
+        if new_password and new_password != confirm_password:
+            flash('Las contraseñas no coinciden', 'error')
+            return redirect(url_for('editar_perfil_empresa'))
+
         conn = get_db_connection()
         conn.execute('UPDATE usuarioEmpresa SET nombre_usuario = ?, correo_electronico = ? WHERE id = ?', (name, email, user_id))
+        if new_password:
+            conn.execute('UPDATE usuarioEmpresa SET contrasena = ? WHERE id = ?', (new_password, user_id))
         conn.commit()
         registrar_accion(user_id, 'Editado perfil de empresa')
         conn.close()
@@ -821,8 +830,7 @@ def eliminar_producto(producto_id):
     conn.execute('DELETE FROM Productos WHERE id = ?', (producto_id,))
     conn.commit()
     conn.close()
-    flash('Producto eliminado', 'success')
-    return redirect(url_for('VerComidas'))
+    return jsonify(success=True)
 
 @app.route("/producto/<int:id>", methods=['GET'])
 def producto(id):

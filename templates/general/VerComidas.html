@@ -190,6 +190,11 @@
             display: block;
             margin: 0 auto 1rem auto;
         }
+        .confirm-delete-button{
+            background-color: #f87171; /* Color de fondo rojo */
+            color: white; /* Texto en color blanco */
+            margin-left: 1rem; /* Espacio entre los botones */
+        }
 
     </style>
     <script>
@@ -201,7 +206,7 @@
             cards.forEach(card => {
                 card.addEventListener('click', function(event) {
                     // Verificar si el click se hizo en un select o en un botón de edición
-                    if (event.target.tagName.toLowerCase() !== 'select' && !event.target.classList.contains('edit-button')) {
+                    if (event.target.tagName.toLowerCase() !== 'select' && !event.target.classList.contains('edit-button') && !event.target.classList.contains('delete-button')) {
                         const productoId = this.getAttribute('data-id');
                         window.location.href = productBaseUrl + productoId;
                     }
@@ -337,6 +342,9 @@
                     event.preventDefault(); // Prevent default form submission
                     event.stopPropagation(); // Stop event propagation
 
+                    const form = this.closest('form');
+                    const productId = form.action.split('/').pop(); // Extract productId from form action URL
+
                     // Show delete confirmation modal
                     deleteModal.style.display = 'block';
 
@@ -347,9 +355,26 @@
 
                     // Handle confirm delete button click
                     confirmDelete.addEventListener('click', function() {
-                        // Perform actual deletion here via AJAX or form submission
-                        const form = this.closest('form');
-                        form.submit(); // Submit the form to delete the product
+                        fetch(`/eliminar_producto/${productId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Remove the product card from the UI
+                                const card = document.querySelector(`.card[data-id='${productId}']`);
+                                card.remove();
+                                deleteModal.style.display = 'none'; // Hide the modal
+                            } else {
+                                alert('Error al eliminar el producto.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
                     });
                 });
             });
@@ -360,8 +385,6 @@
                     deleteModal.style.display = 'none';
                 }
             };
-
-            
         });
     </script>
 </head>
@@ -382,7 +405,7 @@
                         <div>Stock:</div><div class="product-stock">{{ producto['stock'] }}</div>
                         <div class="actions">
                             <button class="edit-button">Editar Producto</button>
-                            <form method="POST" action="{{ url_for('eliminar_producto', producto_id = producto.id) }}">
+                            <form method="POST" action="{{ url_for('eliminar_producto', producto_id=producto.id) }}">
                                 <button type="submit" class="modal-button delete-button">Eliminar Producto</button>
                             </form>
                             <select class="estado-select">
@@ -435,7 +458,7 @@
             <h2>¿Estás seguro de eliminar este producto?</h2>
             <div class="flex justify-between">
                 <button class="modal-button cancel-button">Cancelar</button>
-                <button type="submit" class="modal-button delete-button" >Eliminar</button>
+                <button class="modal-button confirm-delete-button">Eliminar</button>
             </div>
         </div>
     </div>

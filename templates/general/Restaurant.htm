@@ -93,7 +93,7 @@
             </div>
         </div>
         <div class="content">
-            {% for item in restaurant.menus %}
+            {% for item in productos %}
             <div class="menu-item">
                 <img src="{{ url_for('static', filename=item.imagen) }}" alt="{{ item.nombre }} Image">
                 <h3>{{ item.nombre }}</h3>

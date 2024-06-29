@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Save a Bite - Menu</title>
+    <title>Restaurantes</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
@@ -238,106 +238,27 @@
     
     <!-- Main content -->
     <div class="flex-1 p-6 content ml-64">
-        <h1 class="text-4xl font-bold text-custom-blue">Menu Principal</h1>
-        <div class="header">
-            
-            <div class="search">
-                <input type="text" placeholder="Buscar...">
-                <button type="submit"><i class="fas fa-search"></i></button>
-            </div>
-        </div>
-        <div class="button-container">
-            <button class="btn-custom {% if tipo_comida == 'todos' %}active{% endif %}" onclick="filterCategory('todos')">
-                <i class="fas fa-utensils"></i>
-                Todos
-            </button>
-            <button class="btn-custom {% if tipo_comida == 'Hamburguesas' %}active{% endif %}" onclick="filterCategory('Hamburguesas')">
-                <i class="fas fa-hamburger"></i>
-                Hamburguesas
-            </button>
-            <button class="btn-custom {% if tipo_comida == 'Pizzas' %}active{% endif %}" onclick="filterCategory('Pizzas')">
-                <i class="fas fa-pizza-slice"></i>
-                Pizzas
-            </button>
-            <button class="btn-custom {% if tipo_comida == 'Pasta' %}active{% endif %}" onclick="filterCategory('Pasta')">
-                <i class="material-icons">ramen_dining</i>
-                Pasta
-            </button>
-            <button class="btn-custom {% if tipo_comida == 'Ensaladas' %}active{% endif %}" onclick="filterCategory('Ensaladas')">
-                <i class="fas fa-leaf"></i>
-                Ensaladas
-            </button>
-            <button class="btn-custom {% if tipo_comida == 'Cafeteria' %}active{% endif %}" onclick="filterCategory('Cafeteria')">
-                <i class="fas fa-coffee"></i>
-                Cafeteria
-            </button>
-            <button class="btn-custom {% if tipo_comida == 'Carnes' %}active{% endif %}" onclick="filterCategory('Carnes')">
-                <i class="fas fa-drumstick-bite"></i>
-                Carnes
-            </button>
-        </div>
-        {% if tipo_dieta and recomendados %}
-        <div class="mt-8">
-            <h2 class="text-2xl font-bold text-custom-blue mb-4">Recomendados</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {% for producto in recomendados %}
-                <div class="recipe-card {{ producto.tipo_comida }}" onclick="goToProductDetail('{{ producto.id }}')">
-                    <img src="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}" alt="{{ producto.nombre }}">
-                <h3 class="text-xl font-bold mb-2">{{ producto.nombre }}</h3>
+        <h1 class="text-4xl font-bold text-custom-blue">Restaurantes</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for restaurant in restaurantes %}
+            <div class="recipe-card">
+                <img src="{{ url_for('static', filename='uploads/' ~ restaurant.imagen) }}" alt="{{ restaurant.nombre_usuario }}">
+                <h3 class="text-xl font-bold mb-2">{{ restaurant.nombre_usuario }}</h3>
                 <div class="info">
-                        <div>
-                            <div class="info-icon"><i class="fas fa-clock"></i></div>
-                            <p class="text-gray-600">{{ producto.tiempoEstimado }}</p>
-                        </div>
-                        <div>
-                            <div class="info-icon"><i class="fas fa-user"></i></div>
-                            <p class="text-gray-600">{{ producto.tipoComida }}</p>
-                        </div>
-                        <div>
-                            <div class="info-icon"><i class="fas fa-dollar-sign"></i></div>
-                            <p class="text-gray-600">$ {{ producto.precio }}</p>
-                        </div>
-                    </div>
-                    <div class="button-container">
-                        <form method="POST" action="{{ url_for('agregar_a_favoritos', producto_id=producto.id) }}">
-                            <button type="submit" class="action-button">Añadir a favoritos</button>
-                        </form>
-                        <form method="POST" action="{{ url_for('agregar_al_carrito1', producto_id=producto.id) }}">
-                            <button type="submit" class="action-button">Añadir al carrito</button>
-                        </form>
+                    <div>
+                        <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <p class="text-gray-600">{{ restaurant.calle }} {{ restaurant.altura }}, {{ restaurant.localidad }}</p>
                     </div>
                 </div>
-                {% endfor %}
+                <div class="button-container">
+                    <form method="POST" action="{{ url_for('agregar_a_favoritos', empresa_id=restaurant.id) }}">
+                        <button type="submit" class="action-button">Añadir a favoritos</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('ver_menu', id=restaurant.id) }}">
+                        <button type="submit" class="action-button">Ver menú</button>
+                    </form>
+                </div>
             </div>
-        </div>
-		<div class="header">
-            <h2 class="text-2xl font-bold text-custom-blue mt-2">Menu Principal</h2>
-        </div>
-        {% endif %}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {% for producto in productos %}
-                {% if producto.estad == "Disponible" %}
-                    <div class="recipe-card {{ producto.tipo_comida }}" onclick="goToProductDetail('{{ producto.id }}')">
-                        <img src="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}" alt="{{ producto.nombre }}">
-                        <h3 class="text-xl font-bold mb-2">{{ producto.nombre }}</h3>
-                        <div class="info">  
-                            <div>
-                                <div class="info-icon"><i class="fas fa-user"></i></div>
-                                <p class="text-gray-600">{{ producto.empresa }}</p>
-                            </div>
-                            <div>
-                                <div class="info-icon"><i class="fas fa-dollar-sign"></i></div>
-                                <p class="text-gray-600">$ {{ producto.precio }}</p>
-                            </div>
-                        </div>
-                        <div class="button-container">
-                            
-                            <form method="POST" action="{{ url_for('agregar_al_carrito1', producto_id=producto.id) }}">
-                                <button type="submit" class="action-button">Añadir al carrito</button>
-                            </form>
-                        </div>
-                    </div>
-                {% endif %}
             {% endfor %}
         </div>
     </div>

@@ -144,9 +144,9 @@ def create_tables():
         CREATE TABLE IF NOT EXISTS favoritos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             usuario_id INTEGER NOT NULL,
-            producto_id INTEGER NOT NULL,
+            empresa_id INTEGER NOT NULL,
             FOREIGN KEY (usuario_id) REFERENCES usuarios (id),
-            FOREIGN KEY (producto_id) REFERENCES Productos (id)
+            FOREIGN KEY (empresa_id) REFERENCES usuarioEmpresa (id)
         )
     ''')
     conn.execute('''
@@ -748,8 +748,8 @@ def favoritos():
     user_id = session.get('user_id')
     conn = get_db_connection()
     fav_item = conn.execute('''
-        SELECT p.* FROM Productos p
-        JOIN favoritos f ON p.id = f.producto_id
+        SELECT p.* FROM usuarioEmpresa p
+        JOIN favoritos f ON p.id = f.empresa_id
         WHERE f.usuario_id = ?
     ''', (user_id,)).fetchall()
     conn.close()
@@ -955,6 +955,18 @@ def guardar_perfil():
     flash('Perfil actualizado con éxito', 'success')
     return redirect(url_for('perfil_usuario'))
 
+@app.route("/restaurantes", methods=['GET'])
+def restaurantes():
+    conn = get_db_connection()
+    restaurantes = conn.execute('''
+        SELECT usuarioEmpresa.id, usuarioEmpresa.nombre_usuario, usuarioEmpresa.imagen,
+            direccionEmpresa.calle, direccionEmpresa.altura, direccionEmpresa.localidad
+        FROM usuarioEmpresa
+        LEFT JOIN direccionEmpresa ON usuarioEmpresa.id = direccionEmpresa.usuario_id
+    ''').fetchall()
+    conn.close()
+    return render_template('general/Restaurantes.html', restaurantes=restaurantes)
+
 @app.route("/carrito", methods=['GET'])
 def carrito():
     user_id = session.get('user_id')
@@ -1004,33 +1016,41 @@ def eliminar_del_carrito(producto_id):
     flash('Producto eliminado del carrito', 'success')
     return redirect(url_for('carrito'))
 
-@app.route("/agregar_a_favoritos/<int:producto_id>", methods=['POST'])
-def agregar_a_favoritos(producto_id):
+@app.route("/agregar_a_favoritos/<int:empresa_id>", methods=['POST'])
+def agregar_a_favoritos(empresa_id):
     user_id = session.get('user_id')
     conn = get_db_connection()
     # Verifica si el producto ya está en favoritos para el usuario
-    item = conn.execute('SELECT * FROM favoritos WHERE usuario_id = ? AND producto_id = ?', (user_id, producto_id)).fetchone()
+    item = conn.execute('SELECT * FROM favoritos WHERE usuario_id = ? AND empresa_id = ?', (user_id, empresa_id)).fetchone()
     
     if item is None:  # Si el producto no está en favoritos, lo agrega
-        conn.execute('INSERT INTO favoritos (usuario_id, producto_id) VALUES (?, ?)', (user_id, producto_id))
+        conn.execute('INSERT INTO favoritos (usuario_id, empresa_id) VALUES (?, ?)', (user_id, empresa_id))
         flash('Producto agregado a favoritos', 'success')
     else:  # Si el producto ya está en favoritos, muestra un mensaje
         flash('Producto ya está en favoritos', 'error')
     
     conn.commit()
     conn.close()
-    return redirect(url_for('producto', id=producto_id))
+    return redirect(url_for('favoritos', id=empresa_id))
 
-@app.route("/eliminar_de_favoritos/<int:producto_id>", methods=['POST'])
-def eliminar_de_favoritos (producto_id):
+@app.route("/eliminar_de_favoritos/<int:empresa_id>", methods=['POST'])
+def eliminar_de_favoritos (empresa_id):
     user_id = session.get('user_id')
     conn = get_db_connection()
     conn.row_factory = sqlite3.Row
-    conn.execute('DELETE FROM favoritos WHERE usuario_id = ? AND producto_id = ?', (user_id, producto_id))
+    conn.execute('DELETE FROM favoritos WHERE usuario_id = ? AND empresa_id = ?', (user_id, empresa_id))
     conn.commit()
     conn.close()
     flash('Producto eliminado de favoritos', 'success')
     return redirect(url_for('favoritos'))
+
+@app.route("/ver_menu/<int:id>", methods=['GET'])
+def ver_menu(id):
+    conn = get_db_connection()
+    productos = conn.execute('SELECT * FROM Productos WHERE id_empresa = ?', (id,)).fetchall()
+    conn.close()
+    return render_template('general/Restaurant.html', productos=productos)
+
 
 @app.route("/confirmar_compra", methods=['POST'])
 def confirmar_compra():

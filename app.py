@@ -71,16 +71,17 @@ def create_tables():
     conn.execute('''
         CREATE TABLE IF NOT EXISTS Productos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            Empresa TEXT NOT NULL,
+            id_empresa INTEGER NOT NULL,
             nombre TEXT NOT NULL,
-            tiempoEstimado TEXT NOT NULL,
+            empresa TEXT NOT NULL,
             precio REAL NOT NULL,
             descripcion TEXT NOT NULL,
             imagen TEXT NOT NULL,
             tipoComida TEXT NOT NULL,
             stock INTEGER DEFAULT 0,
             estad TEXT DEFAULT 'No Disponible',
-            tipo_dieta TEXT  -- Nueva columna para tipo de dieta
+            tipo_dieta TEXT,
+            FOREIGN KEY (id_empresa) REFERENCES usuarioEmpresa (id)
         )
     ''')
     # Crear tabla métodos de pago
@@ -154,6 +155,9 @@ def create_tables():
             usuario_id INTEGER NOT NULL,
             fecha DATE NOT NULL,
             total REAL NOT NULL,
+            empresa_id INTEGER NOT NULL,
+            empresa TEXT NOT NULL,
+            FOREIGN KEY (empresa_id) REFERENCES usuarioEmpresa (id),
             FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
         )
     ''')
@@ -588,7 +592,7 @@ def pedidos_cliente():
     cursor = conn.cursor()
 
     pedidos = cursor.execute('''
-        SELECT id, fecha, total
+        SELECT id, fecha, total, empresa, empresa_id
         FROM pedidos2
         WHERE usuario_id = ?
         ORDER BY fecha DESC
@@ -856,9 +860,9 @@ def crear_producto():
             # Guardar el producto en la base de datos
             conn = get_db_connection()
             conn.execute('''
-                INSERT INTO Productos (Empresa, nombre, tiempoEstimado, precio, descripcion, imagen, tipoComida, tipo_dieta) 
+                INSERT INTO Productos (id_empresa, nombre, precio, descripcion, imagen, tipoComida, tipo_dieta, empresa) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (session.get('user_name'), nombre, '30 min', precio, descripcion, filename, categoria, tipo_dieta))
+            ''', (session.get('user_id'), nombre, precio, descripcion, filename, categoria, tipo_dieta, session.get('user_name')))
             conn.commit()
             conn.close()
             
@@ -1008,6 +1012,7 @@ def agregar_a_favoritos(producto_id):
 def eliminar_de_favoritos (producto_id):
     user_id = session.get('user_id')
     conn = get_db_connection()
+    conn.row_factory = sqlite3.Row
     conn.execute('DELETE FROM favoritos WHERE usuario_id = ? AND producto_id = ?', (user_id, producto_id))
     conn.commit()
     conn.close()
@@ -1024,7 +1029,16 @@ def confirmar_compra():
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    carrito_items = cursor.execute('SELECT * FROM carrito WHERE usuario_id = ?', (user_id,)).fetchall()
+    carrito_items = cursor.execute('''
+        SELECT c.*, p.empresa, p.id_empresa
+        FROM carrito c
+        JOIN Productos p ON c.producto_id = p.id
+        WHERE c.usuario_id = ?
+    ''', (user_id,)).fetchall()
+
+    if not carrito_items:
+        # Manejar el caso en que el carrito esté vacío
+        return redirect(url_for('carrito_vacio'))  # O redirigir a una página adecuada
 
     total = 0
     for item in carrito_items:
@@ -1033,11 +1047,14 @@ def confirmar_compra():
             total += item['cantidad'] * producto['precio']
 
     ahora = datetime.now().date()
+    first = carrito_items[0]
+    nombre = first['empresa']
+    id = first['id_empresa']
 
     cursor.execute('''
-        INSERT INTO pedidos2 (usuario_id, fecha, total)
-        VALUES (?, ?, ?)
-    ''', (user_id, ahora, total))
+        INSERT INTO pedidos2 (usuario_id, fecha, total, empresa_id, empresa)
+        VALUES (?, ?, ?, ?, ?)
+    ''', (user_id, ahora, total, id, nombre))
 
     cursor.execute('DELETE FROM carrito WHERE usuario_id = ?', (user_id,))
 

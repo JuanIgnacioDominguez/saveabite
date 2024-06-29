@@ -79,7 +79,7 @@ def create_tables():
             imagen TEXT NOT NULL,
             tipoComida TEXT NOT NULL,
             stock INTEGER DEFAULT 0,
-            estad TEXT DEFAULT 'NoDisponible',
+            estad TEXT DEFAULT 'No Disponible',
             tipo_dieta TEXT  -- Nueva columna para tipo de dieta
         )
     ''')
@@ -867,7 +867,6 @@ def crear_producto():
         
     return render_template('crear_producto/CrearProducto.html')
 
- 
 @app.route('/logout', methods=['POST'])
 def logout():
     session.clear()
@@ -1047,6 +1046,46 @@ def confirmar_compra():
 
     return redirect(url_for('pedidos_cliente'))
 
+@app.route('/update_product/<int:product_id>', methods=['POST'])
+def update_product(product_id):
+    data = request.json
+    nombre = data.get('nombre')
+    descripcion = data.get('descripcion')
+    precio = data.get('precio')
+    stock = data.get('stock')
+
+    if not stock or stock == '0':
+        estado = 'No Disponible'
+    else:
+        estado = data.get('estado', 'Disponible')  # Puedes ajustar esto según tu lógica
+
+    conn = get_db_connection()
+    conn.execute('''
+        UPDATE Productos
+        SET nombre = ?, descripcion = ?, precio = ?, stock = ?, estad = ?
+        WHERE id = ?
+    ''', (nombre, descripcion, precio, stock, estado, product_id))
+    conn.commit()
+    conn.close()
+
+    return jsonify(success=True)
+
+
+@app.route('/update_product_status/<int:product_id>', methods=['POST'])
+def update_product_status(product_id):
+    data = request.json
+    estado = data.get('estado')
+
+    conn = get_db_connection()
+    conn.execute('''
+        UPDATE Productos
+        SET estad = ?
+        WHERE id = ?
+    ''', (estado, product_id))
+    conn.commit()
+    conn.close()
+
+    return jsonify(success=True)
 
 if __name__ == "__main__":
     app.run(debug=True)

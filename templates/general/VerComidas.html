@@ -84,7 +84,6 @@
         }
         .card .actions select:not([value="ESTADO"]) {
             color: white;
-            background-color: #1b7fbf;
         }
         .card.no-disponible .actions select:not([value="ESTADO"]) {
             background-color: #f87171;
@@ -225,6 +224,7 @@
                     const productId = card.getAttribute('data-id'); // Obtener el ID del producto
 
                     // Setear valores en el formulario
+                    document.getElementById('product-id').value = productId;
                     document.getElementById('product-name').value = productName;
                     document.getElementById('product-descripcion').value = productPeople;
                     document.getElementById('product-price').value = productPrice;
@@ -242,62 +242,88 @@
                 }
             };
 
-            // Actualizar estado visualmente
-            const selects = document.querySelectorAll('.actions select');
+            // Manejar la actualización del producto a través de AJAX
+            const editProductForm = document.getElementById('edit-product-form');
+            editProductForm.addEventListener('submit', function(event) {
+                event.preventDefault(); // Evitar que el formulario se envíe de la manera tradicional
+                const productId = document.getElementById('product-id').value;
+                const productName = document.getElementById('product-name').value;
+                const productDescription = document.getElementById('product-descripcion').value;
+                const productPrice = document.getElementById('product-price').value;
+                const productStock = document.getElementById('product-stock').value;
+
+                fetch(`/update_product/${productId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nombre: productName,
+                        descripcion: productDescription,
+                        precio: productPrice,
+                        stock: productStock
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Actualizar la interfaz de usuario sin recargar la página
+                        const card = document.querySelector(`.card[data-id='${productId}']`);
+                        card.querySelector('.product-name').textContent = productName;
+                        card.querySelector('.product-descripcion').textContent = productDescription;
+                        card.querySelector('.product-price').textContent = `${productPrice}`;
+                        card.querySelector('.product-stock').textContent = `${productStock}`;
+                        if (!productStock || productStock == '0') {
+                            card.classList.add('no-disponible');
+                            card.querySelector('.estado-select').value = 'No Disponible';
+                        }
+                        modal.style.display = 'none';
+                    } else {
+                        alert('Error al actualizar el producto.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+
+            // Actualizar estado visualmente y en la base de datos
+            const selects = document.querySelectorAll('.estado-select');
             selects.forEach(select => {
+                const currentState = select.value;
+                updateSelectBackground(select, currentState); // Establecer el color inicial del select basado en el estado actual
+
                 select.addEventListener('change', function(event) {
                     const card = this.closest('.card');
                     const selectedValue = this.value;
-                    if (selectedValue === 'Disponible') {
-                        card.classList.remove('no-disponible');
-                        this.style.backgroundColor = '#22c55e';
-                    } else if (selectedValue === 'No Disponible') {
-                        card.classList.add('no-disponible');
-                        this.style.backgroundColor = '#f87171';
-                    }
+                    const productId = card.getAttribute('data-id');
+
+                    fetch(`/update_product_status/${productId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ estado: selectedValue })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            updateSelectBackground(this, selectedValue); // Actualizar el color del select basado en el estado
+                        } else {
+                            alert('Error al actualizar el estado del producto.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
                 });
             });
 
-            const s = document.querySelectorAll('.estado-select');
-            s.forEach(select => {
-                // Obtener el ID del producto
-                const productId = select.closest('.card').getAttribute('data-id');
-
-                // Verificar y establecer el estado guardado en Local Storage
-                const savedState = localStorage.getItem(`producto-${productId}-estado`);
-                if (savedState) {
-                    select.value = savedState;
-                    updateCardState(select.closest('.card'), savedState);
-                }
-
-                // Manejar cambio de estado
-                select.addEventListener('change', function(event) {
-                    const selectedValue = this.value;
-                    updateCardState(this.closest('.card'), selectedValue);
-                    localStorage.setItem(`producto-${productId}-estado`, selectedValue);
-                });
-
-                // Actualizar el color de fondo del select según el estado inicial
-                updateSelectBackground(select, select.value);
-            });
-
-            // Función para actualizar visualmente el estado de la tarjeta
-            function updateCardState(card, estado) {
-                if (estado === 'Disponible') {
-                    card.classList.remove('no-disponible');
-                } else if (estado === 'No Disponible') {
-                    card.classList.add('no-disponible');
-                }
-            }
-
-            // Función para actualizar el color de fondo del select según el estado
             function updateSelectBackground(select, estado) {
                 if (estado === 'Disponible') {
                     select.style.backgroundColor = '#22c55e';
                 } else if (estado === 'No Disponible') {
                     select.style.backgroundColor = '#f87171';
-                }else if(estado == "ESTADO") {
-                    select.style.backgroundColor = '#1b7fbf';
                 }
             }
         });
@@ -315,9 +341,9 @@
                 <div class="card" data-id="{{ producto['id'] }}">
                     <div class="card-content">
                         <h2 class="product-name">{{ producto['nombre'] }}</h2>
-                        <div class="product-descripcion">{{ producto['descripcion'] }}</div>
-                        <div class="product-price">$ {{ producto['precio'] }}</div>
-                        <div class="product-stock">Stock: {{ producto['stock'] }}</div>
+                        <div>Descripcion:</div><div class="product-descripcion">{{ producto['descripcion'] }}</div>
+                        <div>Pecio:</div><div class="product-price">{{ producto['precio'] }}</div>
+                        <div>Stock:</div><div class="product-stock">{{ producto['stock'] }}</div>
                         <div class="actions">
                             <button class="edit-button">Editar Producto</button>
                             <form method="POST" action="{{ url_for('eliminar_producto', producto_id = producto.id) }}">
@@ -325,19 +351,17 @@
                             </form>
                             <select class="estado-select">
                                 <option value="Disponible" {% if producto['estad'] == 'Disponible' %}selected{% endif %}>Disponible</option>
-                                <option value="NoDisponible" {% if producto['estad'] == 'NoDisponible' %}selected{% endif %}>No Disponible</option>
+                                <option value="No Disponible" {% if producto['estad'] == 'No Disponible' %}selected{% endif %}>No Disponible</option>
                             </select>
                         </div>
                     </div>
                     <!-- Dentro del bucle for que muestra los productos -->
                     <img src="{{ url_for('static', filename='uploads/' ~ producto['imagen']) }}" alt="{{ producto['nombre'] }}" class="imagen">
-
                 </div>
                 {% endfor %}
             </div>
         </div>
     </div>
-    
 
     <!-- The Modal -->
     <div id="myModal" class="modal">
@@ -345,6 +369,7 @@
             <span class="close">&times;</span>
             <h2>Editar Producto</h2>
             <form id="edit-product-form">
+                <input type="hidden" id="product-id">
                 <label class="block mb-6">
                     <span class="text-gray-700">Nombre del Producto</span>
                     <input type="text" id="product-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">

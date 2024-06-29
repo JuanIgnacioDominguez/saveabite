@@ -185,7 +185,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="new_password">Nueva Contraseña</label>
-                                <input type="password" id="new_password" name="new_password" value="" required>
+                                <input type="password" id="new_password" name="new_password" value="">
                                 <i class="fas fa-eye password-eye" id="toggleNewPassword"></i>
                             </div>
                             
@@ -218,9 +218,8 @@
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             const currentPassword = document.getElementById('current_password').value;
-            const newPassword = document.getElementById('new_password').value;
 
-            if (!name || !email || !currentPassword || !newPassword) {
+            if (!name || !email || !currentPassword) {
                 alert("Todos los campos son obligatorios.");
                 return false;
             }

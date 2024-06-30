@@ -299,14 +299,11 @@
                         </div>
                     </div>
                     <div class="button-container">
-                        <form method="POST" action="{{ url_for('agregar_a_favoritos', producto_id=producto.id) }}">
-                            <button type="submit" class="action-button">Añadir a favoritos</button>
-                        </form>
                         <form method="POST" action="{{ url_for('agregar_al_carrito1', producto_id=producto.id) }}">
                             <button type="submit" class="action-button">Añadir al carrito</button>
                         </form>
                     </div>
-                </div>
+                </div>  
                 {% endfor %}
             </div>
         </div>
@@ -334,6 +331,9 @@
                             
                             <form method="POST" action="{{ url_for('agregar_al_carrito1', producto_id=producto.id) }}">
                                 <button type="submit" class="action-button">Añadir al carrito</button>
+                            </form>
+                            <form method="GET" action="{{ url_for('ver_menu', id=producto.id_empresa) }}">
+                                <button type="submit" class="action-button">Ver Restaurant</button>
                             </form>
                         </div>
                     </div>

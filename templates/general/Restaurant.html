@@ -101,6 +101,7 @@
                 <img src="{{ url_for('static', filename=item.imagen) }}" alt="{{ item.nombre }} Image">
                 <h3>{{ item.nombre }}</h3>
                 <p>${{ item.precio }}</p>
+                <p>{{item.estad}}</p>
             </div>
             {% endfor %}
         </div>

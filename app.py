@@ -1048,8 +1048,19 @@ def eliminar_de_favoritos (empresa_id):
 def ver_menu(id):
     conn = get_db_connection()
     productos = conn.execute('SELECT * FROM Productos WHERE id_empresa = ?', (id,)).fetchall()
+    restaurant = conn.execute('''
+        SELECT ue.*, de.calle, de.altura, de.localidad 
+        FROM usuarioEmpresa ue 
+        LEFT JOIN direccionEmpresa de ON ue.id = de.usuario_id 
+        WHERE ue.id = ?
+    ''', (id,)).fetchone()
     conn.close()
-    return render_template('general/Restaurant.html', productos=productos)
+
+    if restaurant is None:
+        return "Restaurante no encontrado", 404
+
+    return render_template('general/Restaurant.html', productos=productos, restaurant=restaurant)
+
 
 
 @app.route("/confirmar_compra", methods=['POST'])

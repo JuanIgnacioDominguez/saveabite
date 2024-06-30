@@ -254,7 +254,7 @@
                     <form method="POST" action="{{ url_for('agregar_a_favoritos', empresa_id=restaurant.id) }}">
                         <button type="submit" class="action-button">Añadir a favoritos</button>
                     </form>
-                    <form method="POST" action="{{ url_for('ver_menu', id=restaurant.id) }}">
+                    <form method="GET" action="{{ url_for('ver_menu', id=restaurant.id) }}">
                         <button type="submit" class="action-button">Ver menú</button>
                     </form>
                 </div>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ restaurant.nombre }} - Save a Bite</title>
+    <title>{{ restaurant.nombre_usuario }} - Save a Bite</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -70,15 +70,18 @@
 </head>
 <body>
     <div class="header">
-        <button class="text-white" onclick="window.location.href='menu.html'">VOLVER</button>
+        <a href="{{ url_for('restaurantes') }}" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+            VOLVER
+        </a>
         <img src="{{ url_for('static', filename='logo.png') }}" alt="Save a Bite Logo">
     </div>
     <div class="container">
         <div class="sidebar">
             <div class="restaurant-info">
-                <img src="{{ url_for('static', filename=restaurant.imagen) }}" alt="{{ restaurant.nombre }} Image">
-                <h2>{{ restaurant.nombre }}</h2>
-                <p>{{ restaurant.direccion }}</p>
+                <img src="{{ url_for('static', filename=restaurant.imagen) }}" alt="{{ restaurant.nombre_usuario }} Image">
+                <h2>{{ restaurant.nombre_usuario }}</h2>
+                <p>{{ restaurant.calle }} {{ restaurant.altura }}, {{ restaurant.localidad }}</p>
                 <div>
                     <input type="radio" id="delivery" name="pickup_option" value="delivery">
                     <label for="delivery">Delivery</label><br>

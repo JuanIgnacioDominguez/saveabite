@@ -583,7 +583,13 @@ def pedidos():
             'price': 300.0
         }
     ]
-    return render_template('general/pedidos.html', pedidos=pedidos)
+    return render_template('general/pedidos.html', pedidos=pedidos, completados_url=url_for('pedidosCompletados'))
+
+@app.route("/pedidosCompletados")
+def pedidosCompletados():
+    return render_template('general/pedidosCompletados.html')
+
+
 
 @app.route("/pedidos_cliente")
 def pedidos_cliente():

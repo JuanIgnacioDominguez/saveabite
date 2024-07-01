@@ -135,6 +135,11 @@
         .nav-item.active {
             color: #27a2e8;
         }
+        .button-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
     </style>
 </head>
 <body class="flex h-screen">
@@ -144,13 +149,17 @@
     <!-- Main content -->
     <div class="main-content flex-1 p-6">
         <h1 class="text-4xl font-bold text-custom-blue">Pedidos en Curso</h1>
+        <div class="button-wrapper">
+            <a href="{{ url_for('pedidosCompletados') }}">
+                <button class="action-button">Entregados</button>
+            </a>
+        </div>
         <div class="content-container bg-transparent rounded">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="orders-list">
                 
             </div>
         </div>
     </div>
-   
 
     <script>
         const orders = [

@@ -198,9 +198,6 @@
                     <h3 class="text-xl font-bold mb-2">${order.description}</h3>
                     <p class="text-gray-600">Usuario: ${order.user}</p>
                     <p class="text-gray-600">Precio: $${order.price}</p>
-                    <div class="button-container">
-                        <button class="action-button" onclick="markAsDelivered(${index})">Entregado</button>
-                    </div>
                 `;
                 ordersList.appendChild(orderCard);
             });

@@ -298,6 +298,26 @@ def register():
             conn.close()
     return render_template('general/Iniciarsesion.html')
 
+@app.route("/forgot_password",methods=['GET', 'POST'])
+def forgot_password():
+    email = request.form['email']
+    conn = get_db_connection()
+    user = conn.execute('SELECT * FROM usuarios WHERE correo_electronico = ?', (email,)).fetchone()
+    if user:
+        # Generar un token y almacenarlo en la base de datos
+        token = generate_token()
+        expiration = datetime.datetime.now() + datetime.timedelta(hours=1)
+        conn.execute('INSERT INTO PasswordResetTokens (user_id, token, expiration) VALUES (?, ?, ?)', (user['id'], token, expiration))
+        conn.commit()
+        # Enviar un correo electrónico con el enlace de restablecimiento
+        send_reset_email(email, token)
+        registrar_accion(user['id'], 'Solicitud de restablecimiento de contraseña')
+        flash('Se ha enviado un enlace para restablecer la contraseña a su email', 'success')
+    else:
+        flash('Correo electrónico no encontrado', 'error')
+    conn.close()
+    return redirect(url_for('login'))
+
 @app.route("/metodos_pago", methods=['GET', 'POST'])
 def metodos_pago():
     user_id = session.get('user_id')
@@ -311,19 +331,21 @@ def metodos_pago():
         
         # Validar la longitud del número de tarjeta y el código de seguridad
         if len(numero_tarjeta) != 16 or len(codigo_seguridad) != 3:
-            flash('Número de tarjeta o código de seguridad no válidos', 'error')
-            return redirect(url_for('metodos_pago'))
-
+            return jsonify({'error': 'Número de tarjeta o código de seguridad no válidos'})
+        
         conn.execute('''
             INSERT INTO metodos_pago (usuario_id, tipo_metodo, tipo_tarjeta, nombre_titular, numero_tarjeta, fecha_vencimiento, codigo_seguridad)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         ''', (user_id, 'Tarjeta de Crédito', tipo_tarjeta, nombre_titular, numero_tarjeta, fecha_vencimiento, codigo_seguridad))
         conn.commit()
         registrar_accion(user_id, 'Añadido método de pago')
+        
+        return jsonify({'success': 'Método de pago agregado exitosamente'})
     
     metodos_pago = conn.execute('SELECT * FROM metodos_pago WHERE usuario_id = ?', (user_id,)).fetchall()
     conn.close()
     return render_template('Perfil/MetodosPago.html', metodos_pago=metodos_pago)
+
 
 @app.route("/borrar_metodo_pago/<int:id>", methods=['POST'])
 def borrar_metodo_pago(id):
@@ -364,25 +386,6 @@ def borrar_direccion(id):
     registrar_accion(user_id, 'Eliminada dirección')
     return redirect(url_for('direcciones'))
 
-@app.route("/forgot_password",methods=['GET', 'POST'])
-def forgot_password():
-    email = request.form['email']
-    conn = get_db_connection()
-    user = conn.execute('SELECT * FROM usuarios WHERE correo_electronico = ?', (email,)).fetchone()
-    if user:
-        # Generar un token y almacenarlo en la base de datos
-        token = generate_token()
-        expiration = datetime.datetime.now() + datetime.timedelta(hours=1)
-        conn.execute('INSERT INTO PasswordResetTokens (user_id, token, expiration) VALUES (?, ?, ?)', (user['id'], token, expiration))
-        conn.commit()
-        # Enviar un correo electrónico con el enlace de restablecimiento
-        send_reset_email(email, token)
-        registrar_accion(user['id'], 'Solicitud de restablecimiento de contraseña')
-        flash('Se ha enviado un enlace para restablecer la contraseña a su email', 'success')
-    else:
-        flash('Correo electrónico no encontrado', 'error')
-    conn.close()
-    return redirect(url_for('login'))
 
 @app.route("/estadistica", methods=['GET'])
 def estadistica():

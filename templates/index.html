@@ -43,7 +43,7 @@
         }
 
         .wave {
-            position: fixed;
+            position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
@@ -53,7 +53,7 @@
         .wave svg {
             position: relative;
             display: block;
-            width: calc(100% + 1.3px);
+            width: 100%;
             height: auto;
         }
 
@@ -90,12 +90,10 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 90%;
             max-width: 900px;
-            margin-top: 50px;
+            margin-top: 10px;
             display: none;
-            position: absolute;
-            top: 30%;
-            left: 50%;
-            transform: translate(-50%, -30%);
+            position: relative;
+            margin-bottom: 120px; /* FEDE LO PUSO EN 200px */
         }
 
         .contact-form h2 {
@@ -146,24 +144,22 @@
         }
         .concientizacion-info{
             display: none;
-            max-height: 900px;
             padding: 20px;
             margin-top: 10px;
             width: 100%;
             border-radius: 10px;
+            margin-bottom: 120px;/* FEDE LO PUSO EN 200px */
         }
         .acerca-de-nosotros {
             display: none;
             max-height: 900px;
             padding: 20px;
-            margin-top: 50px;
+            margin-top: 10px;
             width: 100%;
             max-width: 1500px;
             border-radius: 10px;
-            position: absolute;
-            top: 30%;
-            left: 50%;
-            transform: translate(-50%, -30%);
+            position: relative;
+            margin-bottom: 120px; /* FEDE LO PUSO EN 200px */
         }
         .separator {
             border-bottom: 2px solid #27a2e8;
@@ -323,8 +319,9 @@
     </div>
     <script>
         function submitForm() {
-            document.getElementById('contact-form').style.display = 'none';
-            document.getElementById('confirmation-message').style.display = 'block';
+            // Mostrar el mensaje de confirmación
+            document.getElementById("confirmation-message").style.display = "block";
+            // Evitar que el formulario se envíe realmente
             return false;
         }
 
@@ -332,27 +329,18 @@
             event.preventDefault();
             hideAllSections();
             document.getElementById('contact-form').style.display = 'block';
-            document.getElementById('contact-form').scrollIntoView({
-                behavior: 'smooth'
-            });
         });
 
         document.getElementById('concientizacion-link').addEventListener('click', function (event) {
             event.preventDefault();
             hideAllSections();
             document.getElementById('concientizacion-section').style.display = 'block';
-            document.getElementById('concientizacion-section').scrollIntoView({
-                behavior: 'smooth'
-            });
         });
 
         document.getElementById('acercadenosotros-link').addEventListener('click', function (event) {
             event.preventDefault();
             hideAllSections();
             document.getElementById('acercadenosotros-section').style.display = 'block';
-            document.getElementById('acercadenosotros-section').scrollIntoView({
-                behavior: 'smooth'
-            });
         });
 
         function hideAllSections() {

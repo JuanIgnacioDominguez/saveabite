@@ -235,8 +235,9 @@
             const nombre = document.getElementById('nombre').value;
             const precio = document.getElementById('precio').value;
             const descripcion = document.getElementById('descripcion').value;
+            const categorias = document.getElementById('categorias').value;
 
-            if (!imagen || !nombre || !precio || !descripcion) {
+            if (!imagen || !nombre || !precio || !descripcion || !categorias) {
                 alert("Todos los campos son obligatorios.");
                 return false;
             }

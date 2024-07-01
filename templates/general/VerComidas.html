@@ -23,7 +23,6 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
         }
-        
         .card {
             display: flex;
             align-items: center;
@@ -224,7 +223,7 @@
                     modal.style.display = 'block';
                     const card = this.closest('.card');
                     const productName = card.querySelector('.product-name').textContent;
-                    const productPeople = card.querySelector('.product-descripcion').textContent;
+                    const productDescription = card.querySelector('.product-descripcion').textContent;
                     const productPrice = card.querySelector('.product-price').textContent;
                     const productStock = card.querySelector('.product-stock').textContent;
                     const productId = card.getAttribute('data-id'); // Obtener el ID del producto
@@ -232,7 +231,7 @@
                     // Setear valores en el formulario
                     document.getElementById('product-id').value = productId;
                     document.getElementById('product-name').value = productName;
-                    document.getElementById('product-descripcion').value = productPeople;
+                    document.getElementById('product-descripcion').value = productDescription;
                     document.getElementById('product-price').value = productPrice;
                     document.getElementById('product-stock').value = productStock;
                 });
@@ -463,6 +462,5 @@
             </div>
         </div>
     </div>
-    
 </body>
 </html>

@@ -12,6 +12,8 @@
         body {
             font-family: 'Nunito', sans-serif;
             background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
+            height: 100vh; /* Ensure the gradient covers the entire height */
+            margin: 0;
             overflow: hidden;
         }
         .bg-custom-blue {
@@ -20,217 +22,76 @@
         .text-custom-blue {
             color: #27a2e8;
         }
-        .nav-item {
-            margin: 1rem 0;
-            display: flex;
-            align-items: center;
-            color: #6b7280;
-            transition: color 0.3s ease;
-        }
-        .nav-item i {
-            height: 24px;
-            width: 24px;
-            margin-right: 0.5rem;
-        }
-        .nav-item:hover,
-        .nav-item.active {
-            color: #27a2e8;
-        }
-        .profile {
-            display: flex;
-            align-items: center;
-            margin-top: auto;
-            margin-bottom: 1rem;
-        }
-        .profile img {
-            height: 40px;
-            width: 40px;
-            border-radius: 50%;
-            margin-right: 0.5rem;
-        }
-        .profile-text {
-            display: flex;
-            flex-direction: column;
-        }
-        .profile-text .name {
-            font-weight: bold;
-        }
-        .profile-text .edit-profile {
-            color: #6b7280;
-            font-size: 0.875rem;
-        }
-        .btn-custom {
-            background-color: white;
-            color: #27a2e8;
-            padding: 1rem;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: background-color 0.3s, color 0.3s;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            width: 120px;
-        }
-        .btn-custom i,
-        .btn-custom .material-icons {
-            font-size: 24px;
-            margin-bottom: 0.5rem;
-        }
-        .btn-custom:hover,
-        .btn-custom.active {
-            background-color: #27a2e8;
-            color: white;
-        }
-        .recipe-card {
+        .restaurant-card {
             background-color: white;
             border-radius: 12px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 16px;
-            transition: transform 0.2s;
             overflow: hidden;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100%;
+            flex-direction: row;
+            transition: transform 0.2s;
             cursor: pointer;
+            margin-bottom: 16px;
         }
-        .recipe-card:hover {
+        .restaurant-card:hover {
             transform: translateY(-5px);
         }
-        .recipe-card img {
+        .restaurant-card img {
             border-radius: 8px;
-            margin-bottom: 16px;
-            width: 100%;
-            height: 200px;
+            margin-right: 16px;
+            width: 150px;
+            height: 150px;
             object-fit: cover;
         }
-        .recipe-card .info {
-            display: flex;
-            justify-content: space-around;
-            width: 100%;
-            padding: 10px;
-            background-color: #f9fafb;
-            border-radius: 8px;
+        .restaurant-info {
+            flex: 1;
         }
-        .recipe-card .info div {
-            text-align: center;
+        .restaurant-info h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .restaurant-info p {
+            color: #6b7280;
+        }
+        .rating {
+            display: flex;
+            align-items: center;
+        }
+        .rating i {
+            color: #ffc107;
+            margin-right: 4px;
+        }
+        .price-range {
+            color: #6b7280;
+            margin-right: 8px;
+        }
+        .delivery-info {
+            color: #6b7280;
+        }
+        .action-buttons {
             display: flex;
             flex-direction: column;
-            align-items: center;
-        }
-        .info-icon {
-            display: flex;
-            align-items: center;
             justify-content: center;
-            background-color: #e2e8f0;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            margin-bottom: 4px;
+            width: 180px;  /* Ensure buttons are wide enough */
         }
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1rem;
-            position: relative;
-        }
-        .header h1 {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #27a2e8;
-            position: absolute;
-            left: 0;
-            margin-left: 20px;
-        }
-        .search {
-            display: inline-block;
-            position: relative;
-        }
-        .search input[type="text"] {
-            width: 600px;
-            padding: 10px;
-            border: none;
-            border-radius: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .search button[type="submit"] {
-            background-color: #4e99e9;
-            border: none;
-            color: #fff;
-            cursor: pointer;
-            padding: 10px 20px;
-            border-radius: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            position: absolute;
-            top: 0;
-            right: 0;
-            transition: 0.3s ease;
-        }
-        .search button[type="submit"]:hover {
-            transform: scale(1.1);
-            color: rgb(255, 255, 255);
-            background-color: blue;
-        }
-        .button-container {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            padding: 10px 0;
-        }
-        .action-button {
+        .action-buttons button {
             background-color: #27a2e8;
             color: white;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 20px;
             text-align: center;
             cursor: pointer;
             font-weight: bold;
             transition: background-color 0.3s;
+            margin-top: 8px;
+            width: 100%;  /* Ensure button fills the width */
+            white-space: nowrap;  /* Prevent text from wrapping */
         }
-        .action-button:hover {
+        .action-buttons button:hover {
             background-color: #1e81b0;
         }
-        .content {
-            overflow-y: auto;
-            height: 100vh;
-        }
-        .profile {
-            display: flex;
-            align-items: center;
-            margin-top: auto;
-            margin-bottom: 1rem;
-        }
-        .profile img {
-            height: 40px;
-            width: 40px;
-            border-radius: 50%;
-            margin-right: 0.5rem;
-        }
-        .profile-text {
-            display: flex;
-            flex-direction: column;
-        }
-        .profile-text .name {
-            font-weight: bold;
-        }
-        .profile-text .edit-profile {
-            color: #6b7280;
-            font-size: 0.875rem;
-        }
     </style>
-    <script>
-        function goToProductDetail(productId) {
-            window.location.href = "Producto.html";
-        }
-
-        function filterCategory(category) {
-            window.location.href = `/filter_menu?tipoComida=${category}`;
-        }
-    </script>
 </head>
 <body class="flex">
     <!-- Sidebar -->
@@ -238,24 +99,31 @@
     
     <!-- Main content -->
     <div class="flex-1 p-6 content ml-64">
-        <h1 class="text-4xl font-bold text-custom-blue">Restaurantes</h1>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <h1 class="text-4xl font-bold text-custom-blue mb-6">Restaurantes</h1>
+        <div>
             {% for restaurant in restaurantes %}
-            <div class="recipe-card">
+            <div class="restaurant-card">
                 <img src="{{ url_for('static', filename='uploads/' ~ restaurant.imagen) }}" alt="{{ restaurant.nombre_usuario }}">
-                <h3 class="text-xl font-bold mb-2">{{ restaurant.nombre_usuario }}</h3>
-                <div class="info">
-                    <div>
-                        <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
-                        <p class="text-gray-600">{{ restaurant.calle }} {{ restaurant.altura }}, {{ restaurant.localidad }}</p>
+                <div class="restaurant-info">
+                    <div class="flex justify-between items-center">
+                        <h3>{{ restaurant.nombre_usuario }}</h3>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <span>{{ restaurant.rating }}</span>
+                        </div>
                     </div>
+                    <div class="flex items-center">
+                        <span class="price-range">{{ restaurant.price_range }}</span>
+                        <span class="delivery-info">{{ restaurant.delivery_time }} min • Envío ${{ restaurant.delivery_fee }}</span>
+                    </div>
+                    <p>{{ restaurant.calle }} {{ restaurant.altura }}, {{ restaurant.localidad }}</p>
                 </div>
-                <div class="button-container">
+                <div class="action-buttons">
                     <form method="POST" action="{{ url_for('agregar_a_favoritos', empresa_id=restaurant.id) }}">
-                        <button type="submit" class="action-button">Añadir a favoritos</button>
+                        <button type="submit">Añadir a favoritos</button>
                     </form>
                     <form method="GET" action="{{ url_for('ver_menu', id=restaurant.id) }}">
-                        <button type="submit" class="action-button">Ver menú</button>
+                        <button type="submit">Ver menú</button>
                     </form>
                 </div>
             </div>

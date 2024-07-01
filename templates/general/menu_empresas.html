@@ -299,18 +299,18 @@
             <div class="stat-container">
                 <!-- Ventas Diarias -->
                 <div class="stat-card">
-                    <h4>Nuevas Ventas</h4>
-                    <p>{{ daily_sales }} 8</p>
+                    <a href="{{ url_for('pedidos') }}"><h4>Nuevas Ventas</h4>
+                    <p>{{ daily_sales }} 8</p></a>
                 </div>
                 <!-- Pedidos Pendientes -->
                 <div class="stat-card">
-                    <h4>Pedidos Pendientes</h4>
-                    <p>{{ pending_orders }}2</p>
+                    <a href="{{ url_for('pedidos') }}"><h4>Pedidos Pendientes</h4>
+                    <p>{{ pending_orders }}2</p></a>
                 </div>
                 <!-- Pedidos Completados -->
                 <div class="stat-card">
-                    <h4>Pedidos Completados</h4>
-                    <p>{{ completed_orders }}10</p>
+                    <a href="{{ url_for('pedidos') }}"><h4>Pedidos Completados</h4>
+                    <p>{{ completed_orders }}10</p></a>
                 </div>
                 <div class="stat-card">
                     <h4>Productos en Inventario</h4>

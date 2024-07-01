@@ -207,8 +207,9 @@
                 card.addEventListener('click', function(event) {
                     // Verificar si el click se hizo en un select o en un botón de edición
                     if (event.target.tagName.toLowerCase() !== 'select' && !event.target.classList.contains('edit-button') && !event.target.classList.contains('delete-button')) {
-                        const productoId = this.getAttribute('data-id');
-                        window.location.href = productBaseUrl + productoId;
+                        // Evitar la redirección al no hacer nada
+                        event.preventDefault();
+                        event.stopPropagation();
                     }
                 });
             });

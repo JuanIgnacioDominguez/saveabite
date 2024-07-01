@@ -334,25 +334,30 @@
                 </div>
                 <img src="{{ url_for('static', filename='uploads/' ~ item.imagen) }}" alt="{{ item.nombre }}">
             </div>
+            <div id="preview-modal" class="modal hidden">
+                <div class="modal-content">
+                    <span class="close-button">&times;</span>
+                    <img id="modal-image" src="" alt="Product Image">
+                    <div>
+                        <h2 id="modal-title"></h2>
+                        <p id="modal-description"></p>
+                        <p id="modal-price"></p>
+                        <p id="modal-stock"></p>
+                        <form method="POST" action="{{ url_for('agregar_al_carrito', producto_id=item.id) }}">
+                            <label>
+                                <span>Cantidad:</span>
+                                <input type="number" name="cantidad" min="1" value="1">
+                            </label>
+                            <button type="submit" class="action-button">Añadir al carrito</button>
+                        </form>
+                        <div class="message-container"></div>
+                    </div>
+                </div>
+            </div>
             {% endfor %}
         </div>
     </div>
-    <div id="preview-modal" class="modal hidden">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <img id="modal-image" src="" alt="Product Image">
-            <div>
-                <h2 id="modal-title"></h2>
-                <p id="modal-description"></p>
-                <p id="modal-price"></p>
-                <p id="modal-stock"></p>
-                <label for="quantity">Cantidad:</label>
-                <input type="number" id="quantity" name="quantity" value="1" min="1">
-                <button id="modal-add-to-cart">Añadir al carrito</button>
-                <div class="message-container"></div>
-            </div>
-        </div>
-    </div>
+    
     <script>
     document.addEventListener('DOMContentLoaded', function () {
         const modal = document.getElementById('preview-modal');

@@ -829,8 +829,7 @@ def upload_imageEmpresa():
 @app.route("/ver_comidas", methods=['GET'])
 def VerComidas():
     conn = get_db_connection()
-    usuar_id = session.get('user_id')
-    comidas = conn.execute('SELECT * FROM Productos WHERE id_empresa = ?', (usuar_id,)).fetchall()
+    comidas = conn.execute('SELECT * FROM Productos').fetchall()
     conn.close()
     return render_template('general/VerComidas.html', comidas=comidas)
 
@@ -1001,7 +1000,7 @@ def agregar_al_carrito(producto_id):
     conn.commit()
     conn.close()
     flash('Producto agregado al carrito', 'success')
-    return redirect(url_for('menu', id=producto_id))
+    return redirect(url_for('carrito', id=producto_id))
 
 @app.route("/agregar_al_carrito1/<int:producto_id>", methods=['POST'])
 def agregar_al_carrito1(producto_id):

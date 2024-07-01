@@ -143,7 +143,7 @@
     
     <!-- Main content -->
     <div class="main-content flex-1 p-6">
-        <h1 class="text-4xl font-bold text-custom-blue">Pedidos Completados</h1>
+        <h1 class="text-4xl font-bold text-custom-blue">Pedidos Entregados</h1>
         <div class="content-container bg-transparent rounded">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="orders-list">
                 
@@ -198,6 +198,9 @@
                     <h3 class="text-xl font-bold mb-2">${order.description}</h3>
                     <p class="text-gray-600">Usuario: ${order.user}</p>
                     <p class="text-gray-600">Precio: $${order.price}</p>
+                    <div class="button-container">
+                        <button class="action-button" onclick="markAsDelivered(${index})">Com</button>
+                    </div>
                 `;
                 ordersList.appendChild(orderCard);
             });

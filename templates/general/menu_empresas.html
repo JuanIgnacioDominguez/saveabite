@@ -309,12 +309,12 @@
                 </div>
                 <!-- Pedidos Completados -->
                 <div class="stat-card">
-                    <a href="{{ url_for('pedidos') }}"><h4>Pedidos Completados</h4>
+                    <a href="{{ url_for('pedidosCompletados') }}"><h4>Pedidos Completados</h4>
                     <p>{{ completed_orders }}10</p></a>
                 </div>
                 <div class="stat-card">
-                    <h4>Productos en Inventario</h4>
-                    <p>{{ product_inventario }} 10</p>
+                    <a href="{{ url_for('VerComidas') }}"><h4>Productos en Inventario</h4>
+                    <p>{{ product_inventario }} 10</p></a>
                 </div>
             </div>
         </div>

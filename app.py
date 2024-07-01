@@ -1057,15 +1057,14 @@ def agregar_a_favoritos(empresa_id):
     return redirect(url_for('favoritos', id=empresa_id))
 
 @app.route("/eliminar_de_favoritos/<int:empresa_id>", methods=['POST'])
-def eliminar_de_favoritos (empresa_id):
+def eliminar_de_favoritos(empresa_id):
     user_id = session.get('user_id')
     conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     conn.execute('DELETE FROM favoritos WHERE usuario_id = ? AND empresa_id = ?', (user_id, empresa_id))
     conn.commit()
     conn.close()
-    flash('Producto eliminado de favoritos', 'success')
-    return redirect(url_for('favoritos'))
+    return jsonify({"message": "Producto eliminado de favoritos"})
 
 @app.route("/ver_menu/<int:id>", methods=['GET'])
 def ver_menu(id):

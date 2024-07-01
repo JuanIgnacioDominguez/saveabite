@@ -829,7 +829,8 @@ def upload_imageEmpresa():
 @app.route("/ver_comidas", methods=['GET'])
 def VerComidas():
     conn = get_db_connection()
-    comidas = conn.execute('SELECT * FROM Productos').fetchall()
+    usuar_id = session.get('user_id')
+    comidas = conn.execute('SELECT * FROM Productos WHERE id_empresa = ?', (usuar_id,)).fetchall()
     conn.close()
     return render_template('general/VerComidas.html', comidas=comidas)
 

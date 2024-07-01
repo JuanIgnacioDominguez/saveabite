@@ -285,7 +285,7 @@
             <h2 class="text-2xl font-bold text-custom-blue mb-4">Recomendados</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {% for producto in productos %}
-                    {% if producto.estad == "Disponible" %}
+                    {% if producto.estad == "Disponible" and producto.stock != 0 %}
                         <div class="recipe-card {{ producto.tipo_comida }}" onclick="goToProductDetail('{{ producto.id }}')">
                             <img src="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}" alt="{{ producto.nombre }}">
                             <h3 class="text-xl font-bold mb-2">{{ producto.nombre }}</h3>
@@ -320,7 +320,7 @@
         {% endif %}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for producto in productos %}
-                {% if producto.estad == "Disponible" %}
+                {% if producto.estad == "Disponible" and producto.stock != 0 %}
                     <div class="recipe-card {{ producto.tipo_comida }}" onclick="goToProductDetail('{{ producto.id }}')">
                         <img src="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}" alt="{{ producto.nombre }}">
                         <h3 class="text-xl font-bold mb-2">{{ producto.nombre }}</h3>

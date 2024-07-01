@@ -213,7 +213,7 @@
                             </div>
                         </div>
                         <div class="mt-2">
-                            <button type="button" class="submit-button" onclick="openConfirmModal()">Enviar</button>
+                            <button type="button" class="submit-button" onclick="validarFormulario()">Enviar</button>
                         </div>
                     </form>
                 </div>
@@ -240,7 +240,7 @@
             <h2 class="text-xl mb-4">Éxito</h2>
             <p>El mensaje se ha enviado con éxito.</p>
             <div class="flex justify-end mt-4">
-                <a href="PerfilEmpresa.html" class="add-button">Volver al Perfil</a>
+                <a href="{{ url_for('perfil_empresa') }}" class="add-button">Volver al Perfil</a>
             </div>
         </div>
     </div>
@@ -267,6 +267,18 @@
                 confirmModal.style.display = "none";
                 successModal.style.display = "none";
             }
+        }
+
+        function validarFormulario() {
+            var subject = document.getElementById("subject").value.trim();
+            var message = document.getElementById("message").value.trim();
+
+            if (subject === "" || message === "") {
+                alert("Por favor completa todos los campos.");
+                return false;
+            }
+            // Si todos los campos están completados, abrir el modal de confirmación
+            openConfirmModal();
         }
         
         // Function to open the confirm modal

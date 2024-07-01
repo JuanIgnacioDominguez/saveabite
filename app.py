@@ -6,6 +6,7 @@ from flask_mail import Mail, Message
 import sqlite3
 from werkzeug.utils import secure_filename
 from datetime import datetime
+from collections import defaultdict
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -157,6 +158,7 @@ def create_tables():
             total REAL NOT NULL,
             empresa_id INTEGER NOT NULL,
             empresa TEXT NOT NULL,
+            
             FOREIGN KEY (empresa_id) REFERENCES usuarioEmpresa (id),
             FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
         )
@@ -296,6 +298,26 @@ def register():
             conn.close()
     return render_template('general/Iniciarsesion.html')
 
+@app.route("/forgot_password",methods=['GET', 'POST'])
+def forgot_password():
+    email = request.form['email']
+    conn = get_db_connection()
+    user = conn.execute('SELECT * FROM usuarios WHERE correo_electronico = ?', (email,)).fetchone()
+    if user:
+        # Generar un token y almacenarlo en la base de datos
+        token = generate_token()
+        expiration = datetime.datetime.now() + datetime.timedelta(hours=1)
+        conn.execute('INSERT INTO PasswordResetTokens (user_id, token, expiration) VALUES (?, ?, ?)', (user['id'], token, expiration))
+        conn.commit()
+        # Enviar un correo electrónico con el enlace de restablecimiento
+        send_reset_email(email, token)
+        registrar_accion(user['id'], 'Solicitud de restablecimiento de contraseña')
+        flash('Se ha enviado un enlace para restablecer la contraseña a su email', 'success')
+    else:
+        flash('Correo electrónico no encontrado', 'error')
+    conn.close()
+    return redirect(url_for('login'))
+
 @app.route("/metodos_pago", methods=['GET', 'POST'])
 def metodos_pago():
     user_id = session.get('user_id')
@@ -309,19 +331,21 @@ def metodos_pago():
         
         # Validar la longitud del número de tarjeta y el código de seguridad
         if len(numero_tarjeta) != 16 or len(codigo_seguridad) != 3:
-            flash('Número de tarjeta o código de seguridad no válidos', 'error')
-            return redirect(url_for('metodos_pago'))
-
+            return jsonify({'error': 'Número de tarjeta o código de seguridad no válidos'})
+        
         conn.execute('''
             INSERT INTO metodos_pago (usuario_id, tipo_metodo, tipo_tarjeta, nombre_titular, numero_tarjeta, fecha_vencimiento, codigo_seguridad)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         ''', (user_id, 'Tarjeta de Crédito', tipo_tarjeta, nombre_titular, numero_tarjeta, fecha_vencimiento, codigo_seguridad))
         conn.commit()
         registrar_accion(user_id, 'Añadido método de pago')
+        
+        return jsonify({'success': 'Método de pago agregado exitosamente'})
     
     metodos_pago = conn.execute('SELECT * FROM metodos_pago WHERE usuario_id = ?', (user_id,)).fetchall()
     conn.close()
     return render_template('Perfil/MetodosPago.html', metodos_pago=metodos_pago)
+
 
 @app.route("/borrar_metodo_pago/<int:id>", methods=['POST'])
 def borrar_metodo_pago(id):
@@ -362,25 +386,6 @@ def borrar_direccion(id):
     registrar_accion(user_id, 'Eliminada dirección')
     return redirect(url_for('direcciones'))
 
-@app.route("/forgot_password",methods=['GET', 'POST'])
-def forgot_password():
-    email = request.form['email']
-    conn = get_db_connection()
-    user = conn.execute('SELECT * FROM usuarios WHERE correo_electronico = ?', (email,)).fetchone()
-    if user:
-        # Generar un token y almacenarlo en la base de datos
-        token = generate_token()
-        expiration = datetime.datetime.now() + datetime.timedelta(hours=1)
-        conn.execute('INSERT INTO PasswordResetTokens (user_id, token, expiration) VALUES (?, ?, ?)', (user['id'], token, expiration))
-        conn.commit()
-        # Enviar un correo electrónico con el enlace de restablecimiento
-        send_reset_email(email, token)
-        registrar_accion(user['id'], 'Solicitud de restablecimiento de contraseña')
-        flash('Se ha enviado un enlace para restablecer la contraseña a su email', 'success')
-    else:
-        flash('Correo electrónico no encontrado', 'error')
-    conn.close()
-    return redirect(url_for('login'))
 
 @app.route("/estadistica", methods=['GET'])
 def estadistica():
@@ -508,61 +513,79 @@ def menu():
     user_id = session.get('user_id')
     query = request.args.get('query', '').lower()
     conn = get_db_connection()
-    
     # Obtener el tipo de dieta del usuario
     user = conn.execute('SELECT tipo_dieta FROM usuarios WHERE id = ?', (user_id,)).fetchone()
     tipo_dieta = user['tipo_dieta'] if user else None
-
-    # Actualizar la consulta para unir usuarioEmpresa con direccionEmpresa
-    restaurantes = conn.execute('''
-        SELECT usuarioEmpresa.id, usuarioEmpresa.nombre_usuario, usuarioEmpresa.imagen,
-            direccionEmpresa.calle, direccionEmpresa.altura, direccionEmpresa.localidad
-        FROM usuarioEmpresa
-        LEFT JOIN direccionEmpresa ON usuarioEmpresa.id = direccionEmpresa.usuario_id
+    # Obtener las imágenes de las empresas
+    productos = conn.execute('''
+        SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen
+        FROM Productos
+        JOIN usuarioEmpresa ON Productos.id_empresa = usuarioEmpresa.id
+        WHERE Productos.estad = 'Disponible'
     ''').fetchall()
-    
     if query:
         productos = conn.execute('''
-            SELECT * FROM Productos
-            WHERE LOWER(nombre) LIKE ?
-            OR LOWER(descripcion) LIKE ?
-            OR LOWER(tipoComida) LIKE ?
+            SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen
+            FROM Productos
+            JOIN usuarioEmpresa ON Productos.id_empresa = usuarioEmpresa.id
+            WHERE LOWER(Productos.nombre) LIKE ?
+            OR LOWER(Productos.descripcion) LIKE ?
+            OR LOWER(Productos.tipoComida) LIKE ?
+            AND Productos.estad = 'Disponible'
         ''', (f'%{query}%', f'%{query}%', f'%{query}%')).fetchall()
-    else:
-        productos = conn.execute('SELECT * FROM Productos').fetchall()
-    
     recomendados = []
     if tipo_dieta:
         recomendados = conn.execute('''
-            SELECT * FROM Productos
-            WHERE LOWER(tipo_dieta) = ?
+            SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen
+            FROM Productos
+            JOIN usuarioEmpresa ON Productos.id_empresa = usuarioEmpresa.id
+            WHERE LOWER(Productos.tipo_dieta) = ?
+            AND Productos.estad = 'Disponible'
             LIMIT 6
         ''', (tipo_dieta.lower(),)).fetchall()
-    
     conn.close()
-    return render_template('general/menu.html', user_name=user_name, user_image=user_image, productos=productos, recomendados=recomendados, tipo_dieta=tipo_dieta, restaurantes=restaurantes)
-
+    return render_template('general/menu.html', user_name=user_name, user_image=user_image, productos=productos, recomendados=recomendados, tipo_dieta=tipo_dieta)
 
 @app.route('/filter_menu', methods=['GET'])
 def filter_menu():
     user_name = session.get('user_name')
     user_image = session.get('user_image')
     tipo_comida = request.args.get('tipoComida', 'todos')
-    
+
     conn = get_db_connection()
     if tipo_comida == 'todos':
         productos = get_all_productos(conn)
     else:
         productos = get_productos_by_tipo(conn, tipo_comida)
     conn.close()
-    
+
     return render_template('general/menu.html', user_name=user_name, user_image=user_image, productos=productos, tipo_comida=tipo_comida)
 
 def get_all_productos(conn):
-    return conn.execute('SELECT * FROM Productos').fetchall()
+    return conn.execute('SELECT * FROM Productos WHERE estad = "Disponible"').fetchall()
 
 def get_productos_by_tipo(conn, tipo):
-    return conn.execute('SELECT * FROM Productos WHERE tipoComida = ?', (tipo,)).fetchall()
+    query = "SELECT * FROM Productos WHERE ("
+    tipos = tipo.split(',')
+    query += " OR ".join(["tipoComida LIKE ?"] * len(tipos))
+    query += ') AND estad = "Disponible"'
+    return conn.execute(query, tuple(f'%{t}%' for t in tipos)).fetchall()
+
+def get_all_productos(conn):
+    return conn.execute('SELECT * FROM Productos WHERE estad = "Disponible"').fetchall()
+
+def get_productos_by_tipo(conn, tipo):
+    return conn.execute('SELECT * FROM Productos WHERE tipoComida LIKE ? AND estad = "Disponible"', ('%' + tipo + '%',)).fetchall()
+def get_all_productos(conn):
+    return conn.execute('SELECT * FROM Productos WHERE estad = "Disponible"').fetchall()
+
+def get_productos_by_tipo(conn, tipo):
+    return conn.execute('SELECT * FROM Productos WHERE tipoComida = ? AND estad = "Disponible"', (tipo,)).fetchall()
+def get_all_productos(conn):
+    return conn.execute('SELECT * FROM Productos WHERE estad = "Disponible"').fetchall()
+
+def get_productos_by_tipo(conn, tipo):
+    return conn.execute('SELECT * FROM Productos WHERE tipoComida = ? AND estad = "Disponible"', (tipo,)).fetchall()
 
 @app.route("/pedidos", methods=['GET'])
 def pedidos():
@@ -583,7 +606,13 @@ def pedidos():
             'price': 300.0
         }
     ]
-    return render_template('general/pedidos.html', pedidos=pedidos)
+    return render_template('general/pedidos.html', pedidos=pedidos, completados_url=url_for('pedidosCompletados'))
+
+@app.route("/pedidosCompletados")
+def pedidosCompletados():
+    return render_template('general/pedidosCompletados.html')
+
+
 
 @app.route("/pedidos_cliente")
 def pedidos_cliente():
@@ -768,23 +797,18 @@ def upload_image():
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        
         # Crear directorio si no existe
-        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-        
-        file.save(file_path)
-        
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)     
+        file.save(file_path)    
         # Actualizar la imagen del usuario en la base de datos
         user_id = session.get('user_id')
         conn = get_db_connection()
         conn.execute('UPDATE usuarios SET imagen = ? WHERE id = ?', (filename, user_id))
         conn.commit()
         registrar_accion(user_id, 'Actualizada imagen de perfil')
-        conn.close()
-        
+        conn.close()    
         # Actualizar la sesión con la nueva imagen
-        session['user_image'] = filename
-        
+        session['user_image'] = filename    
         flash('Imagen de perfil actualizada con éxito', 'success')
         return redirect(url_for('perfil_usuario'))
     else:
@@ -802,24 +826,19 @@ def upload_imageEmpresa():
         return redirect(url_for('perfil_empresa'))
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)      
         # Crear directorio si no existe
-        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-        
-        file.save(file_path)
-        
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)     
+        file.save(file_path)    
         # Actualizar la imagen del usuario en la base de datos
         user_id = session.get('user_id')
         conn = get_db_connection()
         conn.execute('UPDATE usuarioEmpresa SET imagen = ? WHERE id = ?', (filename, user_id))
         conn.commit()
         registrar_accion(user_id, 'Actualizada imagen de perfil')
-        conn.close()
-        
+        conn.close()    
         # Actualizar la sesión con la nueva imagen
-        session['user_image'] = filename
-        
+        session['user_image'] = filename   
         flash('Imagen de perfil actualizada con éxito', 'success')
         return redirect(url_for('perfil_empresa'))
     else:
@@ -829,7 +848,8 @@ def upload_imageEmpresa():
 @app.route("/ver_comidas", methods=['GET'])
 def VerComidas():
     conn = get_db_connection()
-    comidas = conn.execute('SELECT * FROM Productos').fetchall()
+    usuar_id = session.get('user_id')
+    comidas = conn.execute('SELECT * FROM Productos WHERE id_empresa = ?', (usuar_id,)).fetchall()
     conn.close()
     return render_template('general/VerComidas.html', comidas=comidas)
 
@@ -857,7 +877,7 @@ def crear_producto():
         nombre = request.form['nombre']
         precio = request.form['precio']
         descripcion = request.form['descripcion']
-        categoria = request.form['categoria']
+        categorias = request.form['categorias']  # Obtener las categorías seleccionadas
         tipo_dieta = request.form['tipo_dieta']
         file = request.files['imagen']
         
@@ -870,12 +890,15 @@ def crear_producto():
             
             file.save(file_path)
             
+            # Asignar automáticamente "Todos" a tipoComida
+            categorias += ",Todos"
+            
             # Guardar el producto en la base de datos
             conn = get_db_connection()
             conn.execute('''
                 INSERT INTO Productos (id_empresa, nombre, precio, descripcion, imagen, tipoComida, tipo_dieta, empresa) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (session.get('user_id'), nombre, precio, descripcion, filename, categoria, tipo_dieta, session.get('user_name')))
+            ''', (session.get('user_id'), nombre, precio, descripcion, filename, categorias, tipo_dieta, session.get('user_name')))
             conn.commit()
             conn.close()
             
@@ -901,30 +924,25 @@ def upload_company_image():
         return redirect(url_for('perfil_empresa'))
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)   
         # Crear directorio si no existe
-        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-        
-        file.save(file_path)
-        
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)  
+        file.save(file_path) 
         # Actualizar la imagen de la empresa en la base de datos
         user_id = session.get('user_id')
         conn = get_db_connection()
         conn.execute('UPDATE usuarioEmpresa SET imagen = ? WHERE id = ?', (filename, user_id))
         conn.commit()
         registrar_accion(user_id, 'Actualizada imagen de la empresa')
-        conn.close()
-        
+        conn.close()   
         # Actualizar la sesión con la nueva imagen
         session['user_image'] = filename
-        
         flash('Imagen de la empresa actualizada con éxito', 'success')
         return redirect(url_for('perfil_empresa'))
     else:
         flash('Tipo de archivo no permitido', 'error')
         return redirect(url_for('perfil_empresa'))
-    
+
 @app.route("/guardar_perfil", methods=['POST'])
 def guardar_perfil():
     user_id = session.get('user_id')
@@ -972,13 +990,18 @@ def carrito():
     user_id = session.get('user_id')
     conn = get_db_connection()
     carrito_items = conn.execute('''
-        SELECT Productos.id, Productos.nombre, Productos.precio, Productos.imagen, carrito.cantidad
+        SELECT Productos.id, Productos.nombre, Productos.precio, Productos.imagen, carrito.cantidad, usuarioEmpresa.nombre_usuario AS restaurante, Productos.id_empresa
         FROM carrito
         JOIN Productos ON carrito.producto_id = Productos.id
+        JOIN usuarioEmpresa ON Productos.id_empresa = usuarioEmpresa.id
         WHERE carrito.usuario_id = ?
     ''', (user_id,)).fetchall()
     conn.close()
-    return render_template('carrito/Carrito2.html', carrito_items=carrito_items)
+    items_por_restaurante = defaultdict(list)
+    for item in carrito_items:
+        items_por_restaurante[item['restaurante']].append(item)
+    
+    return render_template('carrito/Carrito2.html', items_por_restaurante=items_por_restaurante)
 
 @app.route("/agregar_al_carrito/<int:producto_id>", methods=['POST'])
 def agregar_al_carrito(producto_id):
@@ -1000,7 +1023,7 @@ def agregar_al_carrito(producto_id):
     conn.commit()
     conn.close()
     flash('Producto agregado al carrito', 'success')
-    return redirect(url_for('menu', id=producto_id))
+    return redirect(url_for('carrito', id=producto_id))
 
 @app.route("/agregar_al_carrito1/<int:producto_id>", methods=['POST'])
 def agregar_al_carrito1(producto_id):
@@ -1063,49 +1086,27 @@ def ver_menu(id):
 
 
 
-@app.route("/confirmar_compra", methods=['POST'])
-def confirmar_compra():
-    user_id = session.get('user_id')  # Asegúrate de que el user_id está correctamente establecido en la sesión
+@app.route("/confirmar_compra_page", methods=['GET', 'POST'])
+def confirmar_compra_page():
+    user_id = session.get('user_id')
     if not user_id:
-        # Considera redirigir al usuario a la página de inicio de sesión si user_id no está en la sesión
         return redirect(url_for('login'))
-
     conn = get_db_connection()
-    cursor = conn.cursor()
-
-    carrito_items = cursor.execute('''
-        SELECT c.*, p.empresa, p.id_empresa
-        FROM carrito c
-        JOIN Productos p ON c.producto_id = p.id
-        WHERE c.usuario_id = ?
+    carrito_items = conn.execute('''
+        SELECT Productos.id, Productos.nombre, Productos.precio, Productos.imagen, carrito.cantidad
+        FROM carrito
+        JOIN Productos ON carrito.producto_id = Productos.id
+        WHERE carrito.usuario_id = ?
     ''', (user_id,)).fetchall()
-
-    if not carrito_items:
-        # Manejar el caso en que el carrito esté vacío
-        return redirect(url_for('carrito_vacio'))  # O redirigir a una página adecuada
-
-    total = 0
-    for item in carrito_items:
-        producto = cursor.execute('SELECT precio FROM Productos WHERE id = ?', (item['producto_id'],)).fetchone()
-        if producto:
-            total += item['cantidad'] * producto['precio']
-
-    ahora = datetime.now().date()
-    first = carrito_items[0]
-    nombre = first['empresa']
-    id = first['id_empresa']
-
-    cursor.execute('''
-        INSERT INTO pedidos2 (usuario_id, fecha, total, empresa_id, empresa)
-        VALUES (?, ?, ?, ?, ?)
-    ''', (user_id, ahora, total, id, nombre))
-
-    cursor.execute('DELETE FROM carrito WHERE usuario_id = ?', (user_id,))
-
-    conn.commit()
+    metodos_pago = conn.execute('SELECT * FROM metodos_pago WHERE usuario_id = ?', (user_id,)).fetchall()
+    direcciones = conn.execute('SELECT * FROM direcciones WHERE usuario_id = ?', (user_id,)).fetchall()
+    product_total = sum(item['precio'] * item['cantidad'] for item in carrito_items)
+    envio = 1289
+    tarifa = 285
+    propina = 0
+    total = product_total + envio + tarifa + propina
     conn.close()
-
-    return redirect(url_for('pedidos_cliente'))
+    return render_template('carrito/confirmar_compra.html', carrito_items=carrito_items, metodos_pago=metodos_pago, direcciones=direcciones, product_total=product_total, total=total)
 
 @app.route('/update_product/<int:product_id>', methods=['POST'])
 def update_product(product_id):
@@ -1143,6 +1144,173 @@ def update_product_status(product_id):
         SET estad = ?
         WHERE id = ?
     ''', (estado, product_id))
+    conn.commit()
+    conn.close()
+
+    return jsonify(success=True)
+
+@app.route("/procesar_compra", methods=['POST'])
+def procesar_compra():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify(success=False, message="Usuario no autenticado"), 401
+
+    delivery_address = request.form.get('delivery_address')
+    payment_option = request.form.get('payment_option')
+    metodo_pago_id = request.form.get('payment_method') if payment_option == 'tarjeta' else None
+    selected_tip = float(request.form.get('selected_tip', 0))
+    empresa_id = request.form.get('empresa_id')
+
+    conn = get_db_connection()
+    carrito_items = conn.execute('''
+        SELECT c.*, p.empresa, p.id_empresa, p.precio, c.cantidad
+        FROM carrito c
+        JOIN Productos p ON c.producto_id = p.id
+        WHERE c.usuario_id = ? AND p.id_empresa = ?
+    ''', (user_id, empresa_id)).fetchall()
+    
+    if not carrito_items:
+        return jsonify(success=False, message="Carrito vacío"), 400
+
+    product_total = sum(item['cantidad'] * item['precio'] for item in carrito_items)
+    envio = 1289
+    tarifa = 285
+    total = product_total + envio + tarifa + selected_tip
+    ahora = datetime.now().date()
+    first = carrito_items[0]
+    nombre = first['empresa']
+    id_empresa = first['id_empresa']
+
+    conn.execute('''
+        INSERT INTO pedidos2 (usuario_id, fecha, total, empresa_id, empresa, metodo_pago, direccion_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ''', (user_id, ahora, total, id_empresa, nombre, payment_option, delivery_address))
+    conn.execute('DELETE FROM carrito WHERE usuario_id = ? AND producto_id IN (SELECT producto_id FROM carrito c JOIN Productos p ON c.producto_id = p.id WHERE p.id_empresa = ?)', (user_id, id_empresa))
+    conn.commit()
+    conn.close()
+
+    return jsonify(success=True)
+
+@app.route("/finalizar_pedido", methods=['POST'])
+def finalizar_pedido():
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('login'))
+    conn = get_db_connection()
+    # Obtener items del carrito
+    carrito_items = conn.execute('''
+        SELECT c.*, p.empresa, p.id_empresa, p.precio
+        FROM carrito c
+        JOIN Productos p ON c.producto_id = p.id
+        WHERE c.usuario_id = ?
+    ''', (user_id,)).fetchall()
+    
+    if not carrito_items:
+        return redirect(url_for('carrito_vacio'))
+    
+    # Imprimir elementos del carrito para depuración
+    for item in carrito_items:
+        print(item)
+    
+    # Calcular el total
+    try:
+        total = sum(item['cantidad'] * item['precio'] for item in carrito_items)
+    except KeyError as e:
+        return f"Error: {e} clave no encontrada en los elementos del carrito", 500
+    
+    ahora = datetime.now().date()
+    first = carrito_items[0]
+    nombre = first['empresa']
+    id = first['id_empresa']
+    
+    # Insertar pedido en historial
+    conn.execute('''
+        INSERT INTO pedidos2 (usuario_id, fecha, total, empresa_id, empresa, metodo_pago)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ''', (user_id, ahora, total, id, nombre, 'pago_confirmado'))
+    
+    # Borrar productos de la empresa específica del carrito
+    conn.execute('DELETE FROM carrito WHERE usuario_id = ? AND producto_id IN (SELECT id FROM Productos WHERE id_empresa = ?)', (user_id, id))
+    conn.commit()
+    conn.close()
+    
+    return redirect(url_for('menu'))
+
+@app.route("/confirmar_compra", methods=['POST'])
+def confirmar_compra():
+    user_id = session.get('user_id')  # Asegúrate de que el user_id está correctamente establecido en la sesión
+    if not user_id:
+        # Considera redirigir al usuario a la página de inicio de sesión si user_id no está en la sesión
+        return redirect(url_for('login'))
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    carrito_items = cursor.execute('''
+        SELECT c.*, p.empresa, p.id_empresa
+        FROM carrito c
+        JOIN Productos p ON c.producto_id = p.id
+        WHERE c.usuario_id = ?
+    ''', (user_id,)).fetchall()
+    if not carrito_items:
+        # Manejar el caso en que el carrito esté vacío
+        return redirect(url_for('carrito_vacio'))  # O redirigir a una página adecuada
+    total = 0
+    for item in carrito_items:
+        producto = cursor.execute('SELECT precio FROM Productos WHERE id = ?', (item['producto_id'],)).fetchone()
+        if producto:
+            total += item['cantidad'] * producto['precio']
+    ahora = datetime.now().date()
+    first = carrito_items[0]
+    nombre = first['empresa']
+    id = first['id_empresa']
+    cursor.execute('''
+        INSERT INTO pedidos2 (usuario_id, fecha, total, empresa_id, empresa)
+        VALUES (?, ?, ?, ?, ?)
+    ''', (user_id, ahora, total, id, nombre))
+    cursor.execute('DELETE FROM carrito WHERE usuario_id = ?', (user_id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('pedidos_cliente'))
+
+@app.route('/confirmar_pago/<int:empresa_id>')
+def confirmar_pago(empresa_id):
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('login'))
+    conn = get_db_connection()
+    carrito_items = conn.execute('''
+        SELECT Productos.id, Productos.nombre, Productos.precio, Productos.imagen, carrito.cantidad
+        FROM carrito
+        JOIN Productos ON carrito.producto_id = Productos.id
+        WHERE carrito.usuario_id = ? AND Productos.id_empresa = ?
+    ''', (user_id, empresa_id)).fetchall()
+    metodos_pago = conn.execute('SELECT * FROM metodos_pago WHERE usuario_id = ?', (user_id,)).fetchall()
+    direcciones = conn.execute('SELECT * FROM direcciones WHERE usuario_id = ?', (user_id,)).fetchall()
+    product_total = sum(item['precio'] * item['cantidad'] for item in carrito_items)
+    envio = 1289
+    tarifa = 285
+    propina = 0
+    total = product_total + envio + tarifa + propina
+    conn.close()
+    return render_template('carrito/ConfirmarPago.html', carrito_items=carrito_items, metodos_pago=metodos_pago, direcciones=direcciones, product_total=product_total, total=total)
+
+@app.route("/actualizar_carrito/<int:producto_id>", methods=['POST'])
+def actualizar_carrito(producto_id):
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify(success=False, message="Usuario no autenticado"), 401
+
+    data = request.json
+    nueva_cantidad = data.get('cantidad')
+    
+    if nueva_cantidad < 1:
+        return jsonify(success=False, message="Cantidad no válida"), 400
+
+    conn = get_db_connection()
+    conn.execute('''
+        UPDATE carrito
+        SET cantidad = ?
+        WHERE usuario_id = ? AND producto_id = ?
+    ''', (nueva_cantidad, user_id, producto_id))
     conn.commit()
     conn.close()
 

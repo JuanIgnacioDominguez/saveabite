@@ -1,82 +1,33 @@
-Cosas que faltan Usuarios:
--Mis Pedidos
--Logica de favoritos
+MODIFICACIONES HECHAS:
+-menu tiene las imagenes de las empresas dependiendo el producto
+-Implementamos la parte seguir la compra de confirmar carrito pero no logra terminar la compra ya que tira el 
+error de que el carrito esta vacio. No termina la compra, (sino si elimina los productos comprados y los agrega a los pedidos realizados.) 
+-Modificamos un poco los filtros pero no estan terminados.
+-Se modifico la animacion de crear producto y se le establecio automaticamente la etiqueta "todos" para usarlos con los filtros.
+-En crear productos se le puede elegir mas de una etiqueta.
+-en el archivo confirmar pago no se puede comprar sin elegir direccion o metodo de pago
+-En el mismo archivo se puede elegir propina y se suma al precio.
+-Ademas los precios de los productos acumulados tambien se suman y dan un total
+-Que en el carrito pueda modificar la cantidad de producto agregado
 
-Cosas que faltan Empresas:
--Pedidos en Curso
--Resumen
-
-Cosas que faltan General:
--Agregar mas informacion e imagenes en el apartado de Informacion
--Base de datos
--De las barras laterales arreglar que te lleve a cada cosa bien
--Recupero de contrasena cuando te redirige el mail
+-en la parte de confirmar pago solo hay que solucionar lo de que se confirme la compra, ahi ya se eliminan los productos del carrito
+y se suma al historial de pedidos
 
 
-Sidebar
+FALTA:
+USUARIO
+-que se vea bien la membresia de los usuarios
+-filtros en el menu
+-cuando se confirma la compra, actualizar stock
+-historial de pedidos te deje abrir el resumen con los productos, etc
+-opcion para calificar los productos
 
-        .sidebar {      /* cuadro blanco de la sidebar */
-            height: 100vh;
-            background-color: white;
-            width: 16rem;
-            padding: 1.5rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            position: fixed;
-        }
-        .main-content {
-            margin-left: 2rem; /* creo y lo agrego al div */
-            flex: 0.13;
-            padding: 1rem;
-        }
-        .nav-item {
-            margin: 2rem 0;
-            display: flex;
-            align-items: center;
-            color: #6b7280;
-            transition: color 0.3s ease;
-        }
-        .nav-item i {
-            height: 24px;
-            width: 24px;
-            margin-right: 0.5rem;
-        }
-        .nav-item a {
-            color: inherit;
-            text-decoration: none;
-        }
-        .nav-item:hover,
-        .nav-item.active {
-            color: #27a2e8;
-        }
-        
+RESTAURANTE
+-cuando tocas la card en ver comidas te lleva a /producto NO TIENE QUE PASAR
+-que la membresia funcione igual a la de usuarios (que pida metodo de pago y aparezca al instante, ahora hay q salir y volver a entrar para verlo)
+-hacer pedidos en curso (probablemente con una tabla pedidos, cuando se confirma el carrito se crea la de pedidos con el estado, preparando, entregado, etc)
+-todas las stats del menu que se hagan en base a los datos de la bd
 
-editar usurio abajo
-
-<div class="profile mt-auto">
-            <img src="{{ url_for('static', filename='uploads/' ~ user_image) }}" alt="Profile">
-            <div class="profile-text">
-                <div class="name">{{ user_name }}</div>
-                <a href="{{ url_for('perfil_usuario') }}" class="edit-profile">Edit Profile</a>
-            </div>
-        </div>
-
-        
-        css
-
-                .profile img {
-            height: 40px;
-            width: 40px;
-            border-radius: 50%;
-            margin-right: 0.5rem;
-        }
-        .profile-text {
-            display: flex;
-            flex-direction: column;
-        }
-        .profile-text .name {
-            font-weight: bold;
-        }
-        .profile-text .edit-profile {
-            color: #6b7280;
-            font-size: 0.875rem;
-        }
+GENERAL
+-que cuando metes un producto al carrito verifique si hay stock suficiente
+-abajo en la sidebar que aparezca el nombre y la foto(en usuario y en resto ninguno anda)

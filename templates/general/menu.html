@@ -108,7 +108,7 @@
         }
         .recipe-card .info {
             display: flex;
-            justify-content: space-around;
+            justify-content: space-evenly;
             width: 100%;
             padding: 10px;
             background-color: #f9fafb;
@@ -119,6 +119,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            margin: 0 -2px;
         }
         .info-icon {
             display: flex;
@@ -129,6 +130,14 @@
             width: 36px;
             height: 36px;
             margin-bottom: 4px;
+            overflow: hidden;
+        }
+        .info-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            margin-bottom: 0px;
         }
         .header {
             display: flex;
@@ -223,10 +232,6 @@
         }
     </style>
     <script>
-        function goToProductDetail(productId) {
-            window.location.href = "Producto.html";
-        }
-
         function filterCategory(category) {
             window.location.href = `/filter_menu?tipoComida=${category}`;
         }
@@ -240,7 +245,6 @@
     <div class="flex-1 p-6 content ml-64">
         <h1 class="text-4xl font-bold text-custom-blue">Menu Principal</h1>
         <div class="header">
-            
             <div class="search">
                 <input type="text" placeholder="Buscar...">
                 <button type="submit"><i class="fas fa-search"></i></button>
@@ -251,27 +255,27 @@
                 <i class="fas fa-utensils"></i>
                 Todos
             </button>
-            <button class="btn-custom {% if tipo_comida == 'Hamburguesas' %}active{% endif %}" onclick="filterCategory('Hamburguesas')">
+            <button class="btn-custom {% if 'Hamburguesas' in tipo_comida %}active{% endif %}" onclick="filterCategory('Hamburguesas')">
                 <i class="fas fa-hamburger"></i>
                 Hamburguesas
             </button>
-            <button class="btn-custom {% if tipo_comida == 'Pizzas' %}active{% endif %}" onclick="filterCategory('Pizzas')">
+            <button class="btn-custom {% if 'Pizzas' in tipo_comida %}active{% endif %}" onclick="filterCategory('Pizzas')">
                 <i class="fas fa-pizza-slice"></i>
                 Pizzas
             </button>
-            <button class="btn-custom {% if tipo_comida == 'Pasta' %}active{% endif %}" onclick="filterCategory('Pasta')">
+            <button class="btn-custom {% if 'Pastas' in tipo_comida %}active{% endif %}" onclick="filterCategory('Pastas')">
                 <i class="material-icons">ramen_dining</i>
-                Pasta
+                Pastas
             </button>
-            <button class="btn-custom {% if tipo_comida == 'Ensaladas' %}active{% endif %}" onclick="filterCategory('Ensaladas')">
+            <button class="btn-custom {% if 'Ensaladas' in tipo_comida %}active{% endif %}" onclick="filterCategory('Ensaladas')">
                 <i class="fas fa-leaf"></i>
                 Ensaladas
             </button>
-            <button class="btn-custom {% if tipo_comida == 'Cafeteria' %}active{% endif %}" onclick="filterCategory('Cafeteria')">
+            <button class="btn-custom {% if 'Cafeteria' in tipo_comida %}active{% endif %}" onclick="filterCategory('Cafeteria')">
                 <i class="fas fa-coffee"></i>
                 Cafeteria
             </button>
-            <button class="btn-custom {% if tipo_comida == 'Carnes' %}active{% endif %}" onclick="filterCategory('Carnes')">
+            <button class="btn-custom {% if 'Carnes' in tipo_comida %}active{% endif %}" onclick="filterCategory('Carnes')">
                 <i class="fas fa-drumstick-bite"></i>
                 Carnes
             </button>
@@ -280,46 +284,51 @@
         <div class="mt-8">
             <h2 class="text-2xl font-bold text-custom-blue mb-4">Recomendados</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {% for producto in recomendados %}
-                <div class="recipe-card {{ producto.tipo_comida }}" onclick="goToProductDetail('{{ producto.id }}')">
-                    <img src="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}" alt="{{ producto.nombre }}">
-                <h3 class="text-xl font-bold mb-2">{{ producto.nombre }}</h3>
-                <div class="info">
-                        <div>
-                            <div class="info-icon"><i class="fas fa-clock"></i></div>
-                            <p class="text-gray-600">{{ producto.tiempoEstimado }}</p>
+                {% for producto in productos %}
+                    {% if producto.estad == "Disponible" and producto.stock != 0 %}
+                        <div class="recipe-card {{ producto.tipo_comida }}" onclick="goToProductDetail('{{ producto.id }}')">
+                            <img src="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}" alt="{{ producto.nombre }}">
+                            <h3 class="text-xl font-bold mb-2">{{ producto.nombre }}</h3>
+                            <div class="info">  
+                                <div>
+                                    <div class="info-icon">
+                                        <img src="{{ url_for('static', filename='uploads/' ~ producto.empresa_imagen) }}" alt="{{ producto.empresa }}">
+                                    </div>
+                                    <p class="text-gray-600">{{ producto.empresa }}</p>
+                                </div>
+                                <div>
+                                    <div class="info-icon"><i class="fas fa-dollar-sign"></i></div>
+                                    <p class="text-gray-600">$ {{ producto.precio }}</p>
+                                </div>
+                            </div>
+                            <div class="button-container">
+                                <form method="POST" action="{{ url_for('agregar_al_carrito1', producto_id=producto.id) }}">
+                                    <button type="submit" class="action-button">Añadir al carrito</button>
+                                </form>
+                                <form method="GET" action="{{ url_for('ver_menu', id=producto.id_empresa) }}">
+                                    <button type="submit" class="action-button">Ver Restaurant</button>
+                                </form>
+                            </div>
                         </div>
-                        <div>
-                            <div class="info-icon"><i class="fas fa-user"></i></div>
-                            <p class="text-gray-600">{{ producto.tipoComida }}</p>
-                        </div>
-                        <div>
-                            <div class="info-icon"><i class="fas fa-dollar-sign"></i></div>
-                            <p class="text-gray-600">$ {{ producto.precio }}</p>
-                        </div>
-                    </div>
-                    <div class="button-container">
-                        <form method="POST" action="{{ url_for('agregar_al_carrito1', producto_id=producto.id) }}">
-                            <button type="submit" class="action-button">Añadir al carrito</button>
-                        </form>
-                    </div>
-                </div>  
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>
-		<div class="header">
+        <div class="header">
             <h2 class="text-2xl font-bold text-custom-blue mt-2">Menu Principal</h2>
         </div>
         {% endif %}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for producto in productos %}
-                {% if producto.estad == "Disponible" %}
+                {% if producto.estad == "Disponible" and producto.stock != 0 %}
                     <div class="recipe-card {{ producto.tipo_comida }}" onclick="goToProductDetail('{{ producto.id }}')">
                         <img src="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}" alt="{{ producto.nombre }}">
                         <h3 class="text-xl font-bold mb-2">{{ producto.nombre }}</h3>
                         <div class="info">  
                             <div>
-                                <div class="info-icon"><i class="fas fa-user"></i></div>
+                                <div class="info-icon">
+                                    <img src="{{ url_for('static', filename='uploads/' ~ producto.empresa_imagen) }}" alt="{{ producto.empresa }}">
+                                </div>
                                 <p class="text-gray-600">{{ producto.empresa }}</p>
                             </div>
                             <div>
@@ -328,12 +337,11 @@
                             </div>
                         </div>
                         <div class="button-container">
-                            
                             <form method="POST" action="{{ url_for('agregar_al_carrito1', producto_id=producto.id) }}">
                                 <button type="submit" class="action-button">Añadir al carrito</button>
                             </form>
                             <form method="GET" action="{{ url_for('ver_menu', id=producto.id_empresa) }}">
-                                <button type="submit" class="action-button">Ver Restaurant</button>
+                                <button type="submit" class="action-button">Ver Restaurante</button>
                             </form>
                         </div>
                     </div>

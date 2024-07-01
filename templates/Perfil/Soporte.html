@@ -190,7 +190,6 @@
 <body class="flex h-screen">
     <!-- Sidebar -->
     {% include 'Sidebars/SidebarUsuario.html' %}
-
     <!-- Main content -->
     <div class="flex-1 p-6">
         <h1 class="text-2xl font-bold mb-4 ml-16rem">Soporte</h1>
@@ -214,8 +213,8 @@
                                 <textarea id="message" name="message" rows="10" required></textarea>
                             </div>
                         </div>
-                        <div class="mt-4">
-                            <button type="button" class="submit-button" onclick="openConfirmModal()">Enviar</button>
+                        <div class="mt-2">
+                            <button type="button" class="submit-button" onclick="validarFormulario()">Enviar</button>
                         </div>
                     </form>
                 </div>
@@ -242,23 +241,28 @@
             <h2 class="text-xl mb-4">Éxito</h2>
             <p>El mensaje se ha enviado con éxito.</p>
             <div class="flex justify-end mt-4">
-                <a href="PerfilUsuario.html" class="add-button">Volver al Perfil</a>
+                <a href="{{ url_for('perfil_usuario') }}" class="add-button">Volver al Perfil</a>
             </div>
         </div>
     </div>
     
     <script>
+        // Get the modals
         var confirmModal = document.getElementById("confirmModal");
         var successModal = document.getElementById("successModal");
+        
+        // Get the <span> elements that close the modals
         var spans = document.getElementsByClassName("close");
-
+        
+        // When the user clicks on <span> (x), close the modals
         for (var i = 0; i < spans.length; i++) {
             spans[i].onclick = function() {
                 confirmModal.style.display = "none";
                 successModal.style.display = "none";
             }
         }
-
+        
+        // When the user clicks anywhere outside of the modals, close them
         window.onclick = function(event) {
             if (event.target == confirmModal || event.target == successModal) {
                 confirmModal.style.display = "none";
@@ -266,15 +270,30 @@
             }
         }
 
+        function validarFormulario() {
+            var subject = document.getElementById("subject").value.trim();
+            var message = document.getElementById("message").value.trim();
+
+            if (subject === "" || message === "") {
+                alert("Por favor completa todos los campos.");
+                return false;
+            }
+            // Si todos los campos están completados, abrir el modal de confirmación
+            openConfirmModal();
+        }
+        
+        // Function to open the confirm modal
         function openConfirmModal() {
             confirmModal.style.display = "block";
         }
-
+        
+        // Function to submit the form
         function submitForm() {
+            // Simulate form submission
             confirmModal.style.display = "none";
             setTimeout(() => {
                 successModal.style.display = "block";
-            }, 500);
+            }, 500); // Simulate a short delay for the submission
         }
     </script>
 </body>

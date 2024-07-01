@@ -43,7 +43,7 @@
         }
 
         .wave {
-            position: fixed;
+            position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
@@ -53,7 +53,7 @@
         .wave svg {
             position: relative;
             display: block;
-            width: calc(100% + 1.3px);
+            width: 100%;
             height: auto;
         }
 
@@ -90,12 +90,10 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 90%;
             max-width: 900px;
-            margin-top: 50px;
+            margin-top: 10px;
             display: none;
-            position: absolute;
-            top: 30%;
-            left: 50%;
-            transform: translate(-50%, -30%);
+            position: relative;
+            margin-bottom: 120px; /* FEDE LO PUSO EN 200px */
         }
 
         .contact-form h2 {
@@ -106,7 +104,7 @@
         .contact-form label {
             display: block;
             margin-top: 10px;
-            color: #27a2e8;
+            color: #000000;
         }
 
         .contact-form input,
@@ -144,19 +142,27 @@
             font-size: 1.2rem;
             margin-top: 20px;
         }
-
-        .concientizacion-info,
+        .concientizacion-info{
+            display: none;
+            padding: 20px;
+            margin-top: 10px;
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 120px;/* FEDE LO PUSO EN 200px */
+        }
         .acerca-de-nosotros {
             display: none;
-            max-height: 80vh;
+            max-height: 900px;
             padding: 20px;
-            margin: 20px auto;
+            margin-top: 10px;
             width: 100%;
             max-width: 1500px;
             border-radius: 10px;
+            position: relative;
+            margin-bottom: 120px; /* FEDE LO PUSO EN 200px */
         }
         .separator {
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 2px solid #27a2e8;
             margin: 1rem 0;
         }
         
@@ -167,10 +173,8 @@
     <div class="white-background w-full flex justify-between items-center">
         <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Save a Bite" class="h-14 ml-4">
         <button id="menu-toggle" class="block md:hidden focus:outline-none mr-4">
-            <svg class="h-6 w-6 text-custom-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M4 6h16M4 12h16m-7 6h7" />
+            <svg class="h-6 w-6 text-custom-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
             </svg>
         </button>
         <nav id="menu" class="hidden md:flex flex-col md:flex-row md:space-x-4 md:items-center">
@@ -192,42 +196,39 @@
                 <div class="w-full text-center">
                     <h1 class="text-4xl text-white font-bold">¡Disfruta comida deliciosa a precios increíbles!</h1>
                     <p class="text-lg mb-6 text-white">Encuentra platos frescos y de calidad que de otro modo se desperdiciarían.</p>
-                    <a href="{{ url_for('login') }}" class="bg-white text-custom-blue rounded-full py-2 px-4">Comprar
-                        ahora</a> <!-- Ajuste del botón -->
+                    <a href="{{ url_for('login') }}" class="bg-white text-custom-blue rounded-full py-2 px-4">Comprar ahora</a> <!-- Ajuste del botón -->
                 </div>
             </div>
         </div>
     </main>
     <!-- Acerca de Nosotros -->
     <div class="acerca-de-nosotros" id="acercadenosotros-section">
-        <div class="text-center mb-6">
-            <h1 class="text-2xl font-bold mb-4">Acerca de Nosotros</h1>
-            
-            <div class="separator mb-10"></div>
-        
-            <p class="text-l mb-3">En Save a Bite, facilitamos la conexión entre los mejores restaurantes y los amantes de la buena
-            mesa.</p>
-            <p class="text-l mb-3">Fundada en 2023, nuestra plataforma permite descubrir y disfrutar de una amplia variedad de
-            opciones gastronómicas de calidad.</p>
-
-            <p class="text-l mb-2">Nuestra misión es ofrecer una experiencia culinaria excepcional a través de la colaboración con una amplia variedad de restaurantes, asegurando siempre una oferta rica y de alta calidad. </p>
-            <p class="text-l mb-2">Nos dedicamos a la innovación y la simplicidad, creando una experiencia de usuario fluida y agradable. Además, priorizamos la satisfacción del cliente, esforzándonos por brindar un servicio excepcional y memorable en todo momento.</p>
-
-            <p class="text-l mb-2">Nos comprometemos a ofrecer una plataforma inclusiva, que facilite el acceso a una amplia gama de restaurantes y tipos de cocina. </p>
-            <p class="text-l mb-10">Buscamos brindar una experiencia única, con soporte integral y personalizado en cada interacción. Además, promovemos la sostenibilidad, apoyando prácticas responsables y colaborando con restaurantes que comparten nuestros valores.</p>
-            
-            <h5 class="text-xl font-bold mb-5">Únete a Save a Bite y descubre nuevos restaurantes. Gracias por confiar en nosotros para tus aventuras culinarias. </h5>
-            <p class="text-l mb-5">¡Esperamos conectarte con tus próximos sabores favoritos!</p>
-        </div> 
+        <div class="content-container bg-white p-4 rounded">
+            <h1 class="text-2xl font-bold text-center mb-4">Acerca de Nosotros</h1>
+            <div class="separator mb-4"></div>
+            <div class="text-center mb-6">            
+                <p class="text-l mb-3">En Save a Bite, facilitamos la conexión entre los mejores restaurantes y los amantes de la buena
+                mesa.</p>
+                <p class="text-l mb-3">Fundada en 2023, nuestra plataforma permite descubrir y disfrutar de una amplia variedad de
+                opciones gastronómicas de calidad.</p>
+    
+                <p class="text-l mb-2">Nuestra misión es ofrecer una experiencia culinaria excepcional a través de la colaboración con una amplia variedad de restaurantes, asegurando siempre una oferta rica y de alta calidad. </p>
+                <p class="text-l mb-2">Nos dedicamos a la innovación y la simplicidad, creando una experiencia de usuario fluida y agradable. Además, priorizamos la satisfacción del cliente, esforzándonos por brindar un servicio excepcional y memorable en todo momento.</p>
+    
+                <p class="text-l mb-2">Nos comprometemos a ofrecer una plataforma inclusiva, que facilite el acceso a una amplia gama de restaurantes y tipos de cocina. </p>
+                <p class="text-l mb-10">Buscamos brindar una experiencia única, con soporte integral y personalizado en cada interacción. Además, promovemos la sostenibilidad, apoyando prácticas responsables y colaborando con restaurantes que comparten nuestros valores.</p>
+                
+                <h5 class="text-xl font-bold mb-5">Únete a Save a Bite y descubre nuevos restaurantes. Gracias por confiar en nosotros para tus aventuras culinarias. </h5>
+                <p class="text-l mb-5">¡Esperamos conectarte con tus próximos sabores favoritos!</p>
+            </div> 
+        </div>
         
     </div>
     <!-- Concientización -->
     <div class="concientizacion-info" id="concientizacion-section">
-        <div class="text-center mb-6">
-            <h1 class="text-2xl font-bold mb-4">Información sobre el Desperdicio de Alimentos</h1>
-        </div>
-
         <div class="content-container bg-white p-4 rounded shadow-md">
+            <h1 class="text-2xl font-bold text-center mb-4">Información sobre el Desperdicio de Alimentos</h1>
+            <div class="separator mb-4"></div>
             <div class="profile-container">
                 <div class="profile-info form-container">
                     <div class="form-content">
@@ -291,7 +292,8 @@
     </div>
     <!-- Contacto -->
     <div class="contact-form" id="contact-form">
-        <h2>Contáctanos</h2>
+        <h1 class="text-2xl font-bold text-center mb-4">Contáctanos</h1>
+        <div class="separator mb-4"></div>
         <form action="#" method="post" onsubmit="return submitForm()">
             <label for="name">Introduce tu nombre</label>
             <input type="text" id="name" name="name" required>
@@ -306,8 +308,7 @@
 
             <button type="submit">Enviar</button>
         </form>
-        <p class="confirmation-message" id="confirmation-message">Nos pondremos en contacto contigo a la brevedad
-            posible.</p>
+        <p class="confirmation-message" id="confirmation-message">Nos pondremos en contacto contigo a la brevedad posible.</p>
     </div>
     <div class="wave">
         <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -318,8 +319,9 @@
     </div>
     <script>
         function submitForm() {
-            document.getElementById('contact-form').style.display = 'none';
-            document.getElementById('confirmation-message').style.display = 'block';
+            // Mostrar el mensaje de confirmación
+            document.getElementById("confirmation-message").style.display = "block";
+            // Evitar que el formulario se envíe realmente
             return false;
         }
 
@@ -327,27 +329,18 @@
             event.preventDefault();
             hideAllSections();
             document.getElementById('contact-form').style.display = 'block';
-            document.getElementById('contact-form').scrollIntoView({
-                behavior: 'smooth'
-            });
         });
 
         document.getElementById('concientizacion-link').addEventListener('click', function (event) {
             event.preventDefault();
             hideAllSections();
             document.getElementById('concientizacion-section').style.display = 'block';
-            document.getElementById('concientizacion-section').scrollIntoView({
-                behavior: 'smooth'
-            });
         });
 
         document.getElementById('acercadenosotros-link').addEventListener('click', function (event) {
             event.preventDefault();
             hideAllSections();
             document.getElementById('acercadenosotros-section').style.display = 'block';
-            document.getElementById('acercadenosotros-section').scrollIntoView({
-                behavior: 'smooth'
-            });
         });
 
         function hideAllSections() {
@@ -362,6 +355,6 @@
             menu.classList.toggle('hidden');
         });
     </script>
+    
 </body>
-
 </html>

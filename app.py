@@ -550,19 +550,21 @@ def menu():
     user_id = session.get('user_id')
     query = request.args.get('query', '').lower()
     conn = get_db_connection()
+
     # Obtener el tipo de dieta del usuario
     user = conn.execute('SELECT tipo_dieta FROM usuarios WHERE id = ?', (user_id,)).fetchone()
     tipo_dieta = user['tipo_dieta'] if user else None
+
     # Obtener las imágenes de las empresas
     productos = conn.execute('''
-        SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen
+        SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen, usuarioEmpresa.ratingTotal
         FROM Productos
         JOIN usuarioEmpresa ON Productos.id_empresa = usuarioEmpresa.id
         WHERE Productos.estad = 'Disponible'
     ''').fetchall()
     if query:
         productos = conn.execute('''
-            SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen
+            SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen, usuarioEmpresa.ratingTotal
             FROM Productos
             JOIN usuarioEmpresa ON Productos.id_empresa = usuarioEmpresa.id
             WHERE LOWER(Productos.nombre) LIKE ?
@@ -570,10 +572,11 @@ def menu():
             OR LOWER(Productos.tipoComida) LIKE ?
             AND Productos.estad = 'Disponible'
         ''', (f'%{query}%', f'%{query}%', f'%{query}%')).fetchall()
+
     recomendados = []
     if tipo_dieta:
         recomendados = conn.execute('''
-            SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen
+            SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen, usuarioEmpresa.ratingTotal
             FROM Productos
             JOIN usuarioEmpresa ON Productos.id_empresa = usuarioEmpresa.id
             WHERE LOWER(Productos.tipo_dieta) = ?

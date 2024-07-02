@@ -788,12 +788,10 @@ def favoritos():
 @app.route('/upload_image', methods=['POST'])
 def upload_image():
     if 'profile_image' not in request.files:
-        flash('No file part', 'error')
-        return redirect(url_for('perfil_usuario'))
+        return jsonify({"success": False, "message": "No file part"}), 400
     file = request.files['profile_image']
     if file.filename == '':
-        flash('No selected file', 'error')
-        return redirect(url_for('perfil_usuario'))
+        return jsonify({"success": False, "message": "No selected file"}), 400
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -809,11 +807,9 @@ def upload_image():
         conn.close()    
         # Actualizar la sesión con la nueva imagen
         session['user_image'] = filename    
-        flash('Imagen de perfil actualizada con éxito', 'success')
-        return redirect(url_for('perfil_usuario'))
+        return jsonify({"success": True, "message": "Imagen de perfil actualizada con éxito"})
     else:
-        flash('Tipo de archivo no permitido', 'error')
-        return redirect(url_for('perfil_usuario'))
+        return jsonify({"success": False, "message": "Tipo de archivo no permitido"}), 400
     
 @app.route('/upload_imageEmpresa', methods=['POST'])
 def upload_imageEmpresa():

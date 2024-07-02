@@ -862,16 +862,6 @@ def eliminar_producto(producto_id):
     conn.close()
     return jsonify(success=True)
 
-@app.route("/producto/<int:id>", methods=['GET'])
-def producto(id):
-    conn = get_db_connection()
-    producto = conn.execute('SELECT * FROM Productos WHERE id = ?', (id,)).fetchone()
-    conn.close()
-    if producto is None:
-        flash('Producto no encontrado', 'error')
-        return redirect(url_for('VerComidas'))
-    return render_template('general/Producto.html', producto=producto)
-
 @app.route("/crear_producto", methods=['GET', 'POST'])
 def crear_producto():
     if request.method == 'POST':
@@ -989,8 +979,7 @@ def agregar_al_carrito(producto_id):
     
     conn.commit()
     conn.close()
-    flash('Producto agregado al carrito', 'success')
-    return redirect(url_for('carrito', id=producto_id))
+    return jsonify({'message': 'Producto agregado al carrito', 'success': True})
 
 @app.route('/actualizar_membresia', methods=['POST'])
 def actualizar_membresia():

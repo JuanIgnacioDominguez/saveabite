@@ -1,0 +1,19 @@
+-Flask para conectar python con la pagina
+-MongoDB para hacer la base de datos
+-Python para hacer el backend
+-Html y css para el Front
+-Tailwind para la libreria de front (funciona con css)
+
+-COMO EJECUTAR EL REQUIREMENTS TXT
+   "  pip install requirements.txt  " en la terminal
+esto va a descargar todos los paquetes y dependencias del backend
+
+--------------------------------------GUIA DE ARCHIVOS-----------------------------------
+-el archivo index.html es la primera pagina que se inicia. Es la que da la bienvenida y te manda directo al inicio de sesion/registrarse
+
+-----Carpeta General-----
+iniciarsesion.html es el archivo donde se encuentra la intefaz del incio de sesion y registrarse
+
+menu.html es donde se encuentra el menu principal que ve el usuario. Basicamente de ahi se puede hacer todo.
+
+

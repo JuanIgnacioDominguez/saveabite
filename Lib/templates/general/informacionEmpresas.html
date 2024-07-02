@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Información sobre el Desperdicio de Alimentos</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
+            display: flex;
+        }
+        .sidebar {
+            height: 100vh;
+            background-color: white;
+            width: 16rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+        }
+        .main-content {
+            margin-left: 16rem; /* Ensure this matches the sidebar width */
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto; /* Habilita el scroll vertical cuando sea necesario */
+            -webkit-overflow-scrolling: touch; /* Añade desplazamiento suave en iOS */
+        }
+        .content-container {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+        .profile-container {
+            display: flex;
+            flex-direction: column;
+        }
+        .profile-info {
+            flex-grow: 1;
+        }
+        .profile-options a {
+            font-size: 1.25rem;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            background-color: #f3f4f6;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s;
+        }
+        .profile-options a:hover {
+            background-color: #e5e7eb;
+        }
+        .profile-options a.active {
+            background-color: #e0f7ff;
+            color: #27a2e8;
+        }
+        .profile-options a.active i,
+        .profile-options a.active span {
+            color: #27a2e8;
+        }
+        .logout-button {
+            background-color: #e3342f;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            text-align: center;
+            display: inline-block;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease-in-out;
+            width: 100%;
+        }
+        .logout-button:hover {
+            background: linear-gradient(to right, #e3342f, #ff0000);
+        }
+        .profile-avatar {
+            width: 8rem;
+            height: 8rem;
+        }
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        .profile-email {
+            font-size: 1.25rem;
+            color: #4a5568;
+        }
+        .active {
+            color: #27a2e8 !important;
+        }
+        .nav-item {
+            margin: 2rem 0;
+            display: flex;
+            align-items: center;
+            color: #6b7280;
+            transition: color 0.3s ease;
+        }
+        .nav-item i {
+            height: 24px;
+            width: 24px;
+            margin-right: 0.5rem;
+        }
+        .nav-item a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .nav-item:hover,
+        .nav-item.active {
+            color: #27a2e8;
+        }
+        .bg-custom-blue {
+            background-color: #27a2e8;
+        }
+    </style>
+</head>
+<body class="flex h-screen">
+    {% include 'Sidebars/sidebarEmpresa.html' %}
+    <div class="main-content">
+        <h1 class="text-4xl font-bold text-custom-blue mb-4">Información sobre el Desperdicio de Alimentos</h1>
+        <div class="content-container bg-white p-4 rounded shadow-md">
+            <div class="form-content">
+                <h2 class="text-2xl font-bold mb-2">¿Qué es el Desperdicio de Alimentos?</h2>
+                <p class="mb-4">El desperdicio de alimentos se refiere a todos aquellos alimentos que se producen y no llegan a ser consumidos. Este problema ocurre a lo largo de toda la cadena de suministro, desde la producción agrícola hasta el consumo final en los hogares. Incluye alimentos que se descartan, ya sea porque no cumplen con los estándares estéticos del mercado, por errores en la cadena de distribución, por mal almacenamiento, o porque simplemente no se consumen a tiempo y se deterioran.</p>
+                
+                <h2 class="text-2xl font-bold mb-2 mt-4">Impacto del Desperdicio de Alimentos</h2>
+                <p class="mb-4">Socialmente, tiene implicaciones importantes para la seguridad alimentaria y el bienestar de las comunidades. A pesar de los avances en la producción de alimentos, según la Organización de las Naciones Unidas (ONU), “existen 821 millones de personas que padecen de hambre en el mundo. Una de cada nueve personas sufre de inseguridad alimentaria, pero en realidad se producen alimentos más que suficientes para todos” (ONU, 2018).</p>
+                <p class="mb-4">Desde un enfoque ambiental, la producción de alimentos requiere enormes cantidades de agua, tierra y energía, y cuando se desperdician alimentos, se está utilizando de manera ineficiente estos recursos. Además, cuando los alimentos no consumidos terminan en vertederos, liberan metano, un gas de efecto invernadero potente que agrava el cambio climático. Esta práctica no solo es insostenible desde un punto de vista ambiental, sino que también tiene consecuencias negativas a largo plazo para el planeta y para las generaciones futuras.</p>
+                <p class="mb-4">A nivel mundial, el desperdicio de alimentos afecta a todas las etapas de la cadena de suministro. Según la Organización de las Naciones Unidas para la Alimentación y la Agricultura (FAO), “anualmente se perdía o desperdiciaba en torno a un tercio de los alimentos a nivel mundial, es decir, unos 1 300 millones de toneladas de alimentos al año” (FAO, 2023). Teniendo así impactos significativos tanto en países desarrollados como en desarrollo.</p>
+                <p class="mb-4">En los países desarrollados, se concentra principalmente en el nivel de consumo, mientras que en los países en desarrollo, ocurre mayormente en las etapas de producción y distribución debido a la falta de infraestructura adecuada (ONU, 2024).</p>
+                
+                <h2 class="text-2xl font-bold mb-2 mt-4">Consejos para Reducir el Desperdicio de Alimentos</h2>
+                <ul class="list-disc pl-6 mb-4">
+                    <li>Planificar las comidas y hacer una lista de compras para evitar comprar en exceso.</li>
+                    <li>Almacenar los alimentos de manera adecuada para prolongar su vida útil.</li>
+                    <li>Utilizar las sobras en nuevas recetas creativas.</li>
+                    <li>Compostar los restos de comida en lugar de tirarlos a la basura.</li>
+                    <li>Utilizar una solución para reducir el desperdicio como Save A Bite!.</li>
+                </ul>
+                
+                <h2 class="text-2xl font-bold mb-2 mt-4">Iniciativas Globales contra el Desperdicio de Alimentos</h2>
+                <p class="mb-4">En todo el mundo, diversas iniciativas están trabajando para reducir el desperdicio de alimentos. La Organización de las Naciones Unidas para la Alimentación y la Agricultura (FAO) y otras organizaciones internacionales están promoviendo prácticas sostenibles de producción y consumo. Programas como el "Desafío de la Década de Acción de la ONU" buscan movilizar gobiernos, empresas y ciudadanos para adoptar medidas concretas y reducir significativamente el desperdicio de alimentos para 2030.</p>
+                <p class="mb-4">A nivel local, muchas comunidades están adoptando estrategias innovadoras para reutilizar alimentos que de otro modo se desperdiciarían. Proyectos de compostaje comunitario, bancos de alimentos, y aplicaciones móviles que conectan a las personas con excedentes de alimentos son solo algunas de las maneras en que las comunidades están abordando este problema crítico.</p>
+                
+                <h2 class="text-2xl font-bold mb-2 mt-4">Estadísticas del Desperdicio de Alimentos</h2>
+                <ul class="list-disc pl-6 mb-4">
+                    <li>Aproximadamente un tercio de los alimentos producidos en el mundo se pierden o desperdician cada año.</li>
+                    <li>El desperdicio de alimentos genera alrededor del 8% de las emisiones globales de gases de efecto invernadero.</li>
+                    <li>El desperdicio de alimentos en los hogares representa el 44% del total de los desperdicios alimentarios.</li>
+                    <li>La reducción del desperdicio de alimentos podría ahorrar hasta 1.2 billones de dólares anualmente.</li>
+                </ul>
+                
+                <h2 class="text-2xl font-bold mb-2 mt-4">Recursos y Herramientas</h2>
+                <p class="mb-4">Hay una variedad de recursos y herramientas disponibles para ayudar a reducir el desperdicio de alimentos:</p>
+                <ul class="list-disc pl-6 mb-4">
+                    <li><a href="https://www.fao.org/platform-food-loss-waste/en/" target="_blank" class="text-blue-500 hover:underline">FAO Plataforma de Pérdida y Desperdicio de Alimentos</a></li>
+                    <li><a href="https://www.un.org/en/actnow" target="_blank" class="text-blue-500 hover:underline">ONU ActNow</a></li>
+                    <li><a href="https://www.epa.gov/sustainable-management-food" target="_blank" class="text-blue-500 hover:underline">EPA Gestión Sostenible de Alimentos</a></li>
+                    <li><a href="https://www.lovefoodhatewaste.com/" target="_blank" class="text-blue-500 hover:underline">Love Food Hate Waste</a></li>
+                </ul>
+                
+                <h2 class="text-2xl font-bold mb-2 mt-4">Historias de Éxito</h2>
+                <p class="mb-4">Muchas organizaciones y comunidades han implementado iniciativas exitosas para reducir el desperdicio de alimentos:</p>
+                <ul class="list-disc pl-6 mb-4">
+                    <li>El programa de compostaje comunitario de San Francisco ha logrado reducir significativamente los residuos alimentarios en la ciudad.</li>
+                    <li>La aplicación OLIO permite a los vecinos compartir el exceso de alimentos, reduciendo así el desperdicio.</li>
+                    <li>El Banco de Alimentos de Londres ha ayudado a redistribuir toneladas de alimentos a personas necesitadas.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

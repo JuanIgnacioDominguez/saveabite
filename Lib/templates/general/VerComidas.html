@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ver Comidas</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
+        }
+        .content-container {
+            max-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+        }
+        .form-container {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        .card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #ffffff;
+            border-radius: 0.375rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: left;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card .card-content {
+            flex: 1;
+        }
+        .card img {
+            width: 100px;
+            height: 100px;
+            margin-left: 1rem;
+            border-radius: 0.375rem;
+        }
+        .card h2 {
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        .card .product-descripcion, .card .product-price {
+            margin-bottom: 0.5rem;
+            color: #6b7280;
+        }
+        .card .actions {
+            display: flex;
+            align-items: center;
+        }
+        .card .actions button, .card .actions select {
+            background-color: #0278ae;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.375rem;
+            margin-right: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .card .actions button:hover {
+            background-color: #1b7fbf;
+        }
+        .card .actions select {
+            background-color: #f8fafc;
+            color: #1f2937;
+            border: 1px solid #e5e7eb;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+        }
+        .card .actions select:not([value="ESTADO"]) {
+            color: white;
+        }
+        .card.no-disponible .actions select:not([value="ESTADO"]) {
+            background-color: #f87171;
+        }
+        .sidebar {
+            height: 100vh;
+            background-color: white;
+            width: 16rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            flex: 0 0 16rem;
+        }
+        .main-content {
+            margin-left: 16rem;
+            flex: 1;
+            padding: 1rem;
+        }
+        .nav-item {
+            margin: 2rem 0;
+            display: flex;
+            align-items: center;
+            color: #6b7280;
+            transition: color 0.3s ease;
+        }
+        .nav-item i {
+            height: 24px;
+            width: 24px;
+            margin-right: 0.5rem;
+        }
+        .nav-item a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .nav-item:hover,
+        .nav-item.active {
+            color: #27a2e8;
+        }
+        
+        .imagen {
+            width: 300px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 0.375rem;
+            margin: 0 auto 1rem auto;
+            display: block;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            border-radius: 10px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .modal-button {
+            background-color: #27a2e8;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.375rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .delete-button {
+            background-color: #f87171; /* Color de fondo rojo */
+            color: white; /* Texto en color blanco */
+            margin-left: 1rem; /* Espacio entre los botones */
+        }
+        .modal-button:hover {
+            background-color: #1b7fbf;
+        }
+        .modal-image {
+            width: 150px;
+            height: 150px;
+            display: block;
+            margin: 0 auto 1rem auto;
+        }
+        .confirm-delete-button{
+            background-color: #f87171; /* Color de fondo rojo */
+            color: white; /* Texto en color blanco */
+            margin-left: 1rem; /* Espacio entre los botones */
+        }
+
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            const baseUrl = "{{ url_for('producto', id=0) }}";
+            const productBaseUrl = baseUrl.slice(0, -1);
+
+            cards.forEach(card => {
+                card.addEventListener('click', function(event) {
+                    // Verificar si el click se hizo en un select o en un botón de edición
+                    if (event.target.tagName.toLowerCase() !== 'select' && !event.target.classList.contains('edit-button') && !event.target.classList.contains('delete-button')) {
+                        // Evitar la redirección al no hacer nada
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                });
+            });
+
+            const editButtons = document.querySelectorAll('.edit-button');
+            const modal = document.getElementById('myModal');
+            const closeModal = document.getElementsByClassName('close')[0];
+
+            editButtons.forEach(button => {
+                button.addEventListener('click', function(event) {
+                    event.stopPropagation(); // Detener la propagación del evento
+                    modal.style.display = 'block';
+                    const card = this.closest('.card');
+                    const productName = card.querySelector('.product-name').textContent;
+                    const productDescription = card.querySelector('.product-descripcion').textContent;
+                    const productPrice = card.querySelector('.product-price').textContent;
+                    const productStock = card.querySelector('.product-stock').textContent;
+                    const productCategory = card.getAttribute('data-category'); // Obtener la categoría del producto
+                    const productId = card.getAttribute('data-id'); // Obtener el ID del producto
+
+                    // Setear valores en el formulario
+                    document.getElementById('product-id').value = productId;
+                    document.getElementById('product-name').value = productName;
+                    document.getElementById('product-descripcion').value = productDescription;
+                    document.getElementById('product-price').value = productPrice;
+                    document.getElementById('product-stock').value = productStock;
+                    document.getElementById('product-category').value = productCategory;
+                });
+            });
+                        
+            closeModal.onclick = function() {
+                modal.style.display = 'none';
+            };
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            };
+
+            // Manejar la actualización del producto a través de AJAX
+            const editProductForm = document.getElementById('edit-product-form');
+            editProductForm.addEventListener('submit', function(event) {
+                event.preventDefault(); // Evitar que el formulario se envíe de la manera tradicional
+                const productId = document.getElementById('product-id').value;
+                const productName = document.getElementById('product-name').value;
+                const productDescription = document.getElementById('product-descripcion').value;
+                const productPrice = document.getElementById('product-price').value;
+                const productStock = document.getElementById('product-stock').value;
+                const productCategory = document.getElementById('product-category').value;
+
+                fetch(`/update_product/${productId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nombre: productName,
+                        descripcion: productDescription,
+                        precio: productPrice,
+                        stock: productStock,
+                        tipoComida: productCategory
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Actualizar la interfaz de usuario sin recargar la página
+                        const card = document.querySelector(`.card[data-id='${productId}']`);
+                        card.querySelector('.product-name').textContent = productName;
+                        card.querySelector('.product-descripcion').textContent = productDescription;
+                        card.querySelector('.product-price').textContent = `${productPrice}`;
+                        card.querySelector('.product-stock').textContent = `${productStock}`;
+                        card.setAttribute('data-category', productCategory);
+                        modal.style.display = 'none';
+                    } else {
+                        alert('Error al actualizar el producto.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+
+            // Actualizar estado visualmente y en la base de datos
+            const selects = document.querySelectorAll('.estado-select');
+            selects.forEach(select => {
+                const currentState = select.value;
+                updateSelectBackground(select, currentState); // Establecer el color inicial del select basado en el estado actual
+
+                select.addEventListener('change', function(event) {
+                    const card = this.closest('.card');
+                    const selectedValue = this.value;
+                    const productId = card.getAttribute('data-id');
+
+                    fetch(`/update_product_status/${productId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ estado: selectedValue })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            updateSelectBackground(this, selectedValue); // Actualizar el color del select basado en el estado
+                        } else {
+                            alert('Error al actualizar el estado del producto.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                });
+            });
+
+            function updateSelectBackground(select, estado) {
+                if (estado === 'Disponible') {
+                    select.style.backgroundColor = '#22c55e';
+                } else if (estado === 'No Disponible') {
+                    select.style.backgroundColor = '#f87171';
+                }
+            }
+
+            const deleteButtons = document.querySelectorAll('.delete-button');
+            const deleteModal = document.getElementById('deleteModal');
+            const cancelDelete = document.querySelector('.cancel-button');
+            const confirmDelete = document.querySelector('.confirm-delete-button');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault(); // Prevent default form submission
+                    event.stopPropagation(); // Stop event propagation
+
+                    const form = this.closest('form');
+                    const productId = form.action.split('/').pop(); // Extract productId from form action URL
+
+                    // Show delete confirmation modal
+                    deleteModal.style.display = 'block';
+
+                    // Handle cancel button click
+                    cancelDelete.addEventListener('click', function() {
+                        deleteModal.style.display = 'none'; // Hide modal on cancel
+                    });
+
+                    // Handle confirm delete button click
+                    confirmDelete.addEventListener('click', function() {
+                        fetch(`/eliminar_producto/${productId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Remove the product card from the UI
+                                const card = document.querySelector(`.card[data-id='${productId}']`);
+                                card.remove();
+                                deleteModal.style.display = 'none'; // Hide the modal
+                            } else {
+                                alert('Error al eliminar el producto.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                    });
+                });
+            });
+
+            // Close the delete modal when clicking outside it
+            window.onclick = function(event) {
+                if (event.target == deleteModal) {
+                    deleteModal.style.display = 'none';
+                }
+            };
+        });
+    </script>
+</head>
+<body class="flex h-screen">
+    <!-- SideBar -->
+    {% include 'Sidebars/sidebarEmpresa.html' %}
+    <!-- Main content -->
+    <div class="main-content flex-1 p-6 overflow-y-auto">
+        <h1 class="text-4xl font-bold text-custom-blue">Ver Comidas</h1>
+        <div class="content-container bg-transparent p-6 rounded">
+            <div class="form-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                {% for producto in comidas %}
+                <div class="card" data-id="{{ producto['id'] }}" data-category="{{ producto['tipoComida'] }}">
+                    <div class="card-content">
+                        <h2 class="product-name">{{ producto['nombre'] }}</h2>
+                        <div>Descripcion:</div><div class="product-descripcion">{{ producto['descripcion'] }}</div>
+                        <div>Precio:</div><div class="product-price">{{ producto['precio'] }}</div>
+                        <div>Stock:</div><div class="product-stock">{{ producto['stock'] }}</div>
+                        <div class="actions">
+                            <button class="edit-button">Editar Producto</button>
+                            <form method="POST" action="{{ url_for('eliminar_producto', producto_id=producto.id) }}">
+                                <button type="submit" class="modal-button delete-button">Eliminar Producto</button>
+                            </form>
+                            <select class="estado-select">
+                                <option value="Disponible" {% if producto['estad'] == 'Disponible' %}selected{% endif %}>Disponible</option>
+                                <option value="No Disponible" {% if producto['estad'] == 'No Disponible' %}selected{% endif %}>No Disponible</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Dentro del bucle for que muestra los productos -->
+                    <img src="{{ url_for('static', filename='uploads/' ~ producto['imagen']) }}" alt="{{ producto['nombre'] }}" class="imagen">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Editar Producto</h2>
+            <form id="edit-product-form">
+                <input type="hidden" id="product-id">
+                <label class="block mb-6">
+                    <span class="text-gray-700">Nombre del Producto</span>
+                    <input type="text" id="product-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                </label>
+                <label class="block mb-6">
+                    <span class="text-gray-700">Descripcion</span>
+                    <input type="text" id="product-descripcion" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                </label>
+                <label class="block mb-6">
+                    <span class="text-gray-700">Precio del Producto</span>
+                    <input type="text" id="product-price" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                </label>
+                <label class="block mb-6">
+                    <span class="text-gray-700">Stock del Producto</span>
+                    <input type="text" id="product-stock" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                </label>
+                <label class="block mb-6">
+                    <span class="text-gray-700">Categoría del Producto</span>
+                    <select id="product-category" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        <option value="Todos">Todos</option>
+                        <option value="Hamburguesas">Hamburguesas</option>
+                        <option value="Pizzas">Pizzas</option>
+                        <option value="Pasta">Pasta</option>
+                        <option value="Ensaladas">Ensaladas</option>
+                        <option value="Cafeteria">Cafeteria</option>
+                        <option value="Carnes">Carnes</option>
+                    </select>
+                </label>
+                <div class="flex justify-between">
+                    <button type="submit" class="modal-button">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>¿Estás seguro de eliminar este producto?</h2>
+            <div class="flex justify-between">
+                <button class="modal-button cancel-button">Cancelar</button>
+                <button class="modal-button confirm-delete-button">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

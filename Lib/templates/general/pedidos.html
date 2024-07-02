@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save a Bite - Pedidos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
+            overflow: hidden; /* Evita el desplazamiento horizontal en toda la página */
+        }
+        .bg-custom-blue {
+            background-color: #27a2e8;
+        }
+        .text-custom-blue {
+            color: #27a2e8;
+        }
+        .recipe-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 16px;
+            transition: transform 0.2s;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+        }
+        .recipe-card:hover {
+            transform: translateY(-5px);
+        }
+        .recipe-card img {
+            border-radius: 8px;
+            margin-bottom: 16px;
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .recipe-card .info {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            padding: 10px;
+            background-color: #f9fafb;
+            border-radius: 8px;
+        }
+        .recipe-card .info div {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .info-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e2e8f0;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            margin-bottom: 4px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 10px 0;
+        }
+        .action-button {
+            background-color: #27a2e8;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .action-button:hover {
+            background-color: #1e81b0;
+        }
+        .content {
+            overflow-y: auto;
+            height: 100vh;
+            padding: 20px;
+        }
+        .sidebar {
+            height: 100vh;
+            background-color: white;
+            width: 16rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            left: 0; /* Asegura que la barra lateral esté fija a la izquierda */
+            top: 0; /* Ajusta la posición de la barra lateral */
+            overflow-y: auto; /* Habilita el desplazamiento vertical dentro de la barra lateral */
+        }
+        .main-content {
+            margin-left: 16rem; /* Alinea el contenido principal a la derecha de la barra lateral */
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto; /* Habilita el desplazamiento vertical en el contenido principal */
+            height: 100vh; /* Ocupa toda la altura visible del viewport */
+            overflow-x: hidden; /* Oculta el desplazamiento horizontal */
+        }
+        .content-container {
+            max-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+        }
+        .nav-item {
+            margin: 2rem 0;
+            display: flex;
+            align-items: center;
+            color: #6b7280;
+            transition: color 0.3s ease;
+        }
+        .nav-item i {
+            height: 24px;
+            width: 24px;
+            margin-right: 0.5rem;
+        }
+        .nav-item a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .nav-item:hover,
+        .nav-item.active {
+            color: #27a2e8;
+        }
+        .button-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body class="flex h-screen">
+    <!--SideBar-->
+    {% include 'Sidebars/sidebarEmpresa.html' %}
+    
+    <!-- Main content -->
+    <div class="main-content flex-1 p-6">
+        <h1 class="text-4xl font-bold text-custom-blue">Pedidos en Curso</h1>
+        <div class="button-wrapper">
+            <a href="{{ url_for('pedidosCompletados') }}">
+                <button class="action-button">Entregados</button>
+            </a>
+        </div>
+        <div class="content-container bg-transparent rounded">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="orders-list">
+                {% for pedido in pedidos %}
+                <div class="recipe-card">
+                    <img src="{{ pedido['image'] }}" alt="{{ pedido['description'] }}">
+                    <h3 class="text-xl font-bold mb-2">{{ pedido['description'] }}</h3>
+                    <p class="text-gray-600">Usuario: {{ pedido['user'] }}</p>
+                    <p class="text-gray-600">Precio: ${{ pedido['price'] }}</p>
+                    <div class="button-container">
+                        <button class="action-button" onclick="markAsDelivered(`{{ pedido['id'] }}`)">Entregado</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function markAsDelivered(pedidoId) {
+            fetch(`/marcar_entregado/${pedidoId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const orderElement = document.querySelector(`button[onclick="markAsDelivered('${pedidoId}')"]`).parentElement.parentElement;
+                    orderElement.remove();
+                } else {
+                    console.error('Failed to mark as delivered');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>

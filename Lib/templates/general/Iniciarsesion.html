@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save a Bite - Registro e Inicio de Sesión</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: url('/static/img/genteb.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        .bg-custom-blue {
+            background-color: #27a2e8;
+        }
+        .text-custom-blue {
+            color: #27a2e8;
+        }
+        .btn-custom {
+            background-color: white;
+            color: #27a2e8;
+            padding: 0.5rem 2rem;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .btn-custom:hover {
+            background-color: #e5f3fc;
+        }
+        .toggle-button-group {
+            display: flex;
+            position: relative;
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        .toggle-button {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .toggle-button.active {
+            background-color: #27a2e8;
+            color: white;
+        }
+        .toggle-button:not(.active) {
+            color: #6b7280;
+        }
+        .inputContainer {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .customInput {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: transparent;
+            border: none;
+            border-bottom: 2px solid #b0b0b0;
+            outline: none;
+            transition: border-color 0.3s ease;
+            color: #b0b0b0;
+        }
+        .customInput:focus,
+        .customInput:not(:placeholder-shown) {
+            border-color: #27a2e8;
+        }
+        .inputLabel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            padding: 5px;
+            font-size: 16px;
+            color: #b0b0b0;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        .customInput:focus + .inputLabel,
+        .customInput:not(:placeholder-shown) + .inputLabel {
+            color: #27a2e8;
+            transform: translateY(-100%) translateX(-5px) scale(0.8);
+        }
+        .inputUnderline {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #27a2e8;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 24px;
+            margin: 10px;
+        }
+        .toggle-switch .toggle-input {
+            display: none;
+        }
+        .toggle-switch .toggle-label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 24px;
+            background-color: #c9c5c5;
+            border-radius: 34px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .toggle-switch .toggle-label::before {
+            content: "";
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            background-color: #ffffff;
+            box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+        }
+        .toggle-switch .toggle-input:checked + .toggle-label {
+            background-color: #27a2e8;
+        }
+        .toggle-switch .toggle-input:checked + .toggle-label::before {
+            transform: translateX(16px);
+        }
+        .inputContainer {
+            margin-top: 35px !important;
+        }
+        .form-transition {
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .form-hidden {
+            opacity: 0;
+            transform: translateX(-50%);
+            position: absolute;
+        }
+        .form-visible {
+            opacity: 1;
+            transform: translateX(0);
+            position: relative;
+        }
+        .show-password-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #b0b0b0;
+        }
+        .logo {
+            margin: 15px;
+        }
+        .flash-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .forgot-password-link {
+            cursor: pointer;
+            color: #27a2e8;
+            text-decoration: underline;
+        }
+        .flex-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .fixed-size {
+            width: 520px;
+        }
+        .spacing {
+            margin-top: 20px;
+        }
+        .btn-align {
+            margin-top: 10px;
+        }
+        .mb-20px {
+            margin-bottom: 20px;
+        }
+
+    </style>
+</head>
+<body class="flex justify-center items-center h-screen">
+    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden fixed-size p-8">
+        <div class="relative flex justify-center items-center bg-white">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" class="logo w-44"/>
+        </div>
+        <div class="p-2">
+            <div class="toggle-button-group">
+                <div id="loginTab" class="toggle-button active">Iniciar Sesión</div>
+                <div id="registerTab" class="toggle-button">Registrarse</div>
+            </div>
+            <div class="form-container relative">
+                <!-- Mensajes flash -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-message">
+                            {% for category, message in messages %}
+                                <p>{{ message }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <form id="loginForm" class="form-transition form-visible" method="POST" action="{{ url_for('login') }}">
+                    <br><br>
+                    <h2 class="text-2xl font-bold mb-2">Bienvenido de vuelta!</h2>
+                    <p class="text-sm text-gray-600 mb-6">Complete con su información en las casillas de abajo para acceder a su cuenta</p>
+                    <div class="inputContainer">
+                        <input type="email" id="emailLogin" name="email" class="customInput" placeholder=" " required>
+                        <label for="emailLogin" class="inputLabel">Email</label>
+                    </div>
+                    <div class="inputContainer relative">
+                        <input type="password" id="passwordLogin" name="password" class="customInput" placeholder=" " required>
+                        <label for="passwordLogin" class="inputLabel">Contraseña</label>
+                        <span class="show-password-btn" onclick="togglePasswordVisibility('passwordLogin')">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-.638 1.846-1.892 3.418-3.467 4.5M15 12a3 3 0 01-6 0"></path>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="spacing"></div>
+                    <div class="flex-center mb-2">
+                        <div class="toggle-switch">
+                            <input class="toggle-input" id="rememberMe" name="remember_me" type="checkbox">
+                            <label class="toggle-label" for="rememberMe"></label>
+                        </div>
+                        <label for="rememberMe" class="text-gray-700 ml-2">Recuérdame</label>
+                    </div>
+                    <div class="flex-center mb-4 mb-20px">
+                        <span class="forgot-password-link" onclick="toggleForms('forgotPasswordForm')">¿Olvidaste tu contraseña?</span>
+                    </div>
+                    <button type="submit" class="w-full bg-custom-blue text-white p-2 rounded-md hover:bg-blue-700 mb-20px">Iniciar Sesión</button>
+                </form>
+                <form id="registerForm" class="form-transition form-hidden" method="POST" action="{{ url_for('register') }}">
+                    <h2 class="text-2xl font-bold mb-2">Crear una Cuenta</h2>
+                    <p class="text-sm text-gray-600 mb-6">Complete con su información en las casillas de abajo para crear su cuenta</p>
+                    <div class="inputContainer">
+                        <input type="text" id="name" name="name" class="customInput" placeholder=" " required>
+                        <label for="name" class="inputLabel">Nombre</label>
+                    </div>
+                    <div class="inputContainer">
+                        <input type="email" id="email" name="email" class="customInput" placeholder=" " required>
+                        <label for="email" class="inputLabel">Email</label>
+                    </div>
+                    <div class="inputContainer relative">
+                        <input type="password" id="password" name="password" class="customInput" placeholder=" " required>
+                        <label for="password" class="inputLabel">Contraseña</label>
+                        <span class="show-password-btn" onclick="togglePasswordVisibility('password')">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-.638 1.846-1.892 3.418-3.467 4.5M15 12a3 3 0 01-6 0"></path>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="mb-4 flex-center">
+                        <div class="toggle-switch">
+                            <input class="toggle-input" id="toggle" type="checkbox" name="is_vendor">
+                            <label class="toggle-label" for="toggle"></label>
+                        </div>
+                        <label for="toggle" class="text-gray-700 ml-2">¿Eres un Restaurante/Vendedor?</label>
+                    </div>
+                    <div>
+                        <button type="submit" class="w-full bg-custom-blue text-white p-2 rounded-md hover:bg-blue-700 mb-20px">Crear Cuenta</button>
+                    </div>
+                </form>
+                <form id="forgotPasswordForm" class="form-transition form-hidden" method="POST" action="{{ url_for('forgot_password') }}">
+                    <h2 class="text-2xl font-bold mb-2">Restablecer Contraseña</h2>
+                    <p class="text-sm text-gray-600 mb-6">Ingrese su dirección de email para recibir un enlace para restablecer su contraseña.</p>
+                    <div class="inputContainer">
+                        <input type="email" id="emailForgot" name="email" class="customInput" placeholder=" " required>
+                        <label for="emailForgot" class="inputLabel">Email</label>
+                    </div>
+                    <div>
+                        <button type="submit" class="w-full bg-custom-blue text-white p-2 rounded-md hover:bg-blue-700">Enviar Mensaje</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        const registerTab = document.getElementById('registerTab');
+        const loginTab = document.getElementById('loginTab');
+        const registerForm = document.getElementById('registerForm');
+        const loginForm = document.getElementById('loginForm');
+        const formContainer = document.querySelector('.form-container');
+        const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+        registerTab.addEventListener('click', () => {
+            registerTab.classList.add('active');
+            loginTab.classList.remove('active');
+            registerForm.classList.remove('form-hidden');
+            loginForm.classList.add('form-hidden');
+            registerForm.classList.add('form-visible');
+            loginForm.classList.remove('form-visible');
+
+            forgotPasswordForm.classList.add('form-hidden');
+            forgotPasswordForm.classList.remove('form-visible');
+        });
+        loginTab.addEventListener('click', () => {
+            loginTab.classList.add('active');
+            registerTab.classList.remove('active');
+            loginForm.classList.remove('form-hidden');
+            registerForm.classList.add('form-hidden');
+            loginForm.classList.add('form-visible');
+            registerForm.classList.remove('form-visible');
+
+            forgotPasswordForm.classList.add('form-hidden');
+            forgotPasswordForm.classList.remove('form-visible');
+        });
+
+        function toggleForms(formId) {
+            loginForm.classList.add('form-hidden');
+            loginForm.classList.remove('form-visible');
+            registerForm.classList.add('form-hidden');
+            registerForm.classList.remove('form-visible');
+            forgotPasswordForm.classList.add('form-hidden');
+            forgotPasswordForm.classList.remove('form-visible');
+
+            const form = document.getElementById(formId);
+            form.classList.remove('form-hidden');
+            form.classList.add('form-visible');
+        }
+        function togglePasswordVisibility(id) {
+            const input = document.getElementById(id);
+            if (input.type === 'password') {
+                input.type = 'text';
+            } else {
+                input.type = 'password';
+            }
+        }
+    </script>
+</body>
+</html>

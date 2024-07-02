@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save a Bite - Menu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
+            overflow: hidden;
+        }
+        .bg-custom-blue {
+            background-color: #27a2e8;
+        }
+        .text-custom-blue {
+            color: #27a2e8;
+        }
+        .nav-item {
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            color: #6b7280;
+            transition: color 0.3s ease;
+        }
+        .nav-item i {
+            height: 24px;
+            width: 24px;
+            margin-right: 0.5rem;
+        }
+        .nav-item:hover,
+        .nav-item.active {
+            color: #27a2e8;
+        }
+        .profile {
+            display: flex;
+            align-items: center;
+            margin-top: auto;
+            margin-bottom: 1rem;
+        }
+        .profile img {
+            height: 40px;
+            width: 40px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        .profile-text {
+            display: flex;
+            flex-direction: column;
+        }
+        .profile-text .name {
+            font-weight: bold;
+        }
+        .profile-text .edit-profile {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        .btn-custom {
+            background-color: white;
+            color: #27a2e8;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 120px;
+        }
+        .btn-custom i,
+        .btn-custom .material-icons {
+            font-size: 24px;
+            margin-bottom: 0.5rem;
+        }
+        .btn-custom:hover,
+        .btn-custom.active {
+            background-color: #27a2e8;
+            color: white;
+        }
+        .recipe-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 16px;
+            transition: transform 0.2s;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            cursor: pointer;
+        }
+        .recipe-card:hover {
+            transform: translateY(-5px);
+        }
+        .recipe-card img {
+            border-radius: 8px;
+            margin-bottom: 16px;
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .recipe-card .info {
+            display: flex;
+            justify-content: space-evenly;
+            width: 100%;
+            padding: 10px;
+            background-color: #f9fafb;
+            border-radius: 8px;
+        }
+        .recipe-card .info div {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 -2px;
+        }
+        .info-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e2e8f0;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            margin-bottom: 4px;
+            overflow: hidden;
+        }
+        .info-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            margin-bottom: 0px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        .header h1 {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #27a2e8;
+            position: absolute;
+            left: 0;
+            margin-left: 20px;
+        }
+        .search {
+            display: inline-block;
+            position: relative;
+        }
+        .search input[type="text"] {
+            width: 600px;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .search button[type="submit"] {
+            background-color: #4e99e9;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            top: 0;
+            right: 0;
+            transition: 0.3s ease;
+        }
+        .search button[type="submit"]:hover {
+            transform: scale(1.1);
+            color: rgb(255, 255, 255);
+            background-color: blue;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px 0;
+        }
+        .action-button {
+            background-color: #27a2e8;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .action-button:hover {
+            background-color: #1e81b0;
+        }
+        .content {
+            overflow-y: auto;
+            height: 100vh;
+        }
+        .profile {
+            display: flex;
+            align-items: center;
+            margin-top: auto;
+            margin-bottom: 1rem;
+        }
+        .profile img {
+            height: 40px;
+            width: 40px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        .profile-text {
+            display: flex;
+            flex-direction: column;
+        }
+        .profile-text .name {
+            font-weight: bold;
+        }
+        .profile-text .edit-profile {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Asegurarse de que el modal esté por encima de otros elementos */
+        }
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 600px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        #modal-image {
+            max-width: 150px;
+            height: auto;
+            margin-right: 20px;
+        }
+        #modal-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        #modal-description,
+        #modal-price,
+        #modal-stock {
+            margin-bottom: 10px;
+        }
+        #quantity {
+            width: 50px;
+            margin-bottom: 20px;
+        }
+        #modal-add-to-cart {
+            background-color: #0278ae;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px; /* Ajusta el margen según sea necesario */
+        }
+        #modal-add-to-cart:hover {
+            background-color: #1b7fbf;
+        }
+    </style>
+    <script>
+        function filterCategory(category) {
+            window.location.href = `/filter_menu?tipoComida=${category}`;
+        }
+    </script>
+</head>
+<body class="flex">
+    <!-- Sidebar -->
+    {% include 'Sidebars/SidebarUsuario.html' %}
+    
+    <!-- Main content -->
+    <div class="flex-1 p-6 content ml-64">
+        <h1 class="text-4xl font-bold text-custom-blue">Menu Principal</h1>
+        <div class="header">
+            <div class="search">
+                <input type="text" placeholder="Buscar...">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+        <div class="button-container">
+            <button class="btn-custom {% if tipo_comida == 'todos' %}active{% endif %}" onclick="filterCategory('todos')">
+                <i class="fas fa-utensils"></i>
+                Todos
+            </button>
+            <button class="btn-custom {% if 'Hamburguesas' in tipo_comida %}active{% endif %}" onclick="filterCategory('Hamburguesas')">
+                <i class="fas fa-hamburger"></i>
+                Hamburguesas
+            </button>
+            <button class="btn-custom {% if 'Pizzas' in tipo_comida %}active{% endif %}" onclick="filterCategory('Pizzas')">
+                <i class="fas fa-pizza-slice"></i>
+                Pizzas
+            </button>
+            <button class="btn-custom {% if 'Pastas' in tipo_comida %}active{% endif %}" onclick="filterCategory('Pastas')">
+                <i class="material-icons">ramen_dining</i>
+                Pastas
+            </button>
+            <button class="btn-custom {% if 'Ensaladas' in tipo_comida %}active{% endif %}" onclick="filterCategory('Ensaladas')">
+                <i class="fas fa-leaf"></i>
+                Ensaladas
+            </button>
+            <button class="btn-custom {% if 'Cafeteria' in tipo_comida %}active{% endif %}" onclick="filterCategory('Cafeteria')">
+                <i class="fas fa-coffee"></i>
+                Cafeteria
+            </button>
+            <button class="btn-custom {% if 'Carnes' in tipo_comida %}active{% endif %}" onclick="filterCategory('Carnes')">
+                <i class="fas fa-drumstick-bite"></i>
+                Carnes
+            </button>
+        </div>
+        {% if tipo_dieta and recomendados %}
+        <div class="mt-8">
+            <h2 class="text-2xl font-bold text-custom-blue mb-4">Recomendados</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for producto in productos %}
+                    {% if producto.estad == "Disponible" and producto.stock != 0 %}
+                        <div class="recipe-card {{ producto.tipo_comida }}" onclick="goToProductDetail('{{ producto.id }}')">
+                            <img src="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}" alt="{{ producto.nombre }}">
+                            <h3 class="text-xl font-bold mb-2">{{ producto.nombre }}</h3>
+                            <div class="info">  
+                                <div>
+                                    <div class="info-icon">
+                                        <img src="{{ url_for('static', filename='uploads/' ~ producto.empresa_imagen) }}" alt="{{ producto.empresa }}">
+                                    </div>
+                                    <p class="text-gray-600">{{ producto.empresa }}</p>
+                                </div>
+                                <div>
+                                    <div class="info-icon"><i class="fas fa-dollar-sign"></i></div>
+                                    <p class="text-gray-600">$ {{ producto.precio }}</p>
+                                </div>
+                            </div>
+                            <div class="button-container">
+                                <button class="action-button add-to-cart-btn" data-stock="{{ producto.stock }}" data-id="{{ producto.id }}" data-name="{{ producto.nombre }}" data-description="{{ producto.descripcion }}" data-price="{{ producto.precio }}" data-image="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}">Añadir al carrito</button>
+                                <form method="GET" action="{{ url_for('ver_menu', id=producto.id_empresa) }}">
+                                    <button type="submit" class="action-button">Ver Restaurante</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="header">
+            <h2 class="text-2xl font-bold text-custom-blue mt-2">Menu Principal</h2>
+        </div>
+        {% endif %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for producto in productos %}
+                {% if producto.estad == "Disponible" and producto.stock != 0 %}
+                    <div class="recipe-card {{ producto.tipo_comida }}" onclick="goToProductDetail('{{ producto.id }}')">
+                        <img src="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}" alt="{{ producto.nombre }}">
+                        <h3 class="text-xl font-bold mb-2">{{ producto.nombre }}</h3>
+                        <div class="info">  
+                            <div>
+                                <div class="info-icon"><i class="fas fa-user"></i></div>
+                                <p class="text-gray-600">{{ producto.empresa }}</p>
+                            </div>
+                            <div>
+                                <div class="info-icon"><i class="fas fa-dollar-sign"></i></div>
+                                <p class="text-gray-600">$ {{ producto.precio }}</p>
+                            </div>
+                        </div>
+                        <div class="button-container">
+                            <button class="action-button add-to-cart-btn" data-stock="{{ producto.stock }}" data-id="{{ producto.id }}" data-name="{{ producto.nombre }}" data-description="{{ producto.descripcion }}" data-price="{{ producto.precio }}" data-image="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}">Añadir al carrito</button>
+                            <form method="GET" action="{{ url_for('ver_menu', id=producto.id_empresa) }}">
+                                <button type="submit" class="action-button">Ver Restaurante</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div id="preview-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <img id="modal-image" src="" alt="Product Image">
+            <div>
+                <h2 id="modal-title"></h2>
+                <p id="modal-description"></p>
+                <p id="modal-price"></p>
+                <p id="modal-stock"></p>
+                <form id="add-to-cart-form" method="POST" action="">
+                    <label>
+                        <span>Cantidad:</span>
+                        <input type="number" id="quantity" name="cantidad" min="1" value="1">
+                    </label>
+                    <button type="submit" id="modal-add-to-cart" class="action-button">Añadir al carrito</button>
+                </form>
+                <div class="message-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const modal = document.getElementById('preview-modal');
+        const closeButton = document.querySelector('.close-button');
+        const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartTotal = document.getElementById('cart-total');
+        const modalAddToCartButton = document.getElementById('modal-add-to-cart');
+        const quantityInput = document.getElementById('quantity');
+
+        // Array para almacenar los elementos del carrito
+        let currentStock = 0;
+        let productId = 0;
+
+        // Event listeners para botones "Agregar al carrito"
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const title = button.getAttribute('data-name');
+                const description = button.getAttribute('data-description');
+                const price = parseFloat(button.getAttribute('data-price'));
+                currentStock = parseInt(button.getAttribute('data-stock'));
+                const imageSrc = button.getAttribute('data-image');
+                productId = button.getAttribute('data-id');
+
+                // Mostrar modal
+                document.getElementById('modal-title').textContent = title;
+                document.getElementById('modal-description').textContent = description;
+                document.getElementById('modal-price').textContent = "Precio: $" + price.toFixed(2);
+                document.getElementById('modal-stock').textContent = "Stock disponible: " + currentStock;
+                document.getElementById('modal-image').src = imageSrc;
+                
+                modal.classList.remove('hidden');
+            });
+        });
+
+        // Manejar clic en "Añadir al carrito" en el modal
+        modalAddToCartButton.addEventListener('click', function (event) {
+            event.preventDefault();
+            const quantity = parseInt(quantityInput.value);
+            if (quantity > 0 && quantity <= currentStock) {
+                // Realizar solicitud AJAX con JSON
+                fetch(`/agregar_al_carrito/${productId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ cantidad: quantity })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        modal.classList.add('hidden');
+                    } else {
+                        alert('Error al agregar el producto al carrito');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al agregar el producto al carrito');
+                });
+            } else {
+                // Mostrar mensaje de error si la cantidad no es válida
+                const messageContainer = document.querySelector('#preview-modal .message-container');
+                messageContainer.innerHTML = `<p class="message">Cantidad no válida. Disponible: ${currentStock}</p>`;
+            }
+        });
+
+        // Funcionalidad del botón de cierre del modal
+        closeButton.addEventListener('click', function () {
+            modal.classList.add('hidden');
+        });
+
+        // Cerrar modal al hacer clic fuera de él
+        window.addEventListener('click', function (event) {
+            if (event.target === modal) {
+                modal.classList.add('hidden');
+            }
+        });
+    });
+    </script>
+</body>
+</html>

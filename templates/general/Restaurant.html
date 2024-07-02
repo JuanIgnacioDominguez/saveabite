@@ -397,16 +397,17 @@
         const modal = document.getElementById('preview-modal');
         const closeButton = document.querySelector('.close-button');
         const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
-		const cartItemsContainer = document.getElementById('cart-items');
+        const cartItemsContainer = document.getElementById('cart-items');
         const cartTotal = document.getElementById('cart-total');
         const checkoutButton = document.getElementById('checkout-button');
         const modalAddToCartButton = document.getElementById('modal-add-to-cart');
         const quantityInput = document.getElementById('quantity');
 
         // Array para almacenar los elementos del carrito
-		let cartItems = [];
+        let cartItems = [];
         let currentStock = 0;
-		// Función para actualizar el carrito visualmente
+
+        // Función para actualizar el carrito visualmente
         function renderCart() {
             cartItemsContainer.innerHTML = '';
             cartItems.forEach(item => {
@@ -426,29 +427,9 @@
             const total = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
             cartTotal.textContent = total.toFixed(2);
         }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
 
-         // Función para obtener los elementos del carrito desde el servidor
-         function fetchCartItems() {
+        // Función para obtener los elementos del carrito desde el servidor
+        function fetchCartItems() {
             fetch('/api/carrito')
                 .then(response => response.json())
                 .then(data => {
@@ -503,6 +484,8 @@
                         setTimeout(() => {
                             modal.classList.add('hidden');
                             messageContainer.innerHTML = '';
+                            // Volver a cargar los elementos del carrito
+                            fetchCartItems();
                         }, 2000);
                     } else {
                         messageContainer.innerHTML = `<p class="message">Error al agregar el producto al carrito</p>`;
@@ -532,11 +515,9 @@
             }
         });
 
-         // Funcionalidad del botón "Continuar" del carrito
+        // Funcionalidad del botón "Continuar" del carrito
         checkoutButton.addEventListener('click', function () {
             window.location.href = '/carrito';
-  
-  
         });
 
         // Obtener y mostrar los elementos del carrito cuando la página se cargue

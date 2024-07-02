@@ -27,7 +27,7 @@ y se suma al historial de pedidos
 ----------- UPDATE de lo que faltaba - Rena (2/7/24)-----------
 RESTAURANTE
 - Cuando tocas la card en ver comidas te lleva a /producto (no tiene que pasar)
-- Saque el todos en el crear producto
+- Saque el TODOS en el crear producto
 -METER EL RATING TOTAL EN MENU RESTAURANTE Y EN MENU(en menu esta a medias)
 
 ----------------FALTA:--------------
@@ -43,9 +43,9 @@ RESTAURANTE
 
 GENERAL
 -METER EL RATING TOTAL EN MENU (funciona si esta en inicio pero si hago filtros nose porque no se ve!) Y INICIO DE EMPRESA
--ARREGLAR FILTROS, ELIMINAR EL TODOS DE CREAR PRODUCTO (SE DEBERIA ASIGNAR AUTOMATICAMENTE)
+-ARREGLAR FILTROS
 -HACER QUE SE ASIGNE AL CREAR UNA CUENTA LA IMAGEN DEFAULTUSER.JPG
--ARREGLAR QUE NO SE ROMPA LA MEMBRESIA SI NO TENGO METODO DEW PAGO
+-ARREGLAR QUE NO SE ROMPA LA MEMBRESIA SI NO TENGO METODO DE PAGO
 -HACER QUE EL INICIO EMRPESA TENGA FUNCIONALIDAD
 -HACER QUE FUNCIONE PEDIDOS EN CURSO
 

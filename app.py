@@ -948,30 +948,29 @@ def guardar_perfil():
     user_id = session.get('user_id')
     nombre = request.form['name']
     correo_electronico = request.form['email']
-    nueva_contrasena = request.form.get('new_password', None)
+    tipo_dieta = request.form['tipo_dieta']
+    current_password = request.form['current_password']
+    new_password = request.form.get('new_password', None)
+    confirm_password = request.form.get('confirm_password', None)
 
     conn = get_db_connection()
     user = conn.execute('SELECT * FROM usuarios WHERE id = ?', (user_id,)).fetchone()
 
-    cambios = []
-    if user['nombre_usuario'] != nombre:
-        cambios.append('Nombre cambiado de {} a {}'.format(user['nombre_usuario'], nombre))
-        conn.execute('UPDATE usuarios SET nombre_usuario = ? WHERE id = ?', (nombre, user_id))
-    if user['correo_electronico'] != correo_electronico:
-        cambios.append('Correo electrónico cambiado de {} a {}'.format(user['correo_electronico'], correo_electronico))
-        conn.execute('UPDATE usuarios SET correo_electronico = ? WHERE id = ?', (correo_electronico, user_id))
-    if nueva_contrasena and user['contrasena'] != nueva_contrasena:
-        cambios.append('Contraseña cambiada')
-        conn.execute('UPDATE usuarios SET contrasena = ? WHERE id = ?', (nueva_contrasena, user_id))
+    if not user or user['contrasena'] != current_password:
+        return jsonify(success=False, error='Contraseña actual incorrecta')
 
+    if new_password and new_password != confirm_password:
+        return jsonify(success=False, error='Las contraseñas nuevas no coinciden')
+
+    conn.execute('UPDATE usuarios SET nombre_usuario = ?, correo_electronico = ?, tipo_dieta = ? WHERE id = ?', (nombre, correo_electronico, tipo_dieta, user_id))
+    if new_password:
+        conn.execute('UPDATE usuarios SET contrasena = ? WHERE id = ?', (new_password, user_id))
     conn.commit()
+    registrar_accion(user_id, 'Editado perfil')
     conn.close()
-
-    for cambio in cambios:
-        registrar_accion(user_id, cambio)
-
-    flash('Perfil actualizado con éxito', 'success')
-    return redirect(url_for('perfil_usuario'))
+    session['user_name'] = nombre
+    session['user_email'] = correo_electronico
+    return jsonify(success=True)
 
 @app.route("/restaurantes", methods=['GET'])
 def restaurantes():

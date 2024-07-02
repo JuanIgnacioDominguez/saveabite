@@ -262,23 +262,6 @@
     <!-- Aquí va tu barra lateral incluida -->
     {% include 'Sidebars/sidebarEmpresa.html' %}
     <div class="main-content">
-        <!-- Sección de perfil -->
-        <!-- Comentado temporalmente
-        <div class="profile">
-            <img src="{{ url_for('static', filename=restaurant['image']) }}" alt="Profile">
-            <div class="profile-text">
-                <div class="name">{{ restaurant['name'] }}</div>
-                <a href="{{ url_for('perfil_empresa') }}" class="edit-profile">Editar Perfil</a>
-            </div>
-        </div>
-        -->
-        
-        <!-- Formulario para subir imagen, oculto temporalmente -->
-        <form id="image-form" action="{{ url_for('upload_company_image') }}" method="POST" enctype="multipart/form-data" style="display:none;">
-            <input type="file" name="company_image" id="company_image">
-            <button type="submit">Upload</button>
-        </form>
-
         <!-- Información del restaurante -->
         <div class="card">
             <h3 class="text-xl font-bold mb-2">Información del Restaurante</h3>

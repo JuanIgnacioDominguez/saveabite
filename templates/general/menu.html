@@ -230,6 +230,66 @@
             color: #6b7280;
             font-size: 0.875rem;
         }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Asegurarse de que el modal esté por encima de otros elementos */
+        }
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 600px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        #modal-image {
+            max-width: 150px;
+            height: auto;
+            margin-right: 20px;
+        }
+        #modal-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        #modal-description,
+        #modal-price,
+        #modal-stock {
+            margin-bottom: 10px;
+        }
+        #quantity {
+            width: 50px;
+            margin-bottom: 20px;
+        }
+        #modal-add-to-cart {
+            background-color: #0278ae;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px; /* Ajusta el margen según sea necesario */
+        }
+        #modal-add-to-cart:hover {
+            background-color: #1b7fbf;
+        }
     </style>
     <script>
         function filterCategory(category) {
@@ -302,11 +362,9 @@
                                 </div>
                             </div>
                             <div class="button-container">
-                                <form method="POST" action="{{ url_for('agregar_al_carrito1', producto_id=producto.id) }}">
-                                    <button type="submit" class="action-button">Añadir al carrito</button>
-                                </form>
+                                <button class="action-button add-to-cart-btn" data-stock="{{ producto.stock }}" data-id="{{ producto.id }}" data-name="{{ producto.nombre }}" data-description="{{ producto.descripcion }}" data-price="{{ producto.precio }}" data-image="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}">Añadir al carrito</button>
                                 <form method="GET" action="{{ url_for('ver_menu', id=producto.id_empresa) }}">
-                                    <button type="submit" class="action-button">Ver Restaurant</button>
+                                    <button type="submit" class="action-button">Ver Restaurante</button>
                                 </form>
                             </div>
                         </div>
@@ -326,9 +384,7 @@
                         <h3 class="text-xl font-bold mb-2">{{ producto.nombre }}</h3>
                         <div class="info">  
                             <div>
-                                <div class="info-icon">
-                                    <img src="{{ url_for('static', filename='uploads/' ~ producto.empresa_imagen) }}" alt="{{ producto.empresa }}">
-                                </div>
+                                <div class="info-icon"><i class="fas fa-user"></i></div>
                                 <p class="text-gray-600">{{ producto.empresa }}</p>
                             </div>
                             <div>
@@ -337,9 +393,7 @@
                             </div>
                         </div>
                         <div class="button-container">
-                            <form method="POST" action="{{ url_for('agregar_al_carrito1', producto_id=producto.id) }}">
-                                <button type="submit" class="action-button">Añadir al carrito</button>
-                            </form>
+                            <button class="action-button add-to-cart-btn" data-stock="{{ producto.stock }}" data-id="{{ producto.id }}" data-name="{{ producto.nombre }}" data-description="{{ producto.descripcion }}" data-price="{{ producto.precio }}" data-image="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}">Añadir al carrito</button>
                             <form method="GET" action="{{ url_for('ver_menu', id=producto.id_empresa) }}">
                                 <button type="submit" class="action-button">Ver Restaurante</button>
                             </form>
@@ -349,5 +403,111 @@
             {% endfor %}
         </div>
     </div>
+    
+    <div id="preview-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <img id="modal-image" src="" alt="Product Image">
+            <div>
+                <h2 id="modal-title"></h2>
+                <p id="modal-description"></p>
+                <p id="modal-price"></p>
+                <p id="modal-stock"></p>
+                <form id="add-to-cart-form" method="POST" action="">
+                    <label>
+                        <span>Cantidad:</span>
+                        <input type="number" id="quantity" name="cantidad" min="1" value="1">
+                    </label>
+                    <button type="submit" id="modal-add-to-cart" class="action-button">Añadir al carrito</button>
+                </form>
+                <div class="message-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const modal = document.getElementById('preview-modal');
+        const closeButton = document.querySelector('.close-button');
+        const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartTotal = document.getElementById('cart-total');
+        const modalAddToCartButton = document.getElementById('modal-add-to-cart');
+        const quantityInput = document.getElementById('quantity');
+
+        // Array para almacenar los elementos del carrito
+        let cartItems = [];
+        let currentStock = 0;
+
+        // Función para actualizar el carrito visualmente
+        function renderCart() {
+            cartItemsContainer.innerHTML = '';
+            cartItems.forEach(item => {
+                const cartItem = document.createElement('div');
+                cartItem.classList.add('cart-item');
+                cartItem.innerHTML = `
+                    <img src="${item.image}" alt="${item.title}">
+                    <div class="cart-item-details">
+                        <p class="cart-item-title">${item.title}</p>
+                        <p class="cart-item-quantity">Cantidad: ${item.quantity}</p>
+                        <p class="cart-item-price">Precio: $${(item.price * item.quantity).toFixed(2)}</p>
+                    </div>
+                `;
+                cartItemsContainer.appendChild(cartItem);
+            });
+
+            // Calcular y mostrar el total del carrito
+            const total = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+            cartTotal.textContent = total.toFixed(2);
+        }
+
+        // Event listeners para botones "Agregar al carrito"
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const title = button.getAttribute('data-name');
+                const description = button.getAttribute('data-description');
+                const price = parseFloat(button.getAttribute('data-price'));
+                currentStock = parseInt(button.getAttribute('data-stock'));
+                const imageSrc = button.getAttribute('data-image');
+                const productId = button.getAttribute('data-id');
+
+                // Mostrar modal
+                document.getElementById('modal-title').textContent = title;
+                document.getElementById('modal-description').textContent = description;
+                document.getElementById('modal-price').textContent = "Precio: $" + price.toFixed(2);
+                document.getElementById('modal-stock').textContent = "Stock disponible: " + currentStock;
+                document.getElementById('modal-image').src = imageSrc;
+                document.getElementById('add-to-cart-form').action = `/agregar_al_carrito/${productId}`;
+                modal.classList.remove('hidden');
+            });
+        });
+
+        // Manejar clic en "Añadir al carrito" en el modal
+        modalAddToCartButton.addEventListener('click', function (event) {
+            event.preventDefault();
+            const quantity = parseInt(quantityInput.value);
+            if (quantity > 0 && quantity <= currentStock) {
+                const form = document.getElementById('add-to-cart-form');
+                form.submit();
+            } else {
+                // Mostrar mensaje de error si la cantidad no es válida
+                const messageContainer = document.querySelector('#preview-modal .message-container');
+                messageContainer.innerHTML = `<p class="message">Cantidad no válida. Disponible: ${currentStock}</p>`;
+            }
+        });
+
+        // Funcionalidad del botón de cierre del modal
+        closeButton.addEventListener('click', function () {
+            modal.classList.add('hidden');
+        });
+
+        // Cerrar modal al hacer clic fuera de él
+        window.addEventListener('click', function (event) {
+            if (event.target === modal) {
+                modal.classList.add('hidden');
+            }
+        });
+    });
+    </script>
 </body>
 </html>

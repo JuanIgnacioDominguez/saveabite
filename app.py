@@ -901,8 +901,6 @@ def crear_producto():
             ''', (session.get('user_id'), nombre, precio, descripcion, filename, categorias, tipo_dieta, session.get('user_name')))
             conn.commit()
             conn.close()
-            
-            flash('Producto creado con éxito', 'success')
             return redirect(url_for('menu_empresas'))
         
     return render_template('crear_producto/CrearProducto.html')
@@ -912,66 +910,34 @@ def logout():
     session.clear()
     return redirect(url_for("index"))
 
-# Endpoint para subir imágenes de la empresa
-@app.route('/upload_company_image', methods=['POST'])
-def upload_company_image():
-    if 'company_image' not in request.files:
-        flash('No file part', 'error')
-        return redirect(url_for('perfil_empresa'))
-    file = request.files['company_image']
-    if file.filename == '':
-        flash('No selected file', 'error')
-        return redirect(url_for('perfil_empresa'))
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)   
-        # Crear directorio si no existe
-        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)  
-        file.save(file_path) 
-        # Actualizar la imagen de la empresa en la base de datos
-        user_id = session.get('user_id')
-        conn = get_db_connection()
-        conn.execute('UPDATE usuarioEmpresa SET imagen = ? WHERE id = ?', (filename, user_id))
-        conn.commit()
-        registrar_accion(user_id, 'Actualizada imagen de la empresa')
-        conn.close()   
-        # Actualizar la sesión con la nueva imagen
-        session['user_image'] = filename
-        flash('Imagen de la empresa actualizada con éxito', 'success')
-        return redirect(url_for('perfil_empresa'))
-    else:
-        flash('Tipo de archivo no permitido', 'error')
-        return redirect(url_for('perfil_empresa'))
-
 @app.route("/guardar_perfil", methods=['POST'])
 def guardar_perfil():
     user_id = session.get('user_id')
     nombre = request.form['name']
     correo_electronico = request.form['email']
-    nueva_contrasena = request.form.get('new_password', None)
+    tipo_dieta = request.form['tipo_dieta']
+    current_password = request.form['current_password']
+    new_password = request.form.get('new_password', None)
+    confirm_password = request.form.get('confirm_password', None)
 
     conn = get_db_connection()
     user = conn.execute('SELECT * FROM usuarios WHERE id = ?', (user_id,)).fetchone()
 
-    cambios = []
-    if user['nombre_usuario'] != nombre:
-        cambios.append('Nombre cambiado de {} a {}'.format(user['nombre_usuario'], nombre))
-        conn.execute('UPDATE usuarios SET nombre_usuario = ? WHERE id = ?', (nombre, user_id))
-    if user['correo_electronico'] != correo_electronico:
-        cambios.append('Correo electrónico cambiado de {} a {}'.format(user['correo_electronico'], correo_electronico))
-        conn.execute('UPDATE usuarios SET correo_electronico = ? WHERE id = ?', (correo_electronico, user_id))
-    if nueva_contrasena and user['contrasena'] != nueva_contrasena:
-        cambios.append('Contraseña cambiada')
-        conn.execute('UPDATE usuarios SET contrasena = ? WHERE id = ?', (nueva_contrasena, user_id))
+    if not user or user['contrasena'] != current_password:
+        return jsonify(success=False, error='Contraseña actual incorrecta')
 
+    if new_password and new_password != confirm_password:
+        return jsonify(success=False, error='Las contraseñas nuevas no coinciden')
+
+    conn.execute('UPDATE usuarios SET nombre_usuario = ?, correo_electronico = ?, tipo_dieta = ? WHERE id = ?', (nombre, correo_electronico, tipo_dieta, user_id))
+    if new_password:
+        conn.execute('UPDATE usuarios SET contrasena = ? WHERE id = ?', (new_password, user_id))
     conn.commit()
+    registrar_accion(user_id, 'Editado perfil')
     conn.close()
-
-    for cambio in cambios:
-        registrar_accion(user_id, cambio)
-
-    flash('Perfil actualizado con éxito', 'success')
-    return redirect(url_for('perfil_usuario'))
+    session['user_name'] = nombre
+    session['user_email'] = correo_electronico
+    return jsonify(success=True)
 
 @app.route("/restaurantes", methods=['GET'])
 def restaurantes():
@@ -1052,8 +1018,8 @@ def eliminar_del_carrito(producto_id):
     conn.execute('DELETE FROM carrito WHERE usuario_id = ? AND producto_id = ?', (user_id, producto_id))
     conn.commit()
     conn.close()
-    flash('Producto eliminado del carrito', 'success')
-    return redirect(url_for('carrito'))
+    return jsonify({"success": True, "message": "Producto eliminado del carrito"})
+
 
 @app.route("/agregar_a_favoritos/<int:empresa_id>", methods=['POST'])
 def agregar_a_favoritos(empresa_id):
@@ -1064,24 +1030,23 @@ def agregar_a_favoritos(empresa_id):
     
     if item is None:  # Si el producto no está en favoritos, lo agrega
         conn.execute('INSERT INTO favoritos (usuario_id, empresa_id) VALUES (?, ?)', (user_id, empresa_id))
-        flash('Producto agregado a favoritos', 'success')
+        message = 'Producto agregado a favoritos'
     else:  # Si el producto ya está en favoritos, muestra un mensaje
-        flash('Producto ya está en favoritos', 'error')
+        message = 'Producto ya está en favoritos'
     
     conn.commit()
     conn.close()
-    return redirect(url_for('favoritos', id=empresa_id))
+    return jsonify({"message": message})
 
 @app.route("/eliminar_de_favoritos/<int:empresa_id>", methods=['POST'])
-def eliminar_de_favoritos (empresa_id):
+def eliminar_de_favoritos(empresa_id):
     user_id = session.get('user_id')
     conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     conn.execute('DELETE FROM favoritos WHERE usuario_id = ? AND empresa_id = ?', (user_id, empresa_id))
     conn.commit()
     conn.close()
-    flash('Producto eliminado de favoritos', 'success')
-    return redirect(url_for('favoritos'))
+    return jsonify({"message": "Producto eliminado de favoritos"})
 
 @app.route("/ver_menu/<int:id>", methods=['GET'])
 def ver_menu(id):
@@ -1131,6 +1096,7 @@ def update_product(product_id):
     descripcion = data.get('descripcion')
     precio = data.get('precio')
     stock = data.get('stock')
+    tipoComida = data.get('tipoComida')
 
     if not stock or stock == '0':
         estado = 'No Disponible'
@@ -1140,9 +1106,9 @@ def update_product(product_id):
     conn = get_db_connection()
     conn.execute('''
         UPDATE Productos
-        SET nombre = ?, descripcion = ?, precio = ?, stock = ?, estad = ?
+        SET nombre = ?, descripcion = ?, precio = ?, stock = ?, estad = ?, tipoComida = ?
         WHERE id = ?
-    ''', (nombre, descripcion, precio, stock, estado, product_id))
+    ''', (nombre, descripcion, precio, stock, estado, tipoComida, product_id))
     conn.commit()
     conn.close()
 

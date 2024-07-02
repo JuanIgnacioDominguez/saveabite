@@ -129,7 +129,7 @@
     {% include 'Sidebars/SidebarUsuario.html' %}
     <!-- Popup -->
     <div id="popup" class="popup">
-        <p>El restaurante fue añadido a tus favoritos correctamente</p>
+        <p id="popup-message">El restaurante fue añadido a tus favoritos correctamente</p>
         <button id="closePopup" class="popup-button">Cerrar</button>
     </div>
     <!-- Main content -->
@@ -154,7 +154,7 @@
                     <p>{{ restaurant.calle }} {{ restaurant.altura }}, {{ restaurant.localidad }}</p>
                 </div>
                 <div class="action-buttons">
-                    <form method="POST" action="{{ url_for('agregar_a_favoritos', empresa_id=restaurant.id) }}">
+                    <form method="POST" action="{{ url_for('agregar_a_favoritos', empresa_id=restaurant.id) }}" class="add-to-favorites-form">
                         <button type="submit">Añadir a favoritos</button>
                     </form>
                     <form method="GET" action="{{ url_for('ver_menu', id=restaurant.id) }}">
@@ -167,28 +167,34 @@
     </div>
 
     <script>
-        document.querySelectorAll('.action-buttons form').forEach(form => {
-            form.addEventListener('submit', function(event) {
-                event.preventDefault();
-                fetch(this.action, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    }
-                }).then(response => {
-                    if (response.ok) {
-                        document.getElementById('popup').classList.add('active');
-                    }
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.add-to-favorites-form').forEach(form => {
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    const actionUrl = this.action;
+                    fetch(actionUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const popup = document.getElementById('popup');
+                        const popupMessage = document.getElementById('popup-message');
+                        popupMessage.textContent = data.message;
+                        popup.classList.add('active');
+                    })
+                    .catch(error => console.error('Error:', error));
                 });
             });
-        });
-    
-        document.getElementById('closePopup').addEventListener('click', function() {
-            document.getElementById('popup').classList.remove('active');
-            // Redirigir a favoritos.html
-            window.location.href = "{{ url_for('favoritos') }}";
+
+            document.getElementById('closePopup').addEventListener('click', function() {
+                document.getElementById('popup').classList.remove('active');
+                // Opcional: Redirigir a favoritos.html
+                window.location.href = "{{ url_for('favoritos') }}";
+            });
         });
     </script>
-
 </body>
 </html>

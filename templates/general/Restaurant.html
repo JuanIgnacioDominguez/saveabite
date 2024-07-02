@@ -341,37 +341,38 @@
                     {% if item.stock == 0 or item.estad == "No Disponible" %}
                         <button disabled class="add-to-cart-btn">No disponible</button>
                     {% else %}
-                        <button class="add-to-cart-btn" data-stock="{{ item.stock }}">Agregar al carrito</button>
+                        <button class="add-to-cart-btn" data-stock="{{ item.stock }}" data-id="{{ item.id }}" data-name="{{ item.nombre }}" data-description="{{ item.descripcion }}" data-price="{{ item.precio }}" data-image="{{ url_for('static', filename='uploads/' ~ item.imagen) }}">Agregar al carrito</button>
                     {% endif %}    
                     <div class="message-container"></div>
                     <p>{{ item.estad }}</p>
                 </div>
                 <img src="{{ url_for('static', filename='uploads/' ~ item.imagen) }}" alt="{{ item.nombre }}">
             </div>
-            <div id="preview-modal" class="modal hidden">
-                <div class="modal-content">
-                    <span class="close-button">&times;</span>
-                    <img id="modal-image" src="" alt="Product Image">
-                    <div>
-                        <h2 id="modal-title"></h2>
-                        <p id="modal-description"></p>
-                        <p id="modal-price"></p>
-                        <p id="modal-stock"></p>
-                        <form method="POST" action="{{ url_for('agregar_al_carrito', producto_id=item.id) }}">
-                            <label>
-                                <span>Cantidad:</span>
-                                <input type="number" name="cantidad" min="1" value="1">
-                            </label>
-                            <button type="submit" class="action-button">Añadir al carrito</button>
-                        </form>
-                        <div class="message-container"></div>
-                    </div>
-                </div>
-            </div>
             {% endfor %}
         </div>
     </div>
     
+    <div id="preview-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <img id="modal-image" src="" alt="Product Image">
+            <div>
+                <h2 id="modal-title"></h2>
+                <p id="modal-description"></p>
+                <p id="modal-price"></p>
+                <p id="modal-stock"></p>
+                <form id="add-to-cart-form" method="POST" action="">
+                    <label>
+                        <span>Cantidad:</span>
+                        <input type="number" id="quantity" name="cantidad" min="1" value="1">
+                    </label>
+                    <button type="submit" id="modal-add-to-cart" class="action-button">Añadir al carrito</button>
+                </form>
+                <div class="message-container"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
     document.addEventListener('DOMContentLoaded', function () {
         const modal = document.getElementById('preview-modal');
@@ -380,9 +381,12 @@
         const cartItemsContainer = document.getElementById('cart-items');
         const cartTotal = document.getElementById('cart-total');
         const checkoutButton = document.getElementById('checkout-button');
+        const modalAddToCartButton = document.getElementById('modal-add-to-cart');
+        const quantityInput = document.getElementById('quantity');
 
         // Array para almacenar los elementos del carrito
         let cartItems = [];
+        let currentStock = 0;
 
         // Función para actualizar el carrito visualmente
         function renderCart() {
@@ -410,57 +414,36 @@
         addToCartButtons.forEach(button => {
             button.addEventListener('click', function () {
                 const card = button.parentElement.parentElement;
-                const title = card.querySelector('h3').textContent;
-                const description = card.querySelector('p').textContent;
-                const price = parseFloat(card.querySelector('.price').textContent.replace('$', ''));
-                let stock = parseInt(button.getAttribute('data-stock'));
-                const imageSrc = card.querySelector('img').src;
+                const title = button.getAttribute('data-name');
+                const description = button.getAttribute('data-description');
+                const price = parseFloat(button.getAttribute('data-price'));
+                currentStock = parseInt(button.getAttribute('data-stock'));
+                const imageSrc = button.getAttribute('data-image');
+                const productId = button.getAttribute('data-id');
 
                 // Mostrar modal
                 document.getElementById('modal-title').textContent = title;
                 document.getElementById('modal-description').textContent = description;
                 document.getElementById('modal-price').textContent = "Precio: $" + price.toFixed(2);
-                document.getElementById('modal-stock').textContent = "Stock disponible: " + stock;
+                document.getElementById('modal-stock').textContent = "Stock disponible: " + currentStock;
                 document.getElementById('modal-image').src = imageSrc;
+                document.getElementById('add-to-cart-form').action = `/agregar_al_carrito/${productId}`;
                 modal.classList.remove('hidden');
-
-                
-                // Manejar clic en "Añadir al carrito" en el modal
-                document.getElementById('modal-add-to-cart').addEventListener('click', function () {
-                    const quantity = parseInt(document.getElementById('quantity').value);
-                    if (quantity > 0 && quantity <= stock) {
-                        // Agregar al carrito
-                        const existingItem = cartItems.find(item => item.title === title);
-                        if (existingItem) {
-                            existingItem.quantity += quantity;
-                        } else {
-                            cartItems.push({
-                                title: title,
-                                price: price,
-                                quantity: quantity,
-                                image: imageSrc
-                            });
-                        }
-                        // Actualizar visualización del carrito
-                        renderCart();
-                        // Actualizar el stock disponible
-                        stock -= quantity;
-                        button.setAttribute('data-stock', stock);
-                        card.querySelector('.stock').textContent = `Stock disponible: ${stock}`;
-                        // Deshabilitar botón si el stock llega a cero
-                        if (stock === 0) {
-                            button.disabled = true;
-                            button.textContent = 'No disponible';
-                        }
-                        // Ocultar modal
-                        modal.classList.add('hidden');
-                    } else {
-                        // Mostrar mensaje de error si la cantidad no es válida
-                        const messageContainer = document.querySelector('#preview-modal .message-container');
-                        messageContainer.innerHTML = `<p class="message">Cantidad no válida. Disponible: ${stock}</p>`;
-                    }
-                });
             });
+        });
+
+        // Manejar clic en "Añadir al carrito" en el modal
+        modalAddToCartButton.addEventListener('click', function (event) {
+            event.preventDefault();
+            const quantity = parseInt(quantityInput.value);
+            if (quantity > 0 && quantity <= currentStock) {
+                const form = document.getElementById('add-to-cart-form');
+                form.submit();
+            } else {
+                // Mostrar mensaje de error si la cantidad no es válida
+                const messageContainer = document.querySelector('#preview-modal .message-container');
+                messageContainer.innerHTML = `<p class="message">Cantidad no válida. Disponible: ${currentStock}</p>`;
+            }
         });
 
         // Funcionalidad del botón de cierre del modal

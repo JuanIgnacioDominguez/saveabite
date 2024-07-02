@@ -141,7 +141,7 @@
         <h1 class="text-4xl font-bold text-custom-blue mb-4 ml-16rem">Perfil Empresa</h1>
         <div class="content-container bg-white p-6 rounded shadow-md">
             <div class="profile-container">
-                <div class="profile-info flex items-start"> <!-- Cambiado a flex y items-start para alinear elementos hacia la izquierda -->
+                <div class="profile-info flex items-start">
                     <div class="text-center mr-4">
                         <img src="{{ url_for('static', filename='uploads/' + company.image) }}" alt="User Avatar" class="profile-avatar rounded-full mx-auto" id="profile-image">
                         <button class="edit-photo-button" onclick="openFileInput()">Editar Foto</button>
@@ -163,6 +163,9 @@
                     </a>
                     <a href="{{ url_for('membresia_empresa') }}" class="flex items-center border-b">
                         <i class="fas fa-star mr-2 text-gray-500"></i> Membresía
+                    </a>
+                    <a href="{{ url_for('metodos_pago_empresa') }}" class="flex items-center border-b">
+                        <i class="fas fa-credit-card mr-2 text-gray-500"></i> Métodos de Pago
                     </a>
                     <a href="{{ url_for('soporte_empresa') }}" class="flex items-center border-b">
                         <i class="fas fa-life-ring mr-2 text-gray-500"></i> Soporte

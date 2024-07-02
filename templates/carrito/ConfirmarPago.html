@@ -326,12 +326,10 @@
                     document.getElementById('thankYouModal').style.display = 'block';
                 } else {
                     console.error('Error al procesar la compra');
-                    alert('Error al procesar la compra: ' + data.message);  
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error: ' + error.message);  
             });
         }
 

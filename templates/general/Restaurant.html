@@ -319,14 +319,8 @@
             </div>
             <div class="order-summary">
                 <h3>Mi pedido</h3>
-                <div id="cart-items">
-                    <!-- Aquí se mostrarán los elementos del carrito dinámicamente -->
-                </div>
-                <div class="cart-total">
-                    <p class="cart-total-text">Total: $<span id="cart-total">0.00</span></p>
-                </div>
                 <div class="cart-actions">
-                    <button class="checkout-button" id="checkout-button">Continuar</button>
+                    <button class="checkout-button" id="checkout-button" src="{{ url_for('carrito') }}">Ver Carrito</button>
                 </div>
             </div>
         </div>
@@ -378,53 +372,14 @@
         const modal = document.getElementById('preview-modal');
         const closeButton = document.querySelector('.close-button');
         const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
-        const cartItemsContainer = document.getElementById('cart-items');
         const cartTotal = document.getElementById('cart-total');
         const checkoutButton = document.getElementById('checkout-button');
         const modalAddToCartButton = document.getElementById('modal-add-to-cart');
         const quantityInput = document.getElementById('quantity');
 
         // Array para almacenar los elementos del carrito
-        let cartItems = [];
         let currentStock = 0;
 
-        // Función para actualizar el carrito visualmente
-        function renderCart() {
-            cartItemsContainer.innerHTML = '';
-            cartItems.forEach(item => {
-                const cartItem = document.createElement('div');
-                cartItem.classList.add('cart-item');
-                cartItem.innerHTML = `
-                    <img src="${item.image}" alt="${item.title}">
-                    <div class="cart-item-details">
-                        <p class="cart-item-title">${item.title}</p>
-                        <p class="cart-item-quantity">Cantidad: ${item.quantity}</p>
-                        <p class="cart-item-price">Precio: $${(item.price * item.quantity).toFixed(2)}</p>
-                    </div>
-                `;
-                cartItemsContainer.appendChild(cartItem);
-            });
-
-            // Calcular y mostrar el total del carrito
-            const total = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-            cartTotal.textContent = total.toFixed(2);
-        }
-
-        // Función para obtener los elementos del carrito desde el servidor
-        function fetchCartItems() {
-            fetch('/api/carrito')
-                .then(response => response.json())
-                .then(data => {
-                    cartItems = data.map(item => ({
-                        title: item.nombre,
-                        price: item.precio,
-                        quantity: item.cantidad,
-                        image: `{{ url_for('static', filename='uploads/') }}${item.imagen}`
-                    }));
-                    renderCart();
-                })
-                .catch(error => console.error('Error fetching cart items:', error));
-        }
 
         // Event listeners para botones "Agregar al carrito"
         addToCartButtons.forEach(button => {

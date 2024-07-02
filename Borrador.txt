@@ -1,4 +1,4 @@
-MODIFICACIONES HECHAS:
+MODIFICACIONES VIEJAS (1/7/24):
 -menu tiene las imagenes de las empresas dependiendo el producto
 -Implementamos la parte seguir la compra de confirmar carrito pero no logra terminar la compra ya que tira el 
 error de que el carrito esta vacio. No termina la compra, (sino si elimina los productos comprados y los agrega a los pedidos realizados.) 
@@ -13,21 +13,51 @@ error de que el carrito esta vacio. No termina la compra, (sino si elimina los p
 -en la parte de confirmar pago solo hay que solucionar lo de que se confirme la compra, ahi ya se eliminan los productos del carrito
 y se suma al historial de pedidos
 
+-----------NUEVO (2/7/24)-----------
+-OPCION DE CALIFICAR PRODUCTOS HECHA!!!!!
+-ESTRELLAS TOTALES AGREGADAS Y SISTEMA DE PUNTUACION AGREGADO (PORFAVOR NO LO TOQUEN ME COSTO MUCHO :) 
+-TABLA DE RATINGS AGREGADA (LO HACE CADA USUARIO, AGARRA EL ID DE LA EMPRESA Y LA PUNTUACION DADA)
+-COLUMNA DE RATING TOTAL EN USUARIOEMPRESA AGREGADA (HACE EL PROMEDIO DE LOS RATINGS)
+-CARRITO ARREGLADO PERO CON PROBLEMAS EN EL HISTORIAL DE COMPRAS(ENVIO SEPARADO DE PRODUCTO)
+-METODO DE PAGO PARA empresa
+-MEMBRESIAS ARREGLADAS Y MEJORADAS
+-filtros en el menu (funciona pero a medias)
+-membresia modificada de empresa y usuario funcionales.
 
-FALTA:
+
+
+----------------FALTA:--------------
+
 USUARIO
--que se vea bien la membresia de los usuarios
--filtros en el menu
+-filtros en el menu ( funcionan pero a medias, habria que sacar el todos en el crear producto)
 -cuando se confirma la compra, actualizar stock
 -historial de pedidos te deje abrir el resumen con los productos, etc
--opcion para calificar los productos
 
 RESTAURANTE
 -cuando tocas la card en ver comidas te lleva a /producto NO TIENE QUE PASAR
--que la membresia funcione igual a la de usuarios (que pida metodo de pago y aparezca al instante, ahora hay q salir y volver a entrar para verlo)
 -hacer pedidos en curso (probablemente con una tabla pedidos, cuando se confirma el carrito se crea la de pedidos con el estado, preparando, entregado, etc)
 -todas las stats del menu que se hagan en base a los datos de la bd
 
 GENERAL
--que cuando metes un producto al carrito verifique si hay stock suficiente
+-METER EL RATING TOTAL EN MENU RESTAURANTE,EN MENU Y INICIO DE EMPRESA
+-ARREGLAR FILTROS, ELIMINAR EL TODOS DE CREAR PRODUCTO (SE DEBERIA ASIGNAR AUTOMATICAMENTE)
+-HACER QUE SE ASIGNE AL CREAR UNA CUENTA LA IMAGEN DEFAULTUSER.JPG
+-ARREGLAR QUE NO SE ROMPA LA MEMBRESIA SI NO TENGO METODO DEW PAGO
+-HACER QUE EL INICIO EMRPESA TENGA FUNCIONALIDAD
+-HACER QUE FUNCIONE PEDIDOS EN CURSO
+
+IMPORTANTISIMO (ULTIMO TASK)
+-INTENTAR ROMPER TODO EL CODIGO (PROBANDO) PARA SABER QUE SOLUCIONAR
+
+DISEÑO (PRIMERO HACER LAS FUNCIONALIDAD, SI SOBRA TIEMPO LO CAMBIAMOS):
+-MEJORAR DISEÑO INFORMACION
+-MEJORAR MENU EMPRESA
+-MEJORAR DISEÑO FAVORITOS
+-MEJORAR DISEÑO VENTANAS EMERGENTES
+-HACER QUE FAVORITOS SEA IGUAL A RESTAURANTES.HTML CAMBIANDO AGREGAR A FAVORITOS POR ELIMINAR Y PONER COLOR ROJO AL BOTON
 -abajo en la sidebar que aparezca el nombre y la foto(en usuario y en resto ninguno anda)
+-MEJORAR DISEÑO HISTORIAL DE PEDIDOS
+-MEJORAR DISEÑO EDITAR PERFIL
+-MEJORAR DISEÑO PERFILES
+-VER SI PODEMOS PONER UN FONDO MAS LINDO PARA TODO
+-MEJORAR VER COMIDAS

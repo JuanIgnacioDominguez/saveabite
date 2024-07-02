@@ -436,30 +436,8 @@
         const quantityInput = document.getElementById('quantity');
 
         // Array para almacenar los elementos del carrito
-        let cartItems = [];
         let currentStock = 0;
-
-        // Función para actualizar el carrito visualmente
-        function renderCart() {
-            cartItemsContainer.innerHTML = '';
-            cartItems.forEach(item => {
-                const cartItem = document.createElement('div');
-                cartItem.classList.add('cart-item');
-                cartItem.innerHTML = `
-                    <img src="${item.image}" alt="${item.title}">
-                    <div class="cart-item-details">
-                        <p class="cart-item-title">${item.title}</p>
-                        <p class="cart-item-quantity">Cantidad: ${item.quantity}</p>
-                        <p class="cart-item-price">Precio: $${(item.price * item.quantity).toFixed(2)}</p>
-                    </div>
-                `;
-                cartItemsContainer.appendChild(cartItem);
-            });
-
-            // Calcular y mostrar el total del carrito
-            const total = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-            cartTotal.textContent = total.toFixed(2);
-        }
+        let productId = 0;
 
         // Event listeners para botones "Agregar al carrito"
         addToCartButtons.forEach(button => {
@@ -469,7 +447,7 @@
                 const price = parseFloat(button.getAttribute('data-price'));
                 currentStock = parseInt(button.getAttribute('data-stock'));
                 const imageSrc = button.getAttribute('data-image');
-                const productId = button.getAttribute('data-id');
+                productId = button.getAttribute('data-id');
 
                 // Mostrar modal
                 document.getElementById('modal-title').textContent = title;
@@ -477,7 +455,7 @@
                 document.getElementById('modal-price').textContent = "Precio: $" + price.toFixed(2);
                 document.getElementById('modal-stock').textContent = "Stock disponible: " + currentStock;
                 document.getElementById('modal-image').src = imageSrc;
-                document.getElementById('add-to-cart-form').action = `/agregar_al_carrito/${productId}`;
+                
                 modal.classList.remove('hidden');
             });
         });
@@ -487,8 +465,27 @@
             event.preventDefault();
             const quantity = parseInt(quantityInput.value);
             if (quantity > 0 && quantity <= currentStock) {
-                const form = document.getElementById('add-to-cart-form');
-                form.submit();
+                // Realizar solicitud AJAX con JSON
+                fetch(`/agregar_al_carrito/${productId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ cantidad: quantity })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        modal.classList.add('hidden');
+                    } else {
+                        alert('Error al agregar el producto al carrito');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al agregar el producto al carrito');
+                });
             } else {
                 // Mostrar mensaje de error si la cantidad no es válida
                 const messageContainer = document.querySelector('#preview-modal .message-container');

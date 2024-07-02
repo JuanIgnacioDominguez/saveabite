@@ -55,6 +55,7 @@ def create_tables():
             imagen TEXT,  -- Columna para almacenar imágenes
             membresia TEXT,
             direccion_id INTEGER,
+            ratingTotal REAL DEFAULT 0,
             FOREIGN KEY (direccion_id) REFERENCES direccionEmpresa (id)
         )
     ''')
@@ -159,8 +160,8 @@ def create_tables():
             total REAL NOT NULL,
             empresa_id INTEGER NOT NULL,
             empresa TEXT NOT NULL,
-            entregado boolean NOT NULL,
-                 
+            metodo_pago TEXT,
+            entregado BOOLEAN NOT NULL DEFAULT 0,
             FOREIGN KEY (empresa_id) REFERENCES usuarioEmpresa (id),
             FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
         )
@@ -170,9 +171,18 @@ def create_tables():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             idPedido INTEGER NOT NULL,
             idProducto INTEGER NOT NULL,
-            
             FOREIGN KEY (idProducto) REFERENCES Productos (id),     
             FOREIGN KEY (idPedido) REFERENCES pedidos2 (id)
+        )
+    ''')
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS RATINGS (
+            idoperacion INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_usuario INTEGER NOT NULL,
+            id_empresa INTEGER NOT NULL,
+            puntuacion INTEGER NOT NULL,
+            FOREIGN KEY (id_usuario) REFERENCES usuarios (id),
+            FOREIGN KEY (id_empresa) REFERENCES usuarioEmpresa (id)
         )
     ''')
     conn.commit()
@@ -239,6 +249,21 @@ def registrar_accion(usuario_id, accion):
     conn.execute('INSERT INTO registroAcciones (usuario_id, accion) VALUES (?, ?)', (usuario_id, accion))
     conn.commit()
     conn.close()
+
+def add_metodo_pago_field():
+    conn = get_db_connection()
+    try:
+        conn.execute('''
+            ALTER TABLE pedidos2
+            ADD COLUMN metodo_pago TEXT
+        ''')
+    except sqlite3.OperationalError:
+        # La columna ya existe
+        pass
+    conn.commit()
+    conn.close()
+
+add_metodo_pago_field()
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
@@ -601,29 +626,34 @@ def get_productos_by_tipo(conn, tipo):
 
 @app.route("/pedidos", methods=['GET'])
 def pedidos():
-    pedidos = [
-        {
-            'date': '2024-06-18',
-            'restaurant': 'Restaurante 1',
-            'price': 100.0
-        },
-        {
-            'date': '2024-06-19',
-            'restaurant': 'Restaurante 2',
-            'price': 200.0
-        },
-        {
-            'date': '2024-06-20',
-            'restaurant': 'Restaurante 3',
-            'price': 300.0
-        }
-    ]
+    empresa_id = session.get('empresa_id')
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    pedidos = conn.execute('''
+                           SELECT * 
+                           FROM pedidos2
+                           WHERE empresa_id = ? AND entregado IS FALSE''', 
+                           (empresa_id,)).fetchall()
+    conn.close()
+    
     return render_template('general/pedidos.html', pedidos=pedidos, completados_url=url_for('pedidosCompletados'))
 
 @app.route("/pedidosCompletados")
 def pedidosCompletados():
     return render_template('general/pedidosCompletados.html')
 
+@app.route("/marcar_entregado/<int:pedido_id>", methods=['POST'])
+def marcar_entregado(pedido_id):
+    empresa_id = session.get('empresa_id')
+    conn = get_db_connection()
+    conn.execute('''
+                 UPDATE pedidos2
+                 SET entregado = TRUE
+                 WHERE id = ? AND empresa_id = ?''', 
+                 (pedido_id, empresa_id))
+    conn.commit()
+    conn.close()
+    return jsonify(success=True)
 
 
 @app.route("/pedidos_cliente")
@@ -632,6 +662,7 @@ def pedidos_cliente():
     conn = get_db_connection()
     cursor = conn.cursor()
 
+    # Consulta para obtener los pedidos del usuario
     pedidos = cursor.execute('''
         SELECT id, fecha, total, empresa, empresa_id
         FROM pedidos2
@@ -640,7 +671,6 @@ def pedidos_cliente():
     ''', (user_id,)).fetchall()
 
     conn.close()
-
     return render_template('general/pedidosCliente.html', pedidos=pedidos)
 
 @app.route("/informacion", methods=['GET'])
@@ -862,16 +892,6 @@ def eliminar_producto(producto_id):
     conn.close()
     return jsonify(success=True)
 
-@app.route("/producto/<int:id>", methods=['GET'])
-def producto(id):
-    conn = get_db_connection()
-    producto = conn.execute('SELECT * FROM Productos WHERE id = ?', (id,)).fetchone()
-    conn.close()
-    if producto is None:
-        flash('Producto no encontrado', 'error')
-        return redirect(url_for('VerComidas'))
-    return render_template('general/Producto.html', producto=producto)
-
 @app.route("/crear_producto", methods=['GET', 'POST'])
 def crear_producto():
     if request.method == 'POST':
@@ -943,12 +963,15 @@ def guardar_perfil():
 @app.route("/restaurantes", methods=['GET'])
 def restaurantes():
     conn = get_db_connection()
+    user_id = session.get('user_id')
     restaurantes = conn.execute('''
         SELECT usuarioEmpresa.id, usuarioEmpresa.nombre_usuario, usuarioEmpresa.imagen,
-            direccionEmpresa.calle, direccionEmpresa.altura, direccionEmpresa.localidad
+            direccionEmpresa.calle, direccionEmpresa.altura, direccionEmpresa.localidad,
+            usuarioEmpresa.ratingTotal as rating_total,
+            IFNULL((SELECT puntuacion FROM RATINGS WHERE id_usuario = ? AND id_empresa = usuarioEmpresa.id), 0) as current_rating
         FROM usuarioEmpresa
         LEFT JOIN direccionEmpresa ON usuarioEmpresa.id = direccionEmpresa.usuario_id
-    ''').fetchall()
+    ''', (user_id,)).fetchall()
     conn.close()
     return render_template('general/Restaurantes.html', restaurantes=restaurantes)
 
@@ -989,8 +1012,7 @@ def agregar_al_carrito(producto_id):
     
     conn.commit()
     conn.close()
-    flash('Producto agregado al carrito', 'success')
-    return redirect(url_for('carrito', id=producto_id))
+    return jsonify({'message': 'Producto agregado al carrito', 'success': True})
 
 @app.route('/actualizar_membresia', methods=['POST'])
 def actualizar_membresia():
@@ -1060,6 +1082,11 @@ def ver_menu(id):
         WHERE ue.id = ?
     ''', (id,)).fetchone()
     conn.close()
+
+    if restaurant is None:
+        return "Restaurante no encontrado", 404
+
+    return render_template('general/Restaurant.html', productos=productos, restaurant=restaurant)
 
     if restaurant is None:
         return "Restaurante no encontrado", 404
@@ -1145,30 +1172,39 @@ def procesar_compra():
     empresa_id = request.form.get('empresa_id')
 
     conn = get_db_connection()
-    carrito_items = conn.execute('''
+    cursor = conn.cursor()
+    carrito_items = cursor.execute('''
         SELECT c.*, p.empresa, p.id_empresa, p.precio, c.cantidad
         FROM carrito c
         JOIN Productos p ON c.producto_id = p.id
         WHERE c.usuario_id = ? AND p.id_empresa = ?
     ''', (user_id, empresa_id)).fetchall()
-    
+
     if not carrito_items:
-        return jsonify(success=False, message="Carrito vacío"), 400
+        carrito_items = []
 
     product_total = sum(item['cantidad'] * item['precio'] for item in carrito_items)
     envio = 1289
     tarifa = 285
     total = product_total + envio + tarifa + selected_tip
     ahora = datetime.now().date()
-    first = carrito_items[0]
-    nombre = first['empresa']
-    id_empresa = first['id_empresa']
+    first = carrito_items[0] if carrito_items else {}
+    nombre = first['empresa'] if carrito_items else ""
+    id_empresa = first['id_empresa'] if carrito_items else 0
 
-    conn.execute('''
-        INSERT INTO pedidos2 (usuario_id, fecha, total, empresa_id, empresa, metodo_pago, direccion_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    ''', (user_id, ahora, total, id_empresa, nombre, payment_option, delivery_address))
-    conn.execute('DELETE FROM carrito WHERE usuario_id = ? AND producto_id IN (SELECT producto_id FROM carrito c JOIN Productos p ON c.producto_id = p.id WHERE p.id_empresa = ?)', (user_id, id_empresa))
+    cursor.execute('''
+        INSERT INTO pedidos2 (usuario_id, fecha, total, empresa_id, empresa, entregado)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ''', (user_id, ahora, total, id_empresa, nombre, False))
+    pedido_id = cursor.lastrowid
+
+    for item in carrito_items:
+        cursor.execute('''
+            INSERT INTO itemsPedido (idPedido, idProducto)
+            VALUES (?, ?)
+        ''', (pedido_id, item['producto_id']))
+
+    cursor.execute('DELETE FROM carrito WHERE usuario_id = ? AND producto_id IN (SELECT producto_id FROM carrito c JOIN Productos p ON c.producto_id = p.id WHERE p.id_empresa = ?)', (user_id, id_empresa))
     conn.commit()
     conn.close()
 
@@ -1179,51 +1215,48 @@ def finalizar_pedido():
     user_id = session.get('user_id')
     if not user_id:
         return redirect(url_for('login'))
+
     conn = get_db_connection()
-    # Obtener items del carrito
-    carrito_items = conn.execute('''
+    cursor = conn.cursor()
+    carrito_items = cursor.execute('''
         SELECT c.*, p.empresa, p.id_empresa, p.precio
         FROM carrito c
         JOIN Productos p ON c.producto_id = p.id
         WHERE c.usuario_id = ?
     ''', (user_id,)).fetchall()
-    
+
     if not carrito_items:
-        return redirect(url_for('carrito_vacio'))
-    
-    # Imprimir elementos del carrito para depuración
-    for item in carrito_items:
-        print(item)
-    
-    # Calcular el total
-    try:
-        total = sum(item['cantidad'] * item['precio'] for item in carrito_items)
-    except KeyError as e:
-        return f"Error: {e} clave no encontrada en los elementos del carrito", 500
-    
+        return redirect(url_for('carrito'))
+
+    total = sum(item['cantidad'] * item['precio'] for item in carrito_items)
     ahora = datetime.now().date()
     first = carrito_items[0]
     nombre = first['empresa']
-    id = first['id_empresa']
-    
-    # Insertar pedido en historial
-    conn.execute('''
-        INSERT INTO pedidos2 (usuario_id, fecha, total, empresa_id, empresa, metodo_pago)
-        VALUES (?, ?, ?, ?, ?, ?)
-    ''', (user_id, ahora, total, id, nombre, 'pago_confirmado'))
-    
-    # Borrar productos de la empresa específica del carrito
-    conn.execute('DELETE FROM carrito WHERE usuario_id = ? AND producto_id IN (SELECT id FROM Productos WHERE id_empresa = ?)', (user_id, id))
+    id_empresa = first['id_empresa']
+
+    cursor.execute('''
+        INSERT INTO pedidos2 (usuario_id, fecha, total, empresa_id, empresa, metodo_pago, entregado)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ''', (user_id, ahora, total, id_empresa, nombre, 'pago_confirmado', False))
+
+    pedido_id = cursor.lastrowid
+
+    for item in carrito_items:
+        cursor.execute('''
+            INSERT INTO itemsPedido (idPedido, idProducto)
+            VALUES (?, ?)
+        ''', (pedido_id, item['producto_id']))
+
+    cursor.execute('DELETE FROM carrito WHERE usuario_id = ? AND producto_id IN (SELECT id FROM Productos WHERE id_empresa = ?)', (user_id, id_empresa))
     conn.commit()
     conn.close()
-    
+
     return redirect(url_for('menu'))
 
 @app.route("/confirmar_compra", methods=['POST'])
 def confirmar_compra():
-    user_id = session.get('user_id')  # Asegúrate de que el user_id está correctamente establecido en la sesión
+    user_id = session.get('user_id')
     if not user_id:
-        # Considera redirigir al usuario a la página de inicio de sesión si user_id no está en la sesión
         return redirect(url_for('login'))
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -1234,31 +1267,18 @@ def confirmar_compra():
         WHERE c.usuario_id = ?
     ''', (user_id,)).fetchall()
     if not carrito_items:
-        # Manejar el caso en que el carrito esté vacío
-        return redirect(url_for('carrito_vacio'))  # O redirigir a una página adecuada
-    total = 0
-    for item in carrito_items:
-        producto = cursor.execute('SELECT precio FROM Productos WHERE id = ?', (item['producto_id'],)).fetchone()
-        if producto:
-            total += item['cantidad'] * producto['precio']
-    ahora = datetime.now().date()
-    first = carrito_items[0]
-    nombre = first['empresa']
-    id = first['id_empresa']
-    cursor.execute('''
-        INSERT INTO pedidos2 (usuario_id, fecha, total, empresa_id, empresa)
-        VALUES (?, ?, ?, ?, ?)
-    ''', (user_id, ahora, total, id, nombre))
+        return redirect(url_for('carrito_vacio'))
     cursor.execute('DELETE FROM carrito WHERE usuario_id = ?', (user_id,))
     conn.commit()
     conn.close()
     return redirect(url_for('pedidos_cliente'))
 
-@app.route('/confirmar_pago/<int:empresa_id>')
+@app.route('/confirmar_pago/<int:empresa_id>', methods=['GET'])
 def confirmar_pago(empresa_id):
     user_id = session.get('user_id')
     if not user_id:
         return redirect(url_for('login'))
+    
     conn = get_db_connection()
     carrito_items = conn.execute('''
         SELECT Productos.id, Productos.nombre, Productos.precio, Productos.imagen, carrito.cantidad
@@ -1266,13 +1286,16 @@ def confirmar_pago(empresa_id):
         JOIN Productos ON carrito.producto_id = Productos.id
         WHERE carrito.usuario_id = ? AND Productos.id_empresa = ?
     ''', (user_id, empresa_id)).fetchall()
+    
     metodos_pago = conn.execute('SELECT * FROM metodos_pago WHERE usuario_id = ?', (user_id,)).fetchall()
     direcciones = conn.execute('SELECT * FROM direcciones WHERE usuario_id = ?', (user_id,)).fetchall()
+    
     product_total = sum(item['precio'] * item['cantidad'] for item in carrito_items)
-    envio = 1289
-    tarifa = 285
-    propina = 0
+    envio = 1289  # Valor fijo de envío
+    tarifa = 285  # Valor fijo de tarifa
+    propina = 0  # Inicialmente, sin propina
     total = product_total + envio + tarifa + propina
+    
     conn.close()
     return render_template('carrito/ConfirmarPago.html', carrito_items=carrito_items, metodos_pago=metodos_pago, direcciones=direcciones, product_total=product_total, total=total)
 
@@ -1335,6 +1358,77 @@ def get_carrito():
     items = [dict(item) for item in carrito_items]
     return jsonify(items)
 
+@app.route("/producto/<int:id>", methods=['GET'])
+def producto(id):
+    conn = get_db_connection()
+    producto = conn.execute('SELECT * FROM Productos WHERE id = ?', (id,)).fetchone()
+    conn.close()
+    if not producto:
+        return "Producto no encontrado", 404
+    return render_template('producto.html', producto=producto)
+
+@app.route('/guardar-calificacion', methods=['POST'])
+def guardar_calificacion():
+    data = request.json
+    user_id = session.get('user_id')
+    restaurant_id = data['restaurant_id']
+    rating = int(data['rating'])
+
+    conn = get_db_connection()
+    existing_rating = conn.execute('SELECT * FROM RATINGS WHERE id_usuario = ? AND id_empresa = ?', (user_id, restaurant_id)).fetchone()
+
+    if existing_rating:
+        conn.execute('UPDATE RATINGS SET puntuacion = ? WHERE id_usuario = ? AND id_empresa = ?', (rating, user_id, restaurant_id))
+    else:
+        conn.execute('INSERT INTO RATINGS (id_usuario, id_empresa, puntuacion) VALUES (?, ?, ?)', (user_id, restaurant_id, rating))
+
+    # Calcular el nuevo rating total
+    ratings = conn.execute('SELECT puntuacion FROM RATINGS WHERE id_empresa = ?', (restaurant_id,)).fetchall()
+    total_ratings = len(ratings)
+    sum_ratings = sum([r['puntuacion'] for r in ratings])
+    average_rating = sum_ratings / total_ratings if total_ratings > 0 else 0
+
+    conn.execute('UPDATE usuarioEmpresa SET ratingTotal = ? WHERE id = ?', (average_rating, restaurant_id))
+    conn.commit()
+    conn.close()
+    return jsonify(success=True)
+
+@app.route("/metodos_pago_empresa", methods=['GET', 'POST'])
+def metodos_pago_empresa():
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    if request.method == 'POST':
+        tipo_tarjeta = request.form.get('tipo_tarjeta')
+        nombre_titular = request.form.get('nombre_titular')
+        numero_tarjeta = request.form.get('numero_tarjeta')
+        fecha_vencimiento = request.form.get('fecha_vencimiento')
+        codigo_seguridad = request.form.get('codigo_seguridad')
+        
+        if len(numero_tarjeta) != 16 or len(codigo_seguridad) != 3:
+            return jsonify({'error': 'Número de tarjeta o código de seguridad no válidos'})
+        
+        conn.execute('''
+            INSERT INTO metodos_pago (usuario_id, tipo_metodo, tipo_tarjeta, nombre_titular, numero_tarjeta, fecha_vencimiento, codigo_seguridad)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', (user_id, 'Tarjeta de Crédito', tipo_tarjeta, nombre_titular, numero_tarjeta, fecha_vencimiento, codigo_seguridad))
+        conn.commit()
+        registrar_accion(user_id, 'Añadido método de pago')
+        
+        return jsonify({'success': 'Método de pago agregado exitosamente'})
+    
+    metodos_pago = conn.execute('SELECT * FROM metodos_pago WHERE usuario_id = ?', (user_id,)).fetchall()
+    conn.close()
+    return render_template('perfiles_empresa/metodos_pago_empresa.html', metodos_pago=metodos_pago)
+
+@app.route("/borrar_metodo_pago_empresa/<int:id>", methods=['POST'])
+def borrar_metodo_pago_empresa(id):
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    conn.execute('DELETE FROM metodos_pago WHERE id = ?', (id,))
+    conn.commit()
+    conn.close()
+    registrar_accion(user_id, 'Eliminado método de pago empresa')
+    return redirect(url_for('metodos_pago_empresa'))
 
 if __name__ == "__main__":
     app.run(debug=True)

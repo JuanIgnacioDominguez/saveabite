@@ -361,7 +361,7 @@
         <div class="mt-8">
             <h2 class="text-2xl font-bold text-custom-blue mb-4">Recomendados</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {% for producto in productos %}
+                {% for producto in recomendados %}
                     {% if producto.estad == "Disponible" and producto.stock != 0 %}
                         <div class="recipe-card {{ producto.tipo_comida }}" onclick="goToProductDetail('{{ producto.id }}')">
                             <img src="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}" alt="{{ producto.nombre }}">
@@ -379,7 +379,7 @@
                                 </div>
                                 <div>
                                     <div class="info-icon rating-icon"><i class="fas fa-star"></i></div>
-                                    <p class="text-gray-600">{{ producto.ratingTotal }}</p>
+                                    <p class="text-gray-600">{{ producto.rating_total }}</p>
                                 </div>
                             </div>
                             <div class="button-container">
@@ -414,7 +414,7 @@
                             </div>
                             <div>
                                 <div class="info-icon rating-icon"><i class="fas fa-star"></i></div>
-                                <p class="text-gray-600">{{ producto.ratingTotal }}</p>
+                                <p class="text-gray-600">{{ producto.rating_total }}</p>
                             </div>
                         </div>
                         <div class="button-container">

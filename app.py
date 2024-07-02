@@ -174,6 +174,7 @@ def create_tables():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             idPedido INTEGER NOT NULL,
             idProducto INTEGER NOT NULL,
+            cantidad INTEGER NOT NULL,
             FOREIGN KEY (idProducto) REFERENCES Productos (id),     
             FOREIGN KEY (idPedido) REFERENCES pedidos2 (id)
         )
@@ -720,7 +721,7 @@ def ver_resumen(idPedido):
 
     # Obtener los productos del pedido
     cursor.execute('''
-        SELECT pr.nombre, pr.precio, COUNT(ip.idProducto) as cantidad
+        SELECT pr.nombre, pr.precio, ip.cantidad
         FROM itemsPedido ip
         JOIN Productos pr ON ip.idProducto = pr.id
         WHERE ip.idPedido = ?
@@ -1371,9 +1372,9 @@ def finalizar_pedido():
 
     for item in carrito_items:
         cursor.execute('''
-            INSERT INTO itemsPedido (idPedido, idProducto)
-            VALUES (?, ?)
-        ''', (pedido_id, item['producto_id']))
+            INSERT INTO itemsPedido (idPedido, idProducto, cantidad)
+            VALUES (?, ?, ?)
+        ''', (pedido_id, item['producto_id'], item['cantidad']))
 
         cursor.execute('''
             UPDATE Productos

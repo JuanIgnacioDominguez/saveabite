@@ -292,6 +292,21 @@
         .action-button:hover {
             background-color: #1e81b0;
         }
+        #Estrellatotal{
+            font-size: 20px;
+        }
+        #totalNumeros{
+            font-size: 20px;
+        }
+        .rating-total {
+            margin-left: 10px;
+            margin-top: 2px;
+        }
+        .rating-total .fa-star {
+            color: #ff9800;
+            margin-right: 3px;
+
+        }
     </style>
 </head>
 <body>
@@ -307,6 +322,10 @@
             <div class="restaurant-info">
                 <img src="{{ url_for('static', filename='uploads/' ~ restaurant.imagen) }}" class="imagen" alt="{{ restaurant.nombre }}">
                 <h2>{{ restaurant.nombre_usuario }}</h2>
+                <div class="rating-total">
+                    <i class="fas fa-star" id="Estrellatotal"></i>
+                    <span ID="totalNumeros">{{ restaurant.ratingTotal }}</span>
+                </div>
                 <p>{{ restaurant.calle }} {{ restaurant.altura }}, {{ restaurant.localidad }}</p>
             </div>
             <div class="order-options">

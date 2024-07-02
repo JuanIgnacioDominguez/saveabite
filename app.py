@@ -1169,9 +1169,9 @@ def agregar_a_favoritos(empresa_id):
     
     if item is None:  # Si el producto no está en favoritos, lo agrega
         conn.execute('INSERT INTO favoritos (usuario_id, empresa_id) VALUES (?, ?)', (user_id, empresa_id))
-        message = 'Producto agregado a favoritos'
+        message = 'Restaurante agregado a favoritos'
     else:  # Si el producto ya está en favoritos, muestra un mensaje
-        message = 'Producto ya está en favoritos'
+        message = 'Restaurante ya está en favoritos'
     
     conn.commit()
     conn.close()

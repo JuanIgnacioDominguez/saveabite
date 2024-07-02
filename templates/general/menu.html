@@ -455,14 +455,14 @@
         const modal = document.getElementById('preview-modal');
         const closeButton = document.querySelector('.close-button');
         const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
-        const cartItemsContainer = document.getElementById('cart-items');
-        const cartTotal = document.getElementById('cart-total');
-        const modalAddToCartButton = document.getElementById('modal-add-to-cart');
         const quantityInput = document.getElementById('quantity');
-
         const searchInput = document.getElementById('search-input');
         const searchButton = document.getElementById('search-button');
         const clearButton = document.getElementById('clear-button');
+        const modalAddToCartButton = document.getElementById('modal-add-to-cart');
+        
+        let currentStock = 0;
+        let productId = 0;
 
         // Mostrar la cruz roja cuando hay texto en el input
         if (searchInput.value.trim() !== '') {
@@ -478,14 +478,10 @@
             searchInput.value = '';
             clearButton.style.display = 'none';
             searchButton.style.display = 'inline-block';
-            window.location.href = '/menu'; // Redirigir al menú principal
+            document.getElementById('search-form').submit();
         });
 
-        // Array para almacenar los elementos del carrito
-        let currentStock = 0;
-        let productId = 0;
-
-        // Event listeners para botones "Agregar al carrito"
+        // Manejo de los botones de añadir al carrito
         addToCartButtons.forEach(button => {
             button.addEventListener('click', function () {
                 const title = button.getAttribute('data-name');
@@ -495,56 +491,56 @@
                 const imageSrc = button.getAttribute('data-image');
                 productId = button.getAttribute('data-id');
 
-                // Mostrar modal
                 document.getElementById('modal-title').textContent = title;
                 document.getElementById('modal-description').textContent = description;
                 document.getElementById('modal-price').textContent = "Precio: $" + price.toFixed(2);
                 document.getElementById('modal-stock').textContent = "Stock disponible: " + currentStock;
                 document.getElementById('modal-image').src = imageSrc;
-                
+                document.getElementById('add-to-cart-form').action = `/agregar_al_carrito/${productId}`;
+
                 modal.classList.remove('hidden');
             });
         });
 
-        // Manejar clic en "Añadir al carrito" en el modal
+        // Manejo del botón en el modal para añadir al carrito
         modalAddToCartButton.addEventListener('click', function (event) {
             event.preventDefault();
             const quantity = parseInt(quantityInput.value);
             if (quantity > 0 && quantity <= currentStock) {
-                // Realizar solicitud AJAX con JSON
-                fetch(`/agregar_al_carrito/${productId}`, {
+                const formData = new FormData(document.getElementById('add-to-cart-form'));
+                fetch(document.getElementById('add-to-cart-form').action, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ cantidad: quantity })
+                    body: formData,
                 })
                 .then(response => response.json())
                 .then(data => {
+                    const messageContainer = document.querySelector('#preview-modal .message-container');
                     if (data.success) {
-                        alert(data.message);
-                        modal.classList.add('hidden');
+                        messageContainer.innerHTML = `<p class="success-message">${data.message}</p>`;
+                        setTimeout(() => {
+                            modal.classList.add('hidden');
+                            messageContainer.innerHTML = '';
+                            fetchCartItems();
+                        }, 2000);
                     } else {
-                        alert('Error al agregar el producto al carrito');
+                        messageContainer.innerHTML = `<p class="message">Error al agregar el producto al carrito</p>`;
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Error al agregar el producto al carrito');
+                    const messageContainer = document.querySelector('#preview-modal .message-container');
+                    messageContainer.innerHTML = `<p class="message">Error al agregar el producto al carrito</p>`;
                 });
             } else {
-                // Mostrar mensaje de error si la cantidad no es válida
                 const messageContainer = document.querySelector('#preview-modal .message-container');
                 messageContainer.innerHTML = `<p class="message">Cantidad no válida. Disponible: ${currentStock}</p>`;
             }
         });
 
-        // Funcionalidad del botón de cierre del modal
         closeButton.addEventListener('click', function () {
             modal.classList.add('hidden');
         });
 
-        // Cerrar modal al hacer clic fuera de él
         window.addEventListener('click', function (event) {
             if (event.target === modal) {
                 modal.classList.add('hidden');
@@ -553,4 +549,5 @@
     });
     </script>
 </body>
+
 </html>

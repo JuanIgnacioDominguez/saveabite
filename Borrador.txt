@@ -24,17 +24,19 @@ y se suma al historial de pedidos
 -filtros en el menu (funciona pero a medias)
 -membresia modificada de empresa y usuario funcionales.
 
-
+----------- UPDATE de lo que faltaba - Rena (2/7/24)-----------
+RESTAURANTE
+- Cuando tocas la card en ver comidas te lleva a /producto (no tiene que pasar)
+- Saque el todos en el crear producto
 
 ----------------FALTA:--------------
 
 USUARIO
--filtros en el menu ( funcionan pero a medias, habria que sacar el todos en el crear producto)
+-filtros en el menu ( funcionan pero a medias)
 -cuando se confirma la compra, actualizar stock
 -historial de pedidos te deje abrir el resumen con los productos, etc
 
 RESTAURANTE
--cuando tocas la card en ver comidas te lleva a /producto NO TIENE QUE PASAR
 -hacer pedidos en curso (probablemente con una tabla pedidos, cuando se confirma el carrito se crea la de pedidos con el estado, preparando, entregado, etc)
 -todas las stats del menu que se hagan en base a los datos de la bd
 

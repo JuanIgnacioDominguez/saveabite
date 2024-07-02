@@ -75,6 +75,19 @@
             position: fixed;
             flex: 0 0 16rem;
         }
+        .action-button {
+            background-color: #27a2e8;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .action-button:hover {
+            background-color: #1e81b0;
+        }
     </style>
 </head>
 <body class="flex">
@@ -105,9 +118,10 @@
                         </div>
                     </div>
                     <div class="flex justify-end mt-4">
-                        <a href="{{ url_for('ver_resumen', idPedido=order['id']) }}" class="btn btn-primary">Ver resumen</a>
+                        <a href="{{ url_for('ver_resumen', idPedido=order['id']) }}" class="action-button">Ver resumen</a>
                     </div>
                 </div>
+
                 {% endfor %}
             </div>
         </div>

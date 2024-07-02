@@ -5,37 +5,148 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resumen del Pedido</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
+            overflow: hidden;
+        }
+        .bg-custom-blue {
+            background-color: #27a2e8;
+        }
+        .text-custom-blue {
+            color: #27a2e8;
+        }
+        .order-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 16px;
+            transition: transform 0.2s;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            margin-bottom: 20px; /* Espacio entre tarjetas */
+        }
+        .order-card:hover {
+            transform: translateY(-5px);
+        }
+        .order-card .info {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            padding: 10px;
+            background-color: #f9fafb;
+            border-radius: 8px;
+        }
+        .order-card .info div {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .info-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e2e8f0;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            margin-bottom: 4px;
+        }
+        .content {
+            overflow-y: auto;
+            height: 100vh;
+            padding: 20px;
+            margin-left: 16rem; /* Ajusta el margen izquierdo según tu barra lateral */
+        }
+        .sidebar {
+            height: 100vh;
+            background-color: white;
+            width: 16rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            flex: 0 0 16rem;
+        }
+        .container{
+            margin-left: 16rem;
+        }
+        .main-container{
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 16px;
+            transition: transform 0.2s;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: left;
+            height: 100%;
+            margin-bottom: 20px; /* Espacio entre tarjetas */
+        }
+        .back-button {
+            display: flex;
+            align-items: center;
+            font-size: 1.25rem;
+            padding: 0.75rem;
+            color: #4a5568;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .back-button:hover {
+            color: #1b7fbf;
+        }
+        .back-button i {
+            margin-right: 0.5rem;
+        }
+        .separator {
+            border-bottom: 1px solid #e2e8f0;
+            margin: 1rem 0;
+        }
+    </style>
 </head>
-<body>
-    <div class="container mx-auto p-6">
+<body class="flex">
+    <!-- Sidebar -->
+    {% include 'Sidebars/SidebarUsuario.html' %}
+    <!-- Contenido -->
+    <div class="container p-6">
         <h1 class="text-4xl font-bold text-custom-blue">Resumen del Pedido</h1>
-        <div class="mt-6">
+        <div class="main-container mt-6">
+            <a href="{{ url_for('pedidos_cliente') }}" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                Volver al Perfil
+            </a>
+            <div class="separator"></div>
             <p><strong>Fecha:</strong> {{ pedido.fecha }}</p>
             <p><strong>Empresa:</strong> {{ pedido.empresa }}</p>
             <p><strong>Envío:</strong> ${{ pedido.envio }}</p>
             <p><strong>Tarifa de Servicio:</strong> ${{ pedido.servicio }}</p>
             <p><strong>Propina:</strong> ${{ pedido.propina }}</p>
             <p><strong>Total:</strong> ${{ pedido.total }}</p>
+            <h2 class="text-2xl font-bold text-custom-blue mt-6">Productos</h2>
+            <table class="table-auto w-full mt-4">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-2">Producto</th>
+                        <th class="px-4 py-2">Precio</th>
+                        <th class="px-4 py-2">Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in pedido.productos %}
+                    <tr>
+                        <td class="border px-4 py-2">{{ producto.nombre }}</td>
+                        <td class="border px-4 py-2">${{ producto.precio }}</td>
+                        <td class="border px-4 py-2">{{ producto.cantidad }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-        <h2 class="text-2xl font-bold text-custom-blue mt-6">Productos</h2>
-        <table class="table-auto w-full mt-4">
-            <thead>
-                <tr>
-                    <th class="px-4 py-2">Producto</th>
-                    <th class="px-4 py-2">Precio</th>
-                    <th class="px-4 py-2">Cantidad</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for producto in pedido.productos %}
-                <tr>
-                    <td class="border px-4 py-2">{{ producto.nombre }}</td>
-                    <td class="border px-4 py-2">${{ producto.precio }}</td>
-                    <td class="border px-4 py-2">{{ producto.cantidad }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
     </div>
 </body>
 </html>

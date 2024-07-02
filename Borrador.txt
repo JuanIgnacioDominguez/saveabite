@@ -32,24 +32,27 @@ y se suma al historial de pedidos
 RESTAURANTE
 - Cuando tocas la card en ver comidas te lleva a /producto (no tiene que pasar)
 - Saque el TODOS en el crear producto
+- METER EL RATING TOTAL EN INICIO DE EMPRESA
 
 USUARIO
--METER EL RATING TOTAL EN MENU RESTAURANTE Y EN MENU(en menu esta a medias)
+-METER EL RATING TOTAL EN MENU RESTAURANTE Y EN MENU
 -filtros en el menu ya funciona el buscador y chris logro que funcione para que se vea lo del rating
 -cuando se confirma la compra, actualizar stock
+
+GENERAL
+-ARREGLAR FILTROS
 
 ----------------FALTA:--------------
 USUARIO
 -historial de pedidos te deje abrir el resumen con los productos, etc
 
 RESTAURANTE
+-Faltaria arreglar lo del stock que funciona a medias
 -hacer pedidos en curso (probablemente con una tabla pedidos, cuando se confirma el carrito se crea la de pedidos con el estado, preparando, entregado, etc)
 -todas las stats del menu que se hagan en base a los datos de la bd
 -Definir el costo de envio y si no lo ingreso que exista uno por default
 
 GENERAL
--METER EL RATING TOTAL EN INICIO DE EMPRESA
--ARREGLAR FILTROS
 -HACER QUE SE ASIGNE AL CREAR UNA CUENTA LA IMAGEN DEFAULTUSER.JPG
 -ARREGLAR QUE NO SE ROMPA LA MEMBRESIA SI NO TENGO METODO DE PAGO
 -HACER QUE EL INICIO EMRPESA TENGA FUNCIONALIDAD

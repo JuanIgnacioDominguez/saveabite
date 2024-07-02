@@ -901,8 +901,6 @@ def crear_producto():
             ''', (session.get('user_id'), nombre, precio, descripcion, filename, categorias, tipo_dieta, session.get('user_name')))
             conn.commit()
             conn.close()
-            
-            flash('Producto creado con éxito', 'success')
             return redirect(url_for('menu_empresas'))
         
     return render_template('crear_producto/CrearProducto.html')
@@ -911,37 +909,6 @@ def crear_producto():
 def logout():
     session.clear()
     return redirect(url_for("index"))
-
-# Endpoint para subir imágenes de la empresa
-@app.route('/upload_company_image', methods=['POST'])
-def upload_company_image():
-    if 'company_image' not in request.files:
-        flash('No file part', 'error')
-        return redirect(url_for('perfil_empresa'))
-    file = request.files['company_image']
-    if file.filename == '':
-        flash('No selected file', 'error')
-        return redirect(url_for('perfil_empresa'))
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)   
-        # Crear directorio si no existe
-        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)  
-        file.save(file_path) 
-        # Actualizar la imagen de la empresa en la base de datos
-        user_id = session.get('user_id')
-        conn = get_db_connection()
-        conn.execute('UPDATE usuarioEmpresa SET imagen = ? WHERE id = ?', (filename, user_id))
-        conn.commit()
-        registrar_accion(user_id, 'Actualizada imagen de la empresa')
-        conn.close()   
-        # Actualizar la sesión con la nueva imagen
-        session['user_image'] = filename
-        flash('Imagen de la empresa actualizada con éxito', 'success')
-        return redirect(url_for('perfil_empresa'))
-    else:
-        flash('Tipo de archivo no permitido', 'error')
-        return redirect(url_for('perfil_empresa'))
 
 @app.route("/guardar_perfil", methods=['POST'])
 def guardar_perfil():

@@ -818,32 +818,26 @@ def upload_image():
 @app.route('/upload_imageEmpresa', methods=['POST'])
 def upload_imageEmpresa():
     if 'profile_image' not in request.files:
-        flash('No file part', 'error')
-        return redirect(url_for('perfil_empresa'))
+        return jsonify({"success": False, "message": "No file part"}), 400
     file = request.files['profile_image']
     if file.filename == '':
-        flash('No selected file', 'error')
-        return redirect(url_for('perfil_empresa'))
+        return jsonify({"success": False, "message": "No selected file"}), 400
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)      
-        # Crear directorio si no existe
-        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)     
-        file.save(file_path)    
-        # Actualizar la imagen del usuario en la base de datos
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+        file.save(file_path)
         user_id = session.get('user_id')
         conn = get_db_connection()
         conn.execute('UPDATE usuarioEmpresa SET imagen = ? WHERE id = ?', (filename, user_id))
         conn.commit()
         registrar_accion(user_id, 'Actualizada imagen de perfil')
-        conn.close()    
-        # Actualizar la sesión con la nueva imagen
-        session['user_image'] = filename   
-        flash('Imagen de perfil actualizada con éxito', 'success')
-        return redirect(url_for('perfil_empresa'))
+        conn.close()
+        session['user_image'] = filename
+        return jsonify({"success": True, "message": "Imagen de perfil actualizada con éxito"})
     else:
-        flash('Tipo de archivo no permitido', 'error')
-        return redirect(url_for('perfil_empresa'))
+        return jsonify({"success": False, "message": "Tipo de archivo no permitido"}), 400
+
 
 @app.route("/ver_comidas", methods=['GET'])
 def VerComidas():

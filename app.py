@@ -1185,7 +1185,7 @@ def eliminar_de_favoritos(empresa_id):
     conn.execute('DELETE FROM favoritos WHERE usuario_id = ? AND empresa_id = ?', (user_id, empresa_id))
     conn.commit()
     conn.close()
-    return jsonify({"message": "Producto eliminado de favoritos"})
+    return jsonify({"message": "Restaurante eliminado de favoritos"})
 
 @app.route("/ver_menu/<int:id>", methods=['GET'])
 def ver_menu(id):

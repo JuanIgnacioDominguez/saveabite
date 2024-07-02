@@ -1025,6 +1025,22 @@ def agregar_al_carrito(producto_id):
     flash('Producto agregado al carrito', 'success')
     return redirect(url_for('carrito', id=producto_id))
 
+@app.route('/actualizar_membresia', methods=['POST'])
+def actualizar_membresia():
+    plan = request.form.get('plan')
+    user_id = session.get('user_id')
+    
+    if user_id:
+        conn = get_db_connection()
+        conn.execute('UPDATE usuarios SET membresia = ? WHERE id = ?', (plan, user_id))
+        conn.commit()
+        conn.close()
+        flash('Membresía actualizada con éxito', 'success')
+    else:
+        flash('No se pudo actualizar la membresía. Usuario no autenticado.', 'error')
+    
+    return redirect(url_for('membresia'))
+
 @app.route("/agregar_al_carrito1/<int:producto_id>", methods=['POST'])
 def agregar_al_carrito1(producto_id):
     return redirect(url_for('producto', id=producto_id))

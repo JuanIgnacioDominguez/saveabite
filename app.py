@@ -1113,6 +1113,7 @@ def update_product(product_id):
     descripcion = data.get('descripcion')
     precio = data.get('precio')
     stock = data.get('stock')
+    tipoComida = data.get('tipoComida')
 
     if not stock or stock == '0':
         estado = 'No Disponible'
@@ -1122,9 +1123,9 @@ def update_product(product_id):
     conn = get_db_connection()
     conn.execute('''
         UPDATE Productos
-        SET nombre = ?, descripcion = ?, precio = ?, stock = ?, estad = ?
+        SET nombre = ?, descripcion = ?, precio = ?, stock = ?, estad = ?, tipoComida = ?
         WHERE id = ?
-    ''', (nombre, descripcion, precio, stock, estado, product_id))
+    ''', (nombre, descripcion, precio, stock, estado, tipoComida, product_id))
     conn.commit()
     conn.close()
 

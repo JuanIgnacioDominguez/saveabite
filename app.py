@@ -1035,8 +1035,8 @@ def eliminar_del_carrito(producto_id):
     conn.execute('DELETE FROM carrito WHERE usuario_id = ? AND producto_id = ?', (user_id, producto_id))
     conn.commit()
     conn.close()
-    flash('Producto eliminado del carrito', 'success')
-    return redirect(url_for('carrito'))
+    return jsonify({"success": True, "message": "Producto eliminado del carrito"})
+
 
 @app.route("/agregar_a_favoritos/<int:empresa_id>", methods=['POST'])
 def agregar_a_favoritos(empresa_id):

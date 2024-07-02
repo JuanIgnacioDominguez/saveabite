@@ -40,6 +40,7 @@ USUARIO
 RESTAURANTE
 -hacer pedidos en curso (probablemente con una tabla pedidos, cuando se confirma el carrito se crea la de pedidos con el estado, preparando, entregado, etc)
 -todas las stats del menu que se hagan en base a los datos de la bd
+-Definir el costo de envio y si no lo ingreso que exista uno por default
 
 GENERAL
 -METER EL RATING TOTAL EN MENU (funciona si esta en inicio pero si hago filtros nose porque no se ve!) Y INICIO DE EMPRESA

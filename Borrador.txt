@@ -29,22 +29,22 @@ y se suma al historial de pedidos
 -membresia modificada de empresa y usuario funcionales.
 
 ----------- UPDATE de lo que faltaba - Rena, Sofi y Chris (2/7/24)-----------
+
 RESTAURANTE
-- Cuando tocas la card en ver comidas te lleva a /producto (no tiene que pasar)
-- Saque el TODOS en el crear producto
-- METER EL RATING TOTAL EN INICIO DE EMPRESA
+- Cuando tocas la card en ver comidas te lleva a /producto (no tiene que pasar) -> ya lo sacamos
+- Saque el TODOS en el crear producto -> ya lo sacamos
+- METER EL RATING TOTAL EN INICIO DE EMPRESA -> ya funciona
 
 USUARIO
--METER EL RATING TOTAL EN MENU RESTAURANTE Y EN MENU
+-METER EL RATING TOTAL EN MENU RESTAURANTE Y EN MENU -> ya funciona
 -filtros en el menu ya funciona el buscador y chris logro que funcione para que se vea lo del rating
--cuando se confirma la compra, actualizar stock
+-cuando se confirma la compra, actualizar stock -> ya funciona
+-historial de pedidos te deje abrir el resumen con los productos, etc -> ya podes ver el resumen de la compra
 
 GENERAL
--ARREGLAR FILTROS
+-ARREGLAR FILTROS -> ya funcionan todos los filtros del menu
 
 ----------------FALTA:--------------
-USUARIO
--historial de pedidos te deje abrir el resumen con los productos, etc
 
 RESTAURANTE
 -Faltaria arreglar lo del stock que funciona a medias
@@ -55,7 +55,7 @@ RESTAURANTE
 GENERAL
 -HACER QUE SE ASIGNE AL CREAR UNA CUENTA LA IMAGEN DEFAULTUSER.JPG
 -ARREGLAR QUE NO SE ROMPA LA MEMBRESIA SI NO TENGO METODO DE PAGO
--HACER QUE EL INICIO EMRPESA TENGA FUNCIONALIDAD
+-HACER QUE EL INICIO EMPRESA TENGA FUNCIONALIDAD
 -HACER QUE FUNCIONE PEDIDOS EN CURSO
 
 IMPORTANTISIMO (ULTIMO TASK)

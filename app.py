@@ -1047,13 +1047,13 @@ def agregar_a_favoritos(empresa_id):
     
     if item is None:  # Si el producto no está en favoritos, lo agrega
         conn.execute('INSERT INTO favoritos (usuario_id, empresa_id) VALUES (?, ?)', (user_id, empresa_id))
-        flash('Producto agregado a favoritos', 'success')
+        message = 'Producto agregado a favoritos'
     else:  # Si el producto ya está en favoritos, muestra un mensaje
-        flash('Producto ya está en favoritos', 'error')
+        message = 'Producto ya está en favoritos'
     
     conn.commit()
     conn.close()
-    return redirect(url_for('favoritos', id=empresa_id))
+    return jsonify({"message": message})
 
 @app.route("/eliminar_de_favoritos/<int:empresa_id>", methods=['POST'])
 def eliminar_de_favoritos(empresa_id):

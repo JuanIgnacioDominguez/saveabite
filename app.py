@@ -162,6 +162,9 @@ def create_tables():
             empresa TEXT NOT NULL,
             metodo_pago TEXT,
             entregado BOOLEAN NOT NULL DEFAULT 0,
+            envio REAL DEFAULT 0,
+            servicio REAL DEFAULT 0,
+            propina REAL DEFAULT 0,
             FOREIGN KEY (empresa_id) REFERENCES usuarioEmpresa (id),
             FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
         )
@@ -701,6 +704,45 @@ def pedidos_cliente():
 
     conn.close()
     return render_template('general/pedidosCliente.html', pedidos=pedidos)
+
+@app.route('/ver_resumen/<int:idPedido>')
+def ver_resumen(idPedido):
+    db = get_db_connection()
+    cursor = db.cursor()
+    
+    # Obtener detalles del pedido
+    cursor.execute('''
+        SELECT p.fecha, p.total, p.empresa, p.envio, p.servicio, p.propina
+        FROM pedidos2 p
+        WHERE p.id = ?
+    ''', (idPedido,))
+    pedido = cursor.fetchone()
+
+    # Obtener los productos del pedido
+    cursor.execute('''
+        SELECT pr.nombre, pr.precio, COUNT(ip.idProducto) as cantidad
+        FROM itemsPedido ip
+        JOIN Productos pr ON ip.idProducto = pr.id
+        WHERE ip.idPedido = ?
+        GROUP BY pr.id
+    ''', (idPedido,))
+    productos = cursor.fetchall()
+
+    if pedido:
+        pedido_info = {
+            'fecha': pedido[0],
+            'total': pedido[1],
+            'empresa': pedido[2],
+            'envio': pedido[3],
+            'servicio': pedido[4],
+            'propina': pedido[5],
+            'productos': [{'nombre': p[0], 'precio': p[1], 'cantidad': p[2]} for p in productos]
+        }
+        return render_template('general/resumen.html', pedido=pedido_info)
+    else:
+        return "Pedido no encontrado", 404
+
+
 
 @app.route("/informacion", methods=['GET'])
 def informacion():
@@ -1276,9 +1318,9 @@ def finalizar_pedido():
     total = total1 + envio + tarifa + propina
 
     cursor.execute('''
-        INSERT INTO pedidos2 (usuario_id, fecha, total, empresa_id, empresa, metodo_pago, entregado)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    ''', (user_id, ahora, total, id_empresa, nombre, 'pago_confirmado', False))
+        INSERT INTO pedidos2 (usuario_id, fecha, total, empresa_id, empresa, metodo_pago, entregado, envio, servicio, propina)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (user_id, ahora, total, id_empresa, nombre, 'pago_confirmado', False, envio, tarifa, propina))
 
     pedido_id = cursor.lastrowid
 

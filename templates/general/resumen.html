@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumen del Pedido</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container mx-auto p-6">
+        <h1 class="text-4xl font-bold text-custom-blue">Resumen del Pedido</h1>
+        <div class="mt-6">
+            <p><strong>Fecha:</strong> {{ pedido.fecha }}</p>
+            <p><strong>Empresa:</strong> {{ pedido.empresa }}</p>
+            <p><strong>Envío:</strong> ${{ pedido.envio }}</p>
+            <p><strong>Tarifa de Servicio:</strong> ${{ pedido.servicio }}</p>
+            <p><strong>Propina:</strong> ${{ pedido.propina }}</p>
+            <p><strong>Total:</strong> ${{ pedido.total }}</p>
+        </div>
+        <h2 class="text-2xl font-bold text-custom-blue mt-6">Productos</h2>
+        <table class="table-auto w-full mt-4">
+            <thead>
+                <tr>
+                    <th class="px-4 py-2">Producto</th>
+                    <th class="px-4 py-2">Precio</th>
+                    <th class="px-4 py-2">Cantidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in pedido.productos %}
+                <tr>
+                    <td class="border px-4 py-2">{{ producto.nombre }}</td>
+                    <td class="border px-4 py-2">${{ producto.precio }}</td>
+                    <td class="border px-4 py-2">{{ producto.cantidad }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

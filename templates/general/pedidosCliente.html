@@ -104,6 +104,9 @@
                             <p class="text-gray-600">{{ order['empresa'] }}</p>
                         </div>
                     </div>
+                    <div class="flex justify-end mt-4">
+                        <a href="{{ url_for('ver_resumen', idPedido=order['id']) }}" class="btn btn-primary">Ver resumen</a>
+                    </div>
                 </div>
                 {% endfor %}
             </div>

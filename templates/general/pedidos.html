@@ -159,9 +159,9 @@
                 {% for pedido in pedidos %}
                 <div class="recipe-card">
                     <img src="{{ pedido['image'] }}" alt="{{ pedido['description'] }}">
-                    <h3 class="text-xl font-bold mb-2">{{ pedido['description'] }}</h3>
-                    <p class="text-gray-600">Usuario: {{ pedido['user'] }}</p>
-                    <p class="text-gray-600">Precio: ${{ pedido['price'] }}</p>
+                    <h3 class="text-xl font-bold mb-2">{{ pedido['fecha'] }}</h3>
+                    <p class="text-gray-600">Usuario: {{ pedido['usuario_id'] }}</p>
+                    <p class="text-gray-600">Precio: ${{ pedido['total'] }}</p>
                     <div class="button-container">
                         <button class="action-button" onclick="markAsDelivered(`{{ pedido['id'] }}`)">Entregado</button>
                     </div>

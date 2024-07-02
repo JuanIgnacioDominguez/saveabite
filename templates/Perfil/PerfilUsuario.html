@@ -129,13 +129,15 @@
         .modal-content button:hover {
             background-color: #1c87c9; /* Color de hover del botón */
         }
+        .container{
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body class="flex h-screen">
     <!-- Sidebar -->
     {% include 'Sidebars/SidebarUsuario.html' %}
-        
-    <div class="flex-1 p-6">
+    <div class=" container flex-1 p-6">
         <h1 class="text-4xl font-bold text-custom-blue mb-4 ml-16rem">Perfil</h1>
         <div class="content-container bg-white p-6 rounded shadow-md">
             <div class="profile-container">

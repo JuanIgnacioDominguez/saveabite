@@ -140,6 +140,9 @@
             margin-bottom: 1rem;
             display: none;
         }
+        .container{
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body class="flex h-screen">
@@ -147,7 +150,7 @@
     {% include 'Sidebars/SidebarUsuario.html' %}
         
     <!-- Main content -->
-    <div class="flex-1 p-6">
+    <div class="container flex-1 p-6">
         <h1 class="text-2xl font-bold mb-4 ml-16rem">Métodos de Pago</h1>
         <div class="content-container bg-white p-6 rounded shadow-md">
             <a href="{{ url_for('perfil_usuario') }}" class="back-button">

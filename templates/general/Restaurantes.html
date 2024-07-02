@@ -179,6 +179,9 @@
         #Estrellatotal{
             font-size: 20px;
         }
+        .container{
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body class="flex">
@@ -190,7 +193,7 @@
         <button id="closePopup" class="popup-button">Cerrar</button>
     </div>
     <!-- Main content -->
-    <div class="flex-1 p-6 content ml-64">
+    <div class="container p-6 content ml-64">
         <h1 class="text-4xl font-bold text-custom-blue mb-6">Restaurantes</h1>
         <div>
             {% for restaurant in restaurantes %}

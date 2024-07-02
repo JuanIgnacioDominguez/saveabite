@@ -235,12 +235,12 @@
                             <div class="form-group">
                                 <label for="tipo_dieta">Tipo de Dieta</label>
                                 <select id="tipo_dieta" name="tipo_dieta">
+                                    <option value="" {% if user.tipo_dieta == '' %}selected{% endif %}>Sin definir</option>
                                     <option value="vegana" {% if user.tipo_dieta == 'vegana' %}selected{% endif %}>Vegana</option>
                                     <option value="vegetariana" {% if user.tipo_dieta == 'vegetariana' %}selected{% endif %}>Vegetariana</option>
                                     <option value="celiaco" {% if user.tipo_dieta == 'celiaco' %}selected{% endif %}>Celíaco</option>
                                     <option value="paleo" {% if user.tipo_dieta == 'paleo' %}selected{% endif %}>Paleo</option>
                                     <option value="keto" {% if user.tipo_dieta == 'keto' %}selected{% endif %}>Keto</option>
-                                    <option value="" {% if user.tipo_dieta == '' %}selected{% endif %}>Sin definir</option>
                                 </select>
                             </div>
                         </div>

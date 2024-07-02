@@ -410,6 +410,22 @@
             cartTotal.textContent = total.toFixed(2);
         }
 
+        // Función para obtener los elementos del carrito desde el servidor
+        function fetchCartItems() {
+            fetch('/api/carrito')
+                .then(response => response.json())
+                .then(data => {
+                    cartItems = data.map(item => ({
+                        title: item.nombre,
+                        price: item.precio,
+                        quantity: item.cantidad,
+                        image: `{{ url_for('static', filename='uploads/') }}${item.imagen}`
+                    }));
+                    renderCart();
+                })
+                .catch(error => console.error('Error fetching cart items:', error));
+        }
+
         // Event listeners para botones "Agregar al carrito"
         addToCartButtons.forEach(button => {
             button.addEventListener('click', function () {
@@ -458,12 +474,13 @@
             }
         });
 
-        // Funcionalidad del botón "Continuar" del carrito
+         // Funcionalidad del botón "Continuar" del carrito
         checkoutButton.addEventListener('click', function () {
-            // Aquí puedes implementar la lógica para continuar con el checkout
-            // Por ejemplo, redireccionar a una página de checkout
-            console.log('Continuar con el checkout');
+            window.location.href = '/carrito';
         });
+
+        // Obtener y mostrar los elementos del carrito cuando la página se cargue
+        fetchCartItems();
     });
     </script>
 </body>

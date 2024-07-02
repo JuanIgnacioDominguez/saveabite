@@ -28,17 +28,18 @@ y se suma al historial de pedidos
 -filtros en el menu (funciona pero a medias)
 -membresia modificada de empresa y usuario funcionales.
 
------------ UPDATE de lo que faltaba - Rena (2/7/24)-----------
+----------- UPDATE de lo que faltaba - Rena, Sofi y Chris (2/7/24)-----------
 RESTAURANTE
 - Cuando tocas la card en ver comidas te lleva a /producto (no tiene que pasar)
 - Saque el TODOS en el crear producto
--METER EL RATING TOTAL EN MENU RESTAURANTE Y EN MENU(en menu esta a medias)
-
-----------------FALTA:--------------
 
 USUARIO
--filtros en el menu ( funcionan pero a medias)
+-METER EL RATING TOTAL EN MENU RESTAURANTE Y EN MENU(en menu esta a medias)
+-filtros en el menu ya funciona el buscador y chris logro que funcione para que se vea lo del rating
 -cuando se confirma la compra, actualizar stock
+
+----------------FALTA:--------------
+USUARIO
 -historial de pedidos te deje abrir el resumen con los productos, etc
 
 RESTAURANTE
@@ -47,7 +48,7 @@ RESTAURANTE
 -Definir el costo de envio y si no lo ingreso que exista uno por default
 
 GENERAL
--METER EL RATING TOTAL EN MENU (funciona si esta en inicio pero si hago filtros nose porque no se ve!) Y INICIO DE EMPRESA
+-METER EL RATING TOTAL EN INICIO DE EMPRESA
 -ARREGLAR FILTROS
 -HACER QUE SE ASIGNE AL CREAR UNA CUENTA LA IMAGEN DEFAULTUSER.JPG
 -ARREGLAR QUE NO SE ROMPA LA MEMBRESIA SI NO TENGO METODO DE PAGO

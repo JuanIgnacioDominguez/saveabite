@@ -759,13 +759,58 @@ def perfil_usuario():
 
 @app.route("/menu_empresas", methods=['GET'])
 def menu_empresas():
+    # Obtener el correo electrónico del usuario desde la sesión
+    correo_electronico = session.get('user_email')
+    
+    # Conectar a la base de datos
+    conn = sqlite3.connect('flask_db.db')
+    cursor = conn.cursor()
+    
+    # Consultar la información del usuarioEmpresa
+    cursor.execute('''
+         SELECT 
+            u.nombre_usuario, 
+            u.correo_electronico, 
+            u.membresia, 
+            u.ratingTotal,
+            d.calle, 
+            d.altura, 
+            d.localidad
+        FROM 
+            usuarioEmpresa u
+        JOIN 
+            direccionEmpresa d ON u.id = d.usuario_id
+        WHERE 
+            u.correo_electronico = ?
+    ''', (correo_electronico,))
+    
+    usuario = cursor.fetchone()
+    if usuario:
+        nombre_usuario = usuario[0]
+        correo = usuario[1]
+        membresia = usuario[2]
+        rating_total = usuario[3]
+        direccion_completa = f"{usuario[4]} {usuario[5]}, {usuario[6]}"
+    else:
+        nombre_usuario = 'N/A'
+        correo = 'N/A'
+        membresia = 'N/A'
+        rating_total = 0
+        direccion_completa = 'Dirección no disponible'
+    
+    conn.close()
+
     restaurant = {
-        "name": session.get('user_name'),
-        "address": "Dirección del Restaurante",
-        "email": session.get('user_email'),
-        "image": session.get('user_image')
+        "name": nombre_usuario,
+        "email": correo,
+        "address": direccion_completa,
+        "phone": 'N/A',  # Agrega el teléfono si lo tienes en otra tabla
+        "membership": membresia,
+        "ratingTotal": rating_total
     }
+    
     return render_template('general/menu_empresas.html', restaurant=restaurant)
+
 
 @app.route('/editar_perfil', methods=['GET', 'POST'])
 def editar_perfil():

@@ -550,37 +550,49 @@ def menu():
     user_id = session.get('user_id')
     query = request.args.get('query', '').lower()
     conn = get_db_connection()
+
     # Obtener el tipo de dieta del usuario
     user = conn.execute('SELECT tipo_dieta FROM usuarios WHERE id = ?', (user_id,)).fetchone()
     tipo_dieta = user['tipo_dieta'] if user else None
-    # Obtener las imágenes de las empresas
-    productos = conn.execute('''
-        SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen
+
+    # Construir la consulta base de productos
+    productos_query = '''
+        SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen, usuarioEmpresa.ratingTotal
         FROM Productos
         JOIN usuarioEmpresa ON Productos.id_empresa = usuarioEmpresa.id
         WHERE Productos.estad = 'Disponible'
-    ''').fetchall()
+    '''
+    params = []
+
+    # Añadir filtros por búsqueda (nombre de producto, descripción, tipo de comida y nombre de empresa)
     if query:
-        productos = conn.execute('''
-            SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen
-            FROM Productos
-            JOIN usuarioEmpresa ON Productos.id_empresa = usuarioEmpresa.id
-            WHERE LOWER(Productos.nombre) LIKE ?
-            OR LOWER(Productos.descripcion) LIKE ?
-            OR LOWER(Productos.tipoComida) LIKE ?
-            AND Productos.estad = 'Disponible'
-        ''', (f'%{query}%', f'%{query}%', f'%{query}%')).fetchall()
+        productos_query += '''
+            AND (
+                LOWER(Productos.nombre) LIKE ?
+                OR LOWER(Productos.descripcion) LIKE ?
+                OR LOWER(Productos.tipoComida) LIKE ?
+                OR LOWER(usuarioEmpresa.nombre_usuario) LIKE ?
+            )
+        '''
+        params.extend([f'%{query}%', f'%{query}%', f'%{query}%', f'%{query}%'])
+
+    # Ejecutar la consulta con los parámetros
+    productos = conn.execute(productos_query, params).fetchall()
+
+    # Filtrar productos recomendados si hay tipo de dieta definido
     recomendados = []
     if tipo_dieta:
         recomendados = conn.execute('''
-            SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen
+            SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen, usuarioEmpresa.ratingTotal
             FROM Productos
             JOIN usuarioEmpresa ON Productos.id_empresa = usuarioEmpresa.id
             WHERE LOWER(Productos.tipo_dieta) = ?
             AND Productos.estad = 'Disponible'
             LIMIT 6
         ''', (tipo_dieta.lower(),)).fetchall()
+
     conn.close()
+
     return render_template('general/menu.html', user_name=user_name, user_image=user_image, productos=productos, recomendados=recomendados, tipo_dieta=tipo_dieta)
 
 @app.route('/filter_menu', methods=['GET'])

@@ -296,6 +296,12 @@
             width: 100%;
             display: block;
         }
+        .search button[type="submit"] {
+            display: '{{ 'none' if request.args.get('query', '') else 'inline-block' }}'';
+        }
+        .search button[type="button"] {
+            display: '{{ 'inline-block' if request.args.get('query', '') else 'none' }}'';
+        }
     </style>
     <script>
         function filterCategory(category) {
@@ -312,8 +318,13 @@
         <h1 class="text-4xl font-bold text-custom-blue">Menu Principal</h1>
         <div class="header">
             <div class="search">
-                <input type="text" placeholder="Buscar...">
-                <button type="submit"><i class="fas fa-search"></i></button>
+                <form id="search-form" action="/menu" method="get">
+                    <div class="search-container">
+                        <input type="text" id="search-input" name="query" placeholder="Buscar..." value="{{ request.args.get('query', '') }}">
+                        <button type="submit" id="search-button" style="display: '{{ 'none' if request.args.get('query', '') else 'inline-block' }}'"><i class="fas fa-search"></i></button>
+                        <button type="button" id="clear-button" style="display: '{{ 'inline-block' if request.args.get('query', '') else 'none' }}'"><i class="fas fa-times-circle text-red-600"></i></button>
+                    </div>
+                </form>
             </div>
         </div>
         <div class="button-container">
@@ -448,6 +459,27 @@
         const cartTotal = document.getElementById('cart-total');
         const modalAddToCartButton = document.getElementById('modal-add-to-cart');
         const quantityInput = document.getElementById('quantity');
+
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.getElementById('search-button');
+        const clearButton = document.getElementById('clear-button');
+
+        // Mostrar la cruz roja cuando hay texto en el input
+        if (searchInput.value.trim() !== '') {
+            clearButton.style.display = 'inline-block';
+            searchButton.style.display = 'none';
+        } else {
+            clearButton.style.display = 'none';
+            searchButton.style.display = 'inline-block';
+        }
+
+        // Limpiar el campo de búsqueda y ocultar la cruz roja
+        clearButton.addEventListener('click', function () {
+            searchInput.value = '';
+            clearButton.style.display = 'none';
+            searchButton.style.display = 'inline-block';
+            window.location.href = '/menu'; // Redirigir al menú principal
+        });
 
         // Array para almacenar los elementos del carrito
         let currentStock = 0;

@@ -18,8 +18,7 @@
             display: flex;
             flex-direction: column;
         }
-
-        .sidebar {      /* cuadro blanco de la sidebar */
+        .sidebar {
             height: 100vh;
             background-color: white;
             width: 16rem;
@@ -28,7 +27,6 @@
             position: fixed;
             flex: 0 0 16rem;
         }
-
         .profile-container {
             height: calc(100% - 4rem);
             display: flex;
@@ -102,7 +100,7 @@
             text-align: center;
             display: inline-block;
             margin-top: 1rem;
-            margin-bottom: 1rem; /* Añadir margen inferior */
+            margin-bottom: 1rem;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             transition: background-color 0.2s;
             width: 100%;
@@ -127,13 +125,13 @@
         }
         .separator {
             border-bottom: 1px solid #e2e8f0;
-            margin: 1rem 0.
+            margin: 1rem 0;
         }
         .sidebar a.active {
             color: #27a2e8;
         }
         .active {
-            color: #27a2e8 !important; /* Active color */
+            color: #27a2e8 !important;
         }
         .form-container {
             display: flex;
@@ -145,6 +143,53 @@
         }
         .ml-16rem {
             margin-left: 16rem;
+        }
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            border-radius: 10px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .modal-button {
+            background-color: #27a2e8;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.375rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .modal-button:hover {
+            background-color: #1b7fbf;
         }
     </style>
 </head>
@@ -164,24 +209,25 @@
             <div class="profile-container">
                 <div class="profile-info form-container">
                     <!-- Edit Profile Form -->
-                    <form action="{{ url_for('editar_perfil') }}" method="post" class="flex flex-col h-full">
+                    <form id="edit-profile-form" class="flex flex-col h-full" onsubmit="event.preventDefault(); showModal();">
                         <div class="form-content">
                             <div class="form-group">
                                 <label for="name">Nombre</label>
-                                <input type="text" id="name" name="name" value="{{ user.name }}">
+                                <input type="text" id="name" name="name" value="{{ user.name }}" required>
                             </div>
                             <div class="form-group">
                                 <label for="email">Correo Electrónico</label>
-                                <input type="email" id="email" name="email" value="{{ user.email }}">
-                            </div>
-                            <div class="form-group">
-                                <label for="current_password">Contraseña Actual</label>
-                                <input type="password" id="current_password" name="current_password" value="{{ user.password }}" readonly>
-                                <i class="fas fa-eye password-eye" id="togglePassword"></i>
+                                <input type="email" id="email" name="email" value="{{ user.email }}" required>
                             </div>
                             <div class="form-group">
                                 <label for="new_password">Nueva Contraseña</label>
                                 <input type="password" id="new_password" name="new_password">
+                                <i class="fas fa-eye password-eye" id="toggleNewPassword"></i>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirm_password">Repetir Contraseña</label>
+                                <input type="password" id="confirm_password" name="confirm_password">
+                                <i class="fas fa-eye password-eye" id="toggleConfirmPassword"></i>
                             </div>
                             <div class="form-group">
                                 <label for="tipo_dieta">Tipo de Dieta</label>
@@ -191,6 +237,7 @@
                                     <option value="celiaco" {% if user.tipo_dieta == 'celiaco' %}selected{% endif %}>Celíaco</option>
                                     <option value="paleo" {% if user.tipo_dieta == 'paleo' %}selected{% endif %}>Paleo</option>
                                     <option value="keto" {% if user.tipo_dieta == 'keto' %}selected{% endif %}>Keto</option>
+                                    <option value="" {% if user.tipo_dieta == '' %}selected{% endif %}>Sin definir</option>
                                 </select>
                             </div>
                         </div>
@@ -202,13 +249,97 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Para confirmar los cambios debe ingresar su contraseña</h2>
+            <div class="form-group">
+                <label for="current_password">Contraseña Actual</label>
+                <input type="password" id="current_password" name="current_password" required>
+                <i class="fas fa-eye password-eye" id="toggleCurrentPassword"></i>
+            </div>
+            <button class="modal-button" onclick="submitForm()">Confirmar</button>
+        </div>
+    </div>
+
     <script>
-        document.getElementById('togglePassword').addEventListener('click', function (e) {
+        // Toggle password visibility
+        document.getElementById('toggleNewPassword').addEventListener('click', function () {
+            const passwordInput = document.getElementById('new_password');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
+        document.getElementById('toggleConfirmPassword').addEventListener('click', function () {
+            const passwordInput = document.getElementById('confirm_password');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
+        document.getElementById('toggleCurrentPassword').addEventListener('click', function () {
             const passwordInput = document.getElementById('current_password');
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
             this.classList.toggle('fa-eye-slash');
         });
+
+        // Show modal
+        function showModal() {
+            if (validateForm()) {
+                document.getElementById('passwordModal').style.display = 'block';
+            }
+        }
+
+        // Close modal
+        document.querySelector('.close').onclick = function () {
+            document.getElementById('passwordModal').style.display = 'none';
+        };
+
+        // Submit form
+        function submitForm() {
+            const form = document.getElementById('edit-profile-form');
+            const currentPassword = document.getElementById('current_password').value;
+            const formData = new FormData(form);
+            formData.append('current_password', currentPassword);
+
+            fetch('{{ url_for("guardar_perfil") }}', {
+                method: 'POST',
+                body: formData
+            }).then(response => response.json()).then(data => {
+                if (data.success) {
+                    alert('Perfil actualizado con éxito');
+                    window.location.href = '{{ url_for("perfil_usuario") }}';
+                } else {
+                    alert(data.error);
+                    document.getElementById('passwordModal').style.display = 'none';
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+                alert('Ocurrió un error al actualizar el perfil');
+            });
+        }
+
+        // Form validation
+        function validateForm() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const newPassword = document.getElementById('new_password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+
+            if (!name || !email) {
+                alert("Nombre y correo electrónico son obligatorios.");
+                return false;
+            }
+
+            if (newPassword && newPassword !== confirmPassword) {
+                alert("Las contraseñas no coinciden.");
+                return false;
+            }
+
+            return true;
+        }
     </script>
 </body>
 </html>

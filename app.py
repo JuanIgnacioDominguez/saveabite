@@ -680,7 +680,6 @@ def editar_perfil():
         conn.close()
         session['user_name'] = name
         session['user_email'] = email
-        flash('Perfil actualizado con éxito', 'success')
         return redirect(url_for('perfil_usuario'))
     
     conn = get_db_connection()

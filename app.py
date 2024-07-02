@@ -1320,5 +1320,21 @@ def actualizar_carrito(producto_id):
         conn.close()
         return jsonify({"success": False, "message": "Producto no encontrado en el carrito"}), 404
 
+@app.route('/api/carrito', methods=['GET'])
+def get_carrito():
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    carrito_items = conn.execute('''
+        SELECT Productos.id, Productos.nombre, Productos.precio, Productos.imagen, carrito.cantidad
+        FROM carrito
+        JOIN Productos ON carrito.producto_id = Productos.id
+        WHERE carrito.usuario_id = ?
+    ''', (user_id,)).fetchall()
+    conn.close()
+
+    items = [dict(item) for item in carrito_items]
+    return jsonify(items)
+
+
 if __name__ == "__main__":
     app.run(debug=True)

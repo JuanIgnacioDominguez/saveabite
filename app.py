@@ -601,34 +601,29 @@ def get_productos_by_tipo(conn, tipo):
 
 @app.route("/pedidos", methods=['GET'])
 def pedidos():
-    empresa_id = session.get('empresa_id')
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    pedidos = conn.execute('''
-                           SELECT * 
-                           FROM pedidos2
-                           WHERE empresa_id = ? AND entregado IS FALSE''', 
-                           (empresa_id,)).fetchall()
-    conn.close()
-    
+    pedidos = [
+        {
+            'date': '2024-06-18',
+            'restaurant': 'Restaurante 1',
+            'price': 100.0
+        },
+        {
+            'date': '2024-06-19',
+            'restaurant': 'Restaurante 2',
+            'price': 200.0
+        },
+        {
+            'date': '2024-06-20',
+            'restaurant': 'Restaurante 3',
+            'price': 300.0
+        }
+    ]
     return render_template('general/pedidos.html', pedidos=pedidos, completados_url=url_for('pedidosCompletados'))
 
 @app.route("/pedidosCompletados")
 def pedidosCompletados():
     return render_template('general/pedidosCompletados.html')
 
-@app.route("/marcar_entregado/<int:pedido_id>", methods=['POST'])
-def marcar_entregado(pedido_id):
-    empresa_id = session.get('empresa_id')
-    conn = get_db_connection()
-    conn.execute('''
-                 UPDATE pedidos2
-                 SET entregado = TRUE
-                 WHERE id = ? AND empresa_id = ?''', 
-                 (pedido_id, empresa_id))
-    conn.commit()
-    conn.close()
-    return jsonify(success=True)
 
 
 @app.route("/pedidos_cliente")
@@ -867,6 +862,16 @@ def eliminar_producto(producto_id):
     conn.close()
     return jsonify(success=True)
 
+@app.route("/producto/<int:id>", methods=['GET'])
+def producto(id):
+    conn = get_db_connection()
+    producto = conn.execute('SELECT * FROM Productos WHERE id = ?', (id,)).fetchone()
+    conn.close()
+    if producto is None:
+        flash('Producto no encontrado', 'error')
+        return redirect(url_for('VerComidas'))
+    return render_template('general/Producto.html', producto=producto)
+
 @app.route("/crear_producto", methods=['GET', 'POST'])
 def crear_producto():
     if request.method == 'POST':
@@ -984,7 +989,8 @@ def agregar_al_carrito(producto_id):
     
     conn.commit()
     conn.close()
-    return jsonify({'message': 'Producto agregado al carrito', 'success': True})
+    flash('Producto agregado al carrito', 'success')
+    return redirect(url_for('carrito', id=producto_id))
 
 @app.route('/actualizar_membresia', methods=['POST'])
 def actualizar_membresia():

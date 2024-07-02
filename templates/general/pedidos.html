@@ -156,40 +156,72 @@
         </div>
         <div class="content-container bg-transparent rounded">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="orders-list">
-                {% for pedido in pedidos %}
-                <div class="recipe-card">
-                    <img src="{{ pedido['image'] }}" alt="{{ pedido['description'] }}">
-                    <h3 class="text-xl font-bold mb-2">{{ pedido['description'] }}</h3>
-                    <p class="text-gray-600">Usuario: {{ pedido['user'] }}</p>
-                    <p class="text-gray-600">Precio: ${{ pedido['price'] }}</p>
-                    <div class="button-container">
-                        <button class="action-button" onclick="markAsDelivered(`{{ pedido['id'] }}`)">Entregado</button>
-                    </div>
-                </div>
-                {% endfor %}
+                
             </div>
         </div>
     </div>
 
     <script>
-        function markAsDelivered(pedidoId) {
-            fetch(`/marcar_entregado/${pedidoId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const orderElement = document.querySelector(`button[onclick="markAsDelivered('${pedidoId}')"]`).parentElement.parentElement;
-                    orderElement.remove();
-                } else {
-                    console.error('Failed to mark as delivered');
-                }
-            })
-            .catch(error => console.error('Error:', error));
+        const orders = [
+            {
+                description: 'Pizza Napolitana',
+                image: 'static/img/PIZZA2.jpg',
+                user: 'Juan Pérez',
+                price: 5200,
+            },
+            {
+                description: 'Milanesa Napolitana',
+                image: 'static/img/milanapo.jpg',
+                user: 'María García',
+                price: 4500,
+            },
+            {
+                description: 'Hamburguesa c/ papas',
+                image: 'static/img/hamburguesa.jpg',
+                user: 'Carlos López',
+                price: 3800,
+            },
+            {
+                description: 'Pasta bolognesa',
+                image: 'static/img/pastabolo.jpg',
+                user: 'Ana Fernández',
+                price: 5000,
+            },
+            {
+                description: 'Bife con puré',
+                image: 'static/img/bife.jpg',
+                user: 'Laura Martínez',
+                price: 5200,
+            },
+        ];
+
+        function loadOrders() {
+            const ordersList = document.getElementById('orders-list');
+            ordersList.innerHTML = ''; // Limpiar contenido previo
+
+            orders.forEach((order, index) => {
+                const orderCard = document.createElement('div');
+                orderCard.className = 'recipe-card';
+                orderCard.innerHTML = `
+                    <img src="${order.image}" alt="${order.description}">
+                    <h3 class="text-xl font-bold mb-2">${order.description}</h3>
+                    <p class="text-gray-600">Usuario: ${order.user}</p>
+                    <p class="text-gray-600">Precio: $${order.price}</p>
+                    <div class="button-container">
+                        <button class="action-button" onclick="markAsDelivered(${index})">Entregado</button>
+                    </div>
+                `;
+                ordersList.appendChild(orderCard);
+            });
         }
+
+        function markAsDelivered(index) {
+            orders.splice(index, 1); // Eliminar el pedido de la lista
+            loadOrders(); // Recargar la lista de pedidos
+        }
+
+        // Cargar los pedidos al cargar la página
+        document.addEventListener('DOMContentLoaded', loadOrders);
     </script>
 </body>
 </html>

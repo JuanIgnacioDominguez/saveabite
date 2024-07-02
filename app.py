@@ -305,7 +305,7 @@ def register():
         email = request.form['email']
         password = request.form['password']
         is_vendor = 'is_vendor' in request.form
-        image = 'img/defaultuser.png'  # Ruta a la imagen predeterminada
+        image = 'defaultuser.jpg'  # Ruta a la imagen predeterminada
 
         if not name or not email or not password:
             flash('Por favor, complete todas las casillas', 'error')
@@ -514,26 +514,31 @@ def membresia_empresa():
     user_id = session.get('user_id')
     conn = get_db_connection()
     user = conn.execute('SELECT * FROM usuarioEmpresa WHERE id = ?', (user_id,)).fetchone()
-    print(f'Usuario empresa encontrado: {user}')
-    if user:
-        membresia = user['membresia']
-        print(f'Membresía encontrada: {membresia}')
-    else:
-        membresia = None
-        print('No se encontró membresía para la empresa.')
+    membresia = user['membresia'] if user else None
+    metodos_pago = conn.execute('SELECT * FROM metodos_pago WHERE usuario_id = ?', (user_id,)).fetchall()
     conn.close()
-    return render_template('perfiles_empresa/MembresiaEmpresa.html', membresia=membresia)
+    return render_template('perfiles_empresa/MembresiaEmpresa.html', membresia=membresia, metodos_pago=metodos_pago)
 
 @app.route('/seleccionar_membresia_empresa/<empresa_membresia>', methods=['POST'])
 def seleccionar_membresia_empresa(empresa_membresia):
     user_id = session.get('user_id')
+    metodo_pago_id = request.form['payment_method']
+
+    # Obtener información del método de pago seleccionado
     conn = get_db_connection()
-    conn.execute('UPDATE usuarioEmpresa SET membresia = ? WHERE id = ?', (empresa_membresia, user_id))
-    conn.commit()
-    registrar_accion(user_id, 'Seleccionada membresía de empresa')
+    metodo_pago = conn.execute('SELECT * FROM metodos_pago WHERE id = ? AND usuario_id = ?', (metodo_pago_id, user_id)).fetchone()
+    if metodo_pago:
+        # Lógica de procesamiento de pago aquí...
+        # Actualizar la membresía del usuario empresa
+        conn.execute('UPDATE usuarioEmpresa SET membresia = ? WHERE id = ?', (empresa_membresia, user_id))
+        conn.commit()
+        registrar_accion(user_id, f'Seleccionada membresía de empresa {empresa_membresia} con método de pago {metodo_pago["tipo_tarjeta"]}: **** **** **** {metodo_pago["numero_tarjeta"][-4:]}')
+        flash('Membresía seleccionada con éxito', 'success')
+    else:
+        flash('Método de pago no válido', 'error')
+
     conn.close()
-    flash('Membresía seleccionada con éxito', 'success')
-    return '', 204
+    return redirect(url_for('membresia_empresa'))
 
 @app.route('/cancelar_membresia_empresa', methods=['POST'])
 def cancelar_membresia_empresa():
@@ -754,7 +759,11 @@ def informacionUsuario():
 
 @app.route("/perfil_usuario", methods=['GET', 'POST'])
 def perfil_usuario():
-    user = {'name': session.get('user_name'), 'email': session.get('user_email'), 'image': session.get('user_image')}
+    user = {
+        'name': session.get('user_name'),
+        'email': session.get('user_email'),
+        'image': session.get('user_image')
+    }
     return render_template('Perfil/PerfilUsuario.html', user=user)
 
 @app.route("/menu_empresas", methods=['GET'])
@@ -952,19 +961,23 @@ def upload_image():
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        
         # Crear directorio si no existe
-        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)     
-        file.save(file_path)    
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+        
+        file.save(file_path)
+        
         # Actualizar la imagen del usuario en la base de datos
         user_id = session.get('user_id')
         conn = get_db_connection()
         conn.execute('UPDATE usuarios SET imagen = ? WHERE id = ?', (filename, user_id))
         conn.commit()
-        registrar_accion(user_id, 'Actualizada imagen de perfil')
-        conn.close()    
+        conn.close()
+        
         # Actualizar la sesión con la nueva imagen
-        session['user_image'] = filename    
-        return jsonify({"success": True, "message": "Imagen de perfil actualizada con éxito"})
+        session['user_image'] = filename
+        
+        return jsonify({"success": True, "image_url": url_for('static', filename='uploads/' + filename)})
     else:
         return jsonify({"success": False, "message": "Tipo de archivo no permitido"}), 400
     

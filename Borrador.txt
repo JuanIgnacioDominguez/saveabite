@@ -14,6 +14,10 @@ error de que el carrito esta vacio. No termina la compra, (sino si elimina los p
 y se suma al historial de pedidos
 
 -----------NUEVO (2/7/24)-----------
+-HISTORIAL ARREGLADO
+-ahora se modifica el stock cuando se hace una compra
+
+-----------NUEVO (2/7/24)-----------
 -OPCION DE CALIFICAR PRODUCTOS HECHA!!!!!
 -ESTRELLAS TOTALES AGREGADAS Y SISTEMA DE PUNTUACION AGREGADO (PORFAVOR NO LO TOQUEN ME COSTO MUCHO :) 
 -TABLA DE RATINGS AGREGADA (LO HACE CADA USUARIO, AGARRA EL ID DE LA EMPRESA Y LA PUNTUACION DADA)

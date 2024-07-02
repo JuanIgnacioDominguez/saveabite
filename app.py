@@ -1258,10 +1258,6 @@ def finalizar_pedido():
 
     total = total1 + envio + tarifa + propina
 
-    print(f"Total sin propina: {total1}")
-    print(f"Envío: {envio}, Tarifa: {tarifa}, Propina: {propina}")
-    print(f"Total con propina: {total}")
-
     cursor.execute('''
         INSERT INTO pedidos2 (usuario_id, fecha, total, empresa_id, empresa, metodo_pago, entregado)
         VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -1274,6 +1270,13 @@ def finalizar_pedido():
             INSERT INTO itemsPedido (idPedido, idProducto)
             VALUES (?, ?)
         ''', (pedido_id, item['producto_id']))
+
+        cursor.execute('''
+            UPDATE Productos
+            SET stock = stock - ?
+            WHERE id = ?
+        ''', (item['cantidad'], item['producto_id']))
+
 
     cursor.execute('DELETE FROM carrito WHERE usuario_id = ? AND producto_id IN (SELECT id FROM Productos WHERE id_empresa = ?)', (user_id, id_empresa))
     conn.commit()

@@ -1276,28 +1276,49 @@ def confirmar_pago(empresa_id):
     conn.close()
     return render_template('carrito/ConfirmarPago.html', carrito_items=carrito_items, metodos_pago=metodos_pago, direcciones=direcciones, product_total=product_total, total=total)
 
-@app.route("/actualizar_carrito/<int:producto_id>", methods=['POST'])
+@app.route('/actualizar_carrito/<int:producto_id>', methods=['POST'])
 def actualizar_carrito(producto_id):
-    user_id = session.get('user_id')
-    if not user_id:
-        return jsonify(success=False, message="Usuario no autenticado"), 401
-
-    data = request.json
+    data = request.get_json()
     nueva_cantidad = data.get('cantidad')
     
+    # Asegurarse de que nueva_cantidad sea un entero
+    try:
+        nueva_cantidad = int(nueva_cantidad)
+    except ValueError:
+        return jsonify({"success": False, "message": "Cantidad inválida"}), 400
+
     if nueva_cantidad < 1:
-        return jsonify(success=False, message="Cantidad no válida"), 400
+        return jsonify({"success": False, "message": "Cantidad no puede ser menor a 1"}), 400
 
     conn = get_db_connection()
-    conn.execute('''
-        UPDATE carrito
-        SET cantidad = ?
-        WHERE usuario_id = ? AND producto_id = ?
-    ''', (nueva_cantidad, user_id, producto_id))
-    conn.commit()
-    conn.close()
+    cursor = conn.cursor()
+    
+    # Obtener el stock del producto
+    cursor.execute('SELECT stock FROM Productos WHERE id = ?', (producto_id,))
+    producto = cursor.fetchone()
+    
+    if not producto:
+        conn.close()
+        return jsonify({"success": False, "message": "Producto no encontrado"}), 404
+    
+    stock = producto['stock']
+    
+    if nueva_cantidad > stock:
+        conn.close()
+        return jsonify({"success": False, "message": "No hay suficiente stock disponible"}), 400
 
-    return jsonify(success=True)
+    # Verificar si el producto está en el carrito
+    cursor.execute('SELECT cantidad FROM carrito WHERE producto_id = ? AND usuario_id = ?', (producto_id, session['user_id']))
+    carrito_item = cursor.fetchone()
+    
+    if carrito_item:
+        cursor.execute('UPDATE carrito SET cantidad = ? WHERE producto_id = ? AND usuario_id = ?', (nueva_cantidad, producto_id, session['user_id']))
+        conn.commit()
+        conn.close()
+        return jsonify({"success": True, "message": "Cantidad actualizada"})
+    else:
+        conn.close()
+        return jsonify({"success": False, "message": "Producto no encontrado en el carrito"}), 404
 
 if __name__ == "__main__":
     app.run(debug=True)

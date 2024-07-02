@@ -162,7 +162,7 @@
             <div class="separator"></div>
             {% if carrito_items|length > 0 %}
                 <h2 class="text-2xl font-bold mb-4">Detalle de Entrega</h2>
-                <form id="paymentForm" method="POST" action="javascript:void(0);" onsubmit="showConfirmationModal()">
+                <form id="paymentForm" method="POST" action="{{ url_for('finalizar_pedido') }}">
                     <div class="form-group">
                         <label for="delivery_address">Dirección de Entrega</label>
                         <select id="delivery_address" name="delivery_address" class="w-full p-2 border rounded" required>

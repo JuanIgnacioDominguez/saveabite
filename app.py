@@ -550,21 +550,19 @@ def menu():
     user_id = session.get('user_id')
     query = request.args.get('query', '').lower()
     conn = get_db_connection()
-
     # Obtener el tipo de dieta del usuario
     user = conn.execute('SELECT tipo_dieta FROM usuarios WHERE id = ?', (user_id,)).fetchone()
     tipo_dieta = user['tipo_dieta'] if user else None
-
     # Obtener las imágenes de las empresas
     productos = conn.execute('''
-        SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen, usuarioEmpresa.ratingTotal
+        SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen
         FROM Productos
         JOIN usuarioEmpresa ON Productos.id_empresa = usuarioEmpresa.id
         WHERE Productos.estad = 'Disponible'
     ''').fetchall()
     if query:
         productos = conn.execute('''
-            SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen, usuarioEmpresa.ratingTotal
+            SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen
             FROM Productos
             JOIN usuarioEmpresa ON Productos.id_empresa = usuarioEmpresa.id
             WHERE LOWER(Productos.nombre) LIKE ?
@@ -572,11 +570,10 @@ def menu():
             OR LOWER(Productos.tipoComida) LIKE ?
             AND Productos.estad = 'Disponible'
         ''', (f'%{query}%', f'%{query}%', f'%{query}%')).fetchall()
-
     recomendados = []
     if tipo_dieta:
         recomendados = conn.execute('''
-            SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen, usuarioEmpresa.ratingTotal
+            SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen
             FROM Productos
             JOIN usuarioEmpresa ON Productos.id_empresa = usuarioEmpresa.id
             WHERE LOWER(Productos.tipo_dieta) = ?
@@ -1231,11 +1228,27 @@ def finalizar_pedido():
     if not carrito_items:
         return redirect(url_for('carrito'))
 
-    total = sum(item['cantidad'] * item['precio'] for item in carrito_items)
+    total1 = sum(item['cantidad'] * item['precio'] for item in carrito_items)
     ahora = datetime.now().date()
     first = carrito_items[0]
     nombre = first['empresa']
     id_empresa = first['id_empresa']
+    envio = 1289
+    tarifa = 285
+    propina = request.form.get('selected_tip')
+    if propina is None:
+        propina = 0.0
+    else:
+        try:
+            propina = float(propina)
+        except ValueError:
+            propina = 0.0
+
+    total = total1 + envio + tarifa + propina
+
+    print(f"Total sin propina: {total1}")
+    print(f"Envío: {envio}, Tarifa: {tarifa}, Propina: {propina}")
+    print(f"Total con propina: {total}")
 
     cursor.execute('''
         INSERT INTO pedidos2 (usuario_id, fecha, total, empresa_id, empresa, metodo_pago, entregado)

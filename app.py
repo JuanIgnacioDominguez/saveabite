@@ -678,7 +678,16 @@ def pedidos():
 
 @app.route("/pedidosCompletados")
 def pedidosCompletados():
-    return render_template('general/pedidosCompletados.html')
+    empresa_id = session.get('empresa_id')
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    pedidos = conn.execute('''
+                           SELECT * 
+                           FROM pedidos2
+                           WHERE empresa_id = ? AND entregado IS TRUE''', 
+                           (empresa_id,)).fetchall()
+    conn.close()
+    return render_template('general/pedidosCompletados.html',pedidos=pedidos)
 
 @app.route("/marcar_entregado/<int:pedido_id>", methods=['POST'])
 def marcar_entregado(pedido_id):

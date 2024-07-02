@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         html, body {
             height: 100%;
@@ -310,39 +311,14 @@
                 <div class="form-group">
                     <label for="payment_method">Método de Pago</label>
                     <select id="payment_method" name="payment_method" class="w-full p-2 border rounded">
+                        <option value="" selected disabled>Selecciona un método de pago</option>
                         {% for metodo in metodos_pago %}
                         <option value="{{ metodo.id }}">{{ metodo.tipo_tarjeta }}: **** **** **** {{ metodo.numero_tarjeta[-4:] }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <button type="button" class="popup-button" id="confirmPaymentButton">Confirmar Pago</button>
+                <button type="button" class="popup-button" id="confirmPaymentButton" disabled>Confirmar Pago</button>
             </form>
-        </div>
-    </div>
-
-    <!-- Confirm modal -->
-    <div id="confirmModal" class="confirm-modal">
-        <div class="confirm-modal-content">
-            <span class="confirm-close" onclick="document.getElementById('confirmModal').style.display='none'">&times;</span>
-            <h2>¿Confirmar Membresía?</h2>
-            <p>¿Estás seguro que deseas confirmar esta membresía?</p>
-            <div>
-                <button id="confirmFinalButton" class="confirm-button">Confirmar</button>
-                <button class="cancel-button" onclick="document.getElementById('confirmModal').style.display='none'">Cancelar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Cancel confirmation modal -->
-    <div id="cancelConfirmModal" class="confirm-modal">
-        <div class="confirm-modal-content">
-            <span class="confirm-close" onclick="document.getElementById('cancelConfirmModal').style.display='none'">&times;</span>
-            <h2>¿Cancelar Membresía?</h2>
-            <p>¿Estás seguro que deseas cancelar tu membresía?</p>
-            <div>
-                <button id="confirmCancelButton" class="confirm-button">Confirmar</button>
-                <button class="cancel-button" onclick="document.getElementById('cancelConfirmModal').style.display='none'">Cancelar</button>
-            </div>
         </div>
     </div>
 
@@ -356,31 +332,55 @@
             });
         });
 
-        document.getElementById('confirmPaymentButton').addEventListener('click', function() {
-            document.getElementById('paymentModal').style.display = 'none';
-            document.getElementById('confirmModal').style.display = 'block';
+        document.getElementById('payment_method').addEventListener('change', function() {
+            const confirmButton = document.getElementById('confirmPaymentButton');
+            confirmButton.disabled = this.value === '';
         });
 
-        document.getElementById('confirmFinalButton').addEventListener('click', function() {
-            const form = document.getElementById('paymentForm');
-            form.action = `/seleccionar_membresia/${selectedPlan}`;
-            form.submit();
+        document.getElementById('confirmPaymentButton').addEventListener('click', function() {
+            document.getElementById('paymentModal').style.display = 'none';
+            Swal.fire({
+                title: "Confirmar Membresía",
+                text: "¿Estás seguro que deseas confirmar esta membresía?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Sí, confirmar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.getElementById('paymentForm');
+                    form.action = `/seleccionar_membresia/${selectedPlan}`;
+                    form.submit();
+                } else {
+                    document.getElementById('paymentModal').style.display = 'block';
+                }
+            });
         });
 
         document.getElementById('cancelMembershipButton').addEventListener('click', function() {
-            document.getElementById('cancelConfirmModal').style.display = 'block';
-        });
-
-        document.getElementById('confirmCancelButton').addEventListener('click', function() {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `{{ url_for('cancelar_membresia') }}`;
-            document.body.appendChild(form);
-            form.submit();
-        });
-
-        document.getElementById('closePopup').addEventListener('click', function() {
-            document.getElementById('popup').classList.remove('active');
+            Swal.fire({
+                title: "¿Estás seguro?",
+                text: "¡No podrás revertir esto!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Sí, dar de baja"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `{{ url_for('cancelar_membresia') }}`;
+                    document.body.appendChild(form);
+                    form.submit();
+                    Swal.fire({
+                        title: "¡Dado de baja!",
+                        text: "Tu membresía ha sido dada de baja.",
+                        icon: "success"
+                    });
+                }
+            });
         });
     </script>
 </body>

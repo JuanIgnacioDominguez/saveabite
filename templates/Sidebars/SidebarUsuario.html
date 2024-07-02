@@ -95,12 +95,11 @@
             <a href="{{ url_for('informacionUsuario') }}" class="text-decoration-none">Información</a>
         </div>
         <div class="profile mt-auto">
-            <img src="{{ url_for('static', filename='uploads/' ~ user_image) }}" alt="Profile">
+            <img src="{{ url_for('static', filename='uploads/' ~ session.get('user_image', 'defaultuser.jpg')) }}" alt="Profile">
             <div class="profile-text">
-                <div class="name">{{ user_name }}</div>
+                <div class="name">{{ session.get('user_name') }}</div>
             </div>
         </div>
     </div>
 </body>
 </html>
-

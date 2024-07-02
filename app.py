@@ -557,7 +557,7 @@ def menu():
 
     # Construir la consulta base de productos
     productos_query = '''
-        SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen, usuarioEmpresa.ratingTotal
+        SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen, usuarioEmpresa.ratingTotal AS rating_total
         FROM Productos
         JOIN usuarioEmpresa ON Productos.id_empresa = usuarioEmpresa.id
         WHERE Productos.estad = 'Disponible'
@@ -583,7 +583,7 @@ def menu():
     recomendados = []
     if tipo_dieta:
         recomendados = conn.execute('''
-            SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen, usuarioEmpresa.ratingTotal
+            SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen, usuarioEmpresa.ratingTotal AS rating_total
             FROM Productos
             JOIN usuarioEmpresa ON Productos.id_empresa = usuarioEmpresa.id
             WHERE LOWER(Productos.tipo_dieta) = ?
@@ -635,6 +635,23 @@ def get_all_productos(conn):
 
 def get_productos_by_tipo(conn, tipo):
     return conn.execute('SELECT * FROM Productos WHERE tipoComida = ? AND estad = "Disponible"', (tipo,)).fetchall()
+
+def get_productos_by_tipo(conn, tipo):
+    return conn.execute('''
+        SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen, usuarioEmpresa.ratingTotal AS rating_total
+        FROM Productos
+        JOIN usuarioEmpresa ON Productos.id_empresa = usuarioEmpresa.id
+        WHERE Productos.tipoComida LIKE ? AND Productos.estad = "Disponible"
+    ''', ('%' + tipo + '%',)).fetchall()
+
+
+def get_all_productos(conn):
+    return conn.execute('''
+        SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen, usuarioEmpresa.ratingTotal AS rating_total
+        FROM Productos
+        JOIN usuarioEmpresa ON Productos.id_empresa = usuarioEmpresa.id
+        WHERE Productos.estad = "Disponible"
+    ''').fetchall()
 
 @app.route("/pedidos", methods=['GET'])
 def pedidos():

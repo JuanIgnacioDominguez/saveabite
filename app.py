@@ -150,6 +150,7 @@ def create_tables():
             FOREIGN KEY (empresa_id) REFERENCES usuarioEmpresa (id)
         )
     ''')
+
     conn.execute('''
         CREATE TABLE IF NOT EXISTS pedidos2 (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -158,7 +159,8 @@ def create_tables():
             total REAL NOT NULL,
             empresa_id INTEGER NOT NULL,
             empresa TEXT NOT NULL,
-            
+            entregado boolean NOT NULL,
+                 
             FOREIGN KEY (empresa_id) REFERENCES usuarioEmpresa (id),
             FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
         )
@@ -170,9 +172,7 @@ def create_tables():
             idProducto INTEGER NOT NULL,
             
             FOREIGN KEY (idProducto) REFERENCES Productos (id),     
-            FOREIGN KEY (idPedido) REFERENCES pedidos2 (id),
-            FOREIGN KEY (empresa_id) REFERENCES usuarioEmpresa (id),
-            FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
+            FOREIGN KEY (idPedido) REFERENCES pedidos2 (id)
         )
     ''')
     conn.commit()

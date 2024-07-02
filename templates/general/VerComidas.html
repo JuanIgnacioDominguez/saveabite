@@ -227,6 +227,7 @@
                     const productDescription = card.querySelector('.product-descripcion').textContent;
                     const productPrice = card.querySelector('.product-price').textContent;
                     const productStock = card.querySelector('.product-stock').textContent;
+                    const productCategory = card.getAttribute('data-category'); // Obtener la categoría del producto
                     const productId = card.getAttribute('data-id'); // Obtener el ID del producto
 
                     // Setear valores en el formulario
@@ -235,6 +236,7 @@
                     document.getElementById('product-descripcion').value = productDescription;
                     document.getElementById('product-price').value = productPrice;
                     document.getElementById('product-stock').value = productStock;
+                    document.getElementById('product-category').value = productCategory;
                 });
             });
                         
@@ -257,6 +259,7 @@
                 const productDescription = document.getElementById('product-descripcion').value;
                 const productPrice = document.getElementById('product-price').value;
                 const productStock = document.getElementById('product-stock').value;
+                const productCategory = document.getElementById('product-category').value;
 
                 fetch(`/update_product/${productId}`, {
                     method: 'POST',
@@ -267,7 +270,8 @@
                         nombre: productName,
                         descripcion: productDescription,
                         precio: productPrice,
-                        stock: productStock
+                        stock: productStock,
+                        tipoComida: productCategory
                     })
                 })
                 .then(response => response.json())
@@ -279,10 +283,7 @@
                         card.querySelector('.product-descripcion').textContent = productDescription;
                         card.querySelector('.product-price').textContent = `${productPrice}`;
                         card.querySelector('.product-stock').textContent = `${productStock}`;
-                        if (!productStock || productStock == '0') {
-                            card.classList.add('no-disponible');
-                            card.querySelector('.estado-select').value = 'No Disponible';
-                        }
+                        card.setAttribute('data-category', productCategory);
                         modal.style.display = 'none';
                     } else {
                         alert('Error al actualizar el producto.');
@@ -398,11 +399,11 @@
         <div class="content-container bg-transparent p-6 rounded">
             <div class="form-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                 {% for producto in comidas %}
-                <div class="card" data-id="{{ producto['id'] }}">
+                <div class="card" data-id="{{ producto['id'] }}" data-category="{{ producto['tipoComida'] }}">
                     <div class="card-content">
                         <h2 class="product-name">{{ producto['nombre'] }}</h2>
                         <div>Descripcion:</div><div class="product-descripcion">{{ producto['descripcion'] }}</div>
-                        <div>Pecio:</div><div class="product-price">{{ producto['precio'] }}</div>
+                        <div>Precio:</div><div class="product-price">{{ producto['precio'] }}</div>
                         <div>Stock:</div><div class="product-stock">{{ producto['stock'] }}</div>
                         <div class="actions">
                             <button class="edit-button">Editar Producto</button>
@@ -445,6 +446,18 @@
                 <label class="block mb-6">
                     <span class="text-gray-700">Stock del Producto</span>
                     <input type="text" id="product-stock" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                </label>
+                <label class="block mb-6">
+                    <span class="text-gray-700">Categoría del Producto</span>
+                    <select id="product-category" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        <option value="Todos">Todos</option>
+                        <option value="Hamburguesas">Hamburguesas</option>
+                        <option value="Pizzas">Pizzas</option>
+                        <option value="Pasta">Pasta</option>
+                        <option value="Ensaladas">Ensaladas</option>
+                        <option value="Cafeteria">Cafeteria</option>
+                        <option value="Carnes">Carnes</option>
+                    </select>
                 </label>
                 <div class="flex justify-between">
                     <button type="submit" class="modal-button">Guardar Cambios</button>

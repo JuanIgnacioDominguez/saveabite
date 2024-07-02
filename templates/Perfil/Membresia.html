@@ -374,7 +374,7 @@
         document.getElementById('confirmCancelButton').addEventListener('click', function() {
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '{{ url_for('cancelar_membresia') }}';
+            form.action = `{{ url_for('cancelar_membresia') }}`;
             document.body.appendChild(form);
             form.submit();
         });

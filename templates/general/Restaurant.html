@@ -399,7 +399,6 @@
         // Array para almacenar los elementos del carrito
         let currentStock = 0;
 
-
         // Event listeners para botones "Agregar al carrito"
         addToCartButtons.forEach(button => {
             button.addEventListener('click', function () {
@@ -427,8 +426,29 @@
             event.preventDefault();
             const quantity = parseInt(quantityInput.value);
             if (quantity > 0 && quantity <= currentStock) {
-                const form = document.getElementById('add-to-cart-form');
-                form.submit();
+                const formData = new FormData(document.getElementById('add-to-cart-form'));
+                fetch(document.getElementById('add-to-cart-form').action, {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const messageContainer = document.querySelector('#preview-modal .message-container');
+                    if (data.success) {
+                        messageContainer.innerHTML = `<p class="success-message">${data.message}</p>`;
+                        setTimeout(() => {
+                            modal.classList.add('hidden');
+                            messageContainer.innerHTML = '';
+                        }, 2000);
+                    } else {
+                        messageContainer.innerHTML = `<p class="message">Error al agregar el producto al carrito</p>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    const messageContainer = document.querySelector('#preview-modal .message-container');
+                    messageContainer.innerHTML = `<p class="message">Error al agregar el producto al carrito</p>`;
+                });
             } else {
                 // Mostrar mensaje de error si la cantidad no es válida
                 const messageContainer = document.querySelector('#preview-modal .message-container');

@@ -28,7 +28,7 @@ y se suma al historial de pedidos
 RESTAURANTE
 - Cuando tocas la card en ver comidas te lleva a /producto (no tiene que pasar)
 - Saque el todos en el crear producto
--METER EL RATING TOTAL EN MENU RESTAURANTE
+-METER EL RATING TOTAL EN MENU RESTAURANTE Y EN MENU(en menu esta a medias)
 
 ----------------FALTA:--------------
 
@@ -42,7 +42,7 @@ RESTAURANTE
 -todas las stats del menu que se hagan en base a los datos de la bd
 
 GENERAL
--METER EL RATING TOTAL EN MENU Y INICIO DE EMPRESA
+-METER EL RATING TOTAL EN MENU (funciona si esta en inicio pero si hago filtros nose porque no se ve!) Y INICIO DE EMPRESA
 -ARREGLAR FILTROS, ELIMINAR EL TODOS DE CREAR PRODUCTO (SE DEBERIA ASIGNAR AUTOMATICAMENTE)
 -HACER QUE SE ASIGNE AL CREAR UNA CUENTA LA IMAGEN DEFAULTUSER.JPG
 -ARREGLAR QUE NO SE ROMPA LA MEMBRESIA SI NO TENGO METODO DEW PAGO

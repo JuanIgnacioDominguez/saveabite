@@ -1756,7 +1756,7 @@ def impacto_ambiental():
 
 @app.route("/recetas_sobras", methods=['GET'])
 def recetas_sobras():
-    return render_template('indexTemplates/RecetasSobras.html')
+    return render_template('indexTemplates/RecetasCocina.html')
 
 @app.route("/economia_circular", methods=['GET'])
 def economia_circular():

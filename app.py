@@ -1746,5 +1746,21 @@ def borrar_metodo_pago_empresa(id):
     registrar_accion(user_id, 'Eliminado método de pago empresa')
     return redirect(url_for('metodos_pago_empresa'))
 
+@app.route("/como_reducir", methods=['GET'])
+def como_reducir():
+    return render_template('indexTemplates/ComoReducir.html')
+
+@app.route("/impacto_ambiental", methods=['GET'])
+def impacto_ambiental():
+    return render_template('indexTemplates/ImpactoAmbiental.html')
+
+@app.route("/recetas_sobras", methods=['GET'])
+def recetas_sobras():
+    return render_template('indexTemplates/RecetasSobras.html')
+
+@app.route("/economia_circular", methods=['GET'])
+def economia_circular():
+    return render_template('indexTemplates/EconomiaCircular.html')
+
 if __name__ == "__main__":
     app.run(debug=True)

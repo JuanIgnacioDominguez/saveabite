@@ -191,6 +191,9 @@
         }
 
         .card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
             background-color: white;
             border: 1px solid #ccc;
             border-radius: 10px;
@@ -199,13 +202,23 @@
             width: 320px;
             text-align: center;
             align-items: center;
+            height: 300px; /* Añadir una altura fija para las cards */
         }
 
         .card img {
-            width: 100px;
-            height: auto;
+            width: 170px;  /* Fija el ancho de las imágenes */
+            height: 150px; /* Fija la altura de las imágenes */
+            object-fit: cover; /* Mantiene las proporciones sin distorsionar */
             margin-bottom: 15px;
             align-items: center;
+        }
+
+        .card h2 {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
 
         .card button {
@@ -216,31 +229,11 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.2s;
+            margin-top: auto; /* Empuja el botón hacia la parte inferior */
         }
 
         .card button:hover {
             background-color: #1e91d6;
-        }
-
-        .imagenReducirDesperdicio{
-            width: 150px;
-            height: auto;
-            margin-bottom: 15px;
-        } 
-        .imagenImpacto {
-            width: 200px;
-            height: auto;
-            margin-bottom: 15px;
-        }
-        .imagenZeroWaste {
-            width: 200px;
-            height: auto;
-            margin-bottom: 15px;
-        }
-        .imagenEconomiaCircular{
-            width: 200px;
-            height: auto;
-            margin-bottom: 15px;
         }
         
     </style>
@@ -338,22 +331,22 @@
         <h1 class="text-2xl font-bold text-center mb-4">Concientización</h1>
         <div class="card-container">
             <div class="card">
-                <img src="{{ url_for('static', filename='img/ReducirDesperdicio.png') }}" alt="Desperdicio en Casa" class="imagenReducirDesperdicio">
+                <img src="{{ url_for('static', filename='img/ReducirDesperdicio.png') }}" alt="Desperdicio en Casa">
                 <h2>CÓMO REDUCIR EL DESPERDICIO EN CASA</h2>
                 <button onclick="scrollToInfo('info1')">LEER MAS</button>
             </div>
             <div class="card">
-                <img src="{{ url_for('static', filename='img/Impacto.png') }}" alt="Impacto Ambiental" class="imagenImpacto">
+                <img src="{{ url_for('static', filename='img/Impacto.png') }}" alt="Impacto Ambiental">
                 <h2>IMPACTO AMBIENTAL DEL DESPERDICIO DE ALIMENTOS</h2>
                 <button onclick="scrollToInfo('info2')">LEER MAS</button>
             </div>
             <div class="card">
-                <img src="{{ url_for('static', filename='img/ZeroWaste.png') }}" alt="Recetas con Sobras" class="imagenZeroWaste">
+                <img src="{{ url_for('static', filename='img/ZeroWaste.png') }}" alt="Recetas con Sobras">
                 <h2>RECETAS DE COCINA CON SOBRAS</h2>
                 <button onclick="scrollToInfo('info3')">LEER MAS</button>
             </div>
             <div class="card">
-                <img src="{{ url_for('static', filename='img/EconomiaCircular.png') }}" alt="Economía Circular" class="imagenEconomiaCircular">
+                <img src="{{ url_for('static', filename='img/EconomiaCircular.png') }}" alt="Economía Circular">
                 <h2>ECONOMÍA CIRCULAR</h2>
                 <button onclick="scrollToInfo('info4')">LEER MAS</button>
             </div>

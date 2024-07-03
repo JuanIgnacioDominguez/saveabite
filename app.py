@@ -1762,5 +1762,24 @@ def recetas_sobras():
 def economia_circular():
     return render_template('indexTemplates/EconomiaCircular.html')
 
+@app.route("/contacto", methods=['POST'])
+def contacto():
+    name = request.form['name']
+    email = request.form['email']
+    message = request.form['message']
+    
+    # Crear el mensaje de correo electrónico
+    msg = Message('Nuevo mensaje de contacto', recipients=['saveabite.sip@gmail.com'])
+    msg.body = f"Nombre: {name}\nEmail: {email}\n\nMensaje:\n{message}"
+    
+    # Enviar el mensaje de correo electrónico
+    try:
+        mail.send(msg)
+        flash('Tu mensaje ha sido enviado con éxito.', 'success')
+    except Exception as e:
+        flash('Hubo un error al enviar tu mensaje. Por favor, inténtalo de nuevo más tarde.', 'error')
+    
+    return redirect(url_for('index'))
+
 if __name__ == "__main__":
     app.run(debug=True)

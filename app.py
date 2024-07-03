@@ -1190,17 +1190,7 @@ def crear_producto():
         tipo_dieta = request.form['tipo_dieta']
         stock = request.form['stock']  # Nuevo campo de stock
         file = request.files['imagen']
-
-        # Validación de stock no negativo
-        try:
-            stock = int(stock)
-            if stock < 0:
-                flash('El stock no puede ser negativo', 'error')
-                return redirect(url_for('crear_producto'))
-        except ValueError:
-            flash('El stock debe ser un número entero', 'error')
-            return redirect(url_for('crear_producto'))
-        
+                
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)

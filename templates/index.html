@@ -221,7 +221,7 @@
             text-align: center;
         }
 
-        .card button {
+        .card a {
             background-color: #27a2e8;
             color: white;
             padding: 10px 20px;
@@ -230,12 +230,13 @@
             cursor: pointer;
             transition: background-color 0.2s;
             margin-top: auto; /* Empuja el botón hacia la parte inferior */
+            text-decoration: none; /* Remove underline from links */
+            display: inline-block; /* Make the link act like a button */
         }
 
-        .card button:hover {
+        .card a:hover {
             background-color: #1e91d6;
         }
-        
     </style>
 </head>
 
@@ -333,39 +334,23 @@
             <div class="card">
                 <img src="{{ url_for('static', filename='img/ReducirDesperdicio.png') }}" alt="Desperdicio en Casa">
                 <h2>CÓMO REDUCIR EL DESPERDICIO EN CASA</h2>
-                <button onclick="scrollToInfo('info1')">LEER MAS</button>
+                <a href="{{ url_for('como_reducir') }}" class="btn">LEER MAS</a>
             </div>
             <div class="card">
                 <img src="{{ url_for('static', filename='img/Impacto.png') }}" alt="Impacto Ambiental">
                 <h2>IMPACTO AMBIENTAL DEL DESPERDICIO DE ALIMENTOS</h2>
-                <button onclick="scrollToInfo('info2')">LEER MAS</button>
+                <a href="{{ url_for('impacto_ambiental') }}" class="btn">LEER MAS</a>
             </div>
             <div class="card">
                 <img src="{{ url_for('static', filename='img/ZeroWaste.png') }}" alt="Recetas con Sobras">
                 <h2>RECETAS DE COCINA CON SOBRAS</h2>
-                <button onclick="scrollToInfo('info3')">LEER MAS</button>
+                <a href="{{ url_for('recetas_sobras') }}" class="btn">LEER MAS</a>
             </div>
             <div class="card">
                 <img src="{{ url_for('static', filename='img/EconomiaCircular.png') }}" alt="Economía Circular">
                 <h2>ECONOMÍA CIRCULAR</h2>
-                <button onclick="scrollToInfo('info4')">LEER MAS</button>
+                <a href="{{ url_for('economia_circular') }}" class="btn">LEER MAS</a>
             </div>
-        </div>
-        <div id="info1" class="info-section">
-            <h2>CÓMO REDUCIR EL DESPERDICIO EN CASA</h2>
-            <p>Información sobre cómo reducir el desperdicio en casa.</p>
-        </div>
-        <div id="info2" class="info-section">
-            <h2>IMPACTO AMBIENTAL DEL DESPERDICIO DE ALIMENTOS</h2>
-            <p>Información sobre el impacto ambiental del desperdicio de alimentos.</p>
-        </div>
-        <div id="info3" class="info-section">
-            <h2>RECETAS DE COCINA CON SOBRAS</h2>
-            <p>Información sobre recetas de cocina con sobras.</p>
-        </div>
-        <div id="info4" class="info-section">
-            <h2>ECONOMÍA CIRCULAR</h2>
-            <p>Información sobre economía circular.</p>
         </div>
     </div>
 
@@ -407,10 +392,6 @@
             document.getElementById("confirmation-message").style.display = "block";
             // Evitar que el formulario se envíe realmente
             return false;
-        }
-
-        function scrollToInfo(infoId) {
-            document.getElementById(infoId).scrollIntoView({ behavior: 'smooth' });
         }
 
         document.getElementById('menu-toggle').addEventListener('click', function () {

@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
             background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
@@ -200,8 +201,6 @@
             });
 
             const form = document.querySelector('form');
-            const modal = document.getElementById('myModal');
-            const closeModal = document.getElementsByClassName('close')[0];
 
             form.addEventListener('submit', function(event) {
                 event.preventDefault();
@@ -214,20 +213,20 @@
                     body: formData
                 }).then(response => {
                     if (response.ok) {
-                        modal.style.display = 'block';
+                        Swal.fire({
+                            title: '¡Producto Creado!',
+                            text: "El producto se ha creado correctamente.",
+                            icon: 'success',
+                            confirmButtonColor: '#27a2e8',
+                            confirmButtonText: 'Ver Comidas'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '/ver_comidas';
+                            }
+                        });
                     }
                 });
             });
-
-            closeModal.onclick = function() {
-                modal.style.display = 'none';
-            };
-
-            window.onclick = function(event) {
-                if (event.target == modal) {
-                    modal.style.display = 'none';
-                }
-            };
         });
 
         function validateForm() {

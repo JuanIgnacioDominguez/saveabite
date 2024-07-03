@@ -7,9 +7,13 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
             background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
+            background-repeat: no-repeat !important;
+            background-attachment: fixed !important;
+            background-size: auto !important;
         }
         .content-container {
             height: auto;
@@ -174,14 +178,15 @@
                         <i class="fas fa-life-ring mr-2 text-gray-500"></i> Soporte
                     </a>
                 </div>
-                <form action="{{ url_for('logout') }}" method="POST" class="w-full">
-                    <button type="submit" class="logout-button w-full text-white py-2 px-4 rounded-lg transition duration-200 mt-6">Cerrar Sesión</button>
+                <form id="logout-form" action="{{ url_for('logout') }}" method="POST" style="display: none;">
+                    <!-- CSRF token no requerido -->
                 </form>
+                <button type="button" class="logout-button w-full text-white py-2 px-4 rounded-lg transition duration-200 mt-6" onclick="confirmLogout()">Cerrar Sesión</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Modal JSON -->
     <div id="jsonModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeJsonModal()">&times;</span>
@@ -233,6 +238,23 @@
                 console.error('Error:', error);
             });
         });
+
+        function confirmLogout() {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¿Quieres cerrar sesión?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#27a2e8',
+                cancelButtonColor: '#e3342f',
+                confirmButtonText: 'Sí, cerrar sesión',
+                cancelButtonText: 'No, cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('logout-form').submit();
+                }
+            });
+        }
     </script>
 </body>
 </html>

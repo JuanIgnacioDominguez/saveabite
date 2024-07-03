@@ -321,6 +321,7 @@ def register():
                 conn.close()
                 session['user_id'] = vendor['id']
                 session['user_name'] = vendor['nombre_usuario']
+                session['user_email'] = vendor['correo_electronico']  # Guardar el correo en la sesión
                 session['user_image'] = vendor['imagen']
                 return redirect(url_for('menu_empresas'))
             else:
@@ -330,6 +331,7 @@ def register():
                 conn.close()
                 session['user_id'] = user['id']
                 session['user_name'] = user['nombre_usuario']
+                session['user_email'] = user['correo_electronico']  # Guardar el correo en la sesión
                 session['user_image'] = user['imagen']
                 return redirect(url_for('menu'))
         except sqlite3.IntegrityError:
@@ -492,6 +494,9 @@ def seleccionar_membresia(membresia):
         conn.execute('UPDATE usuarios SET membresia = ? WHERE id = ?', (membresia, user_id))
         conn.commit()
         registrar_accion(user_id, f'Seleccionada membresía {membresia} con método de pago {metodo_pago["tipo_tarjeta"]}: **** **** **** {metodo_pago["numero_tarjeta"][-4:]}')
+        flash('Membresía seleccionada con éxito', 'success')
+    else:
+        flash('Método de pago no válido', 'error')
 
     conn.close()
     return redirect(url_for('membresia'))
@@ -504,6 +509,7 @@ def cancelar_membresia():
     conn.commit()
     registrar_accion(user_id, 'Cancelada membresía')
     conn.close()
+    flash('Membresía dada de baja correctamente.', 'success')
     return redirect(url_for('membresia'))
 
 @app.route('/membresia_empresa', methods=['GET', 'POST'])
@@ -530,6 +536,9 @@ def seleccionar_membresia_empresa(empresa_membresia):
         conn.execute('UPDATE usuarioEmpresa SET membresia = ? WHERE id = ?', (empresa_membresia, user_id))
         conn.commit()
         registrar_accion(user_id, f'Seleccionada membresía de empresa {empresa_membresia} con método de pago {metodo_pago["tipo_tarjeta"]}: **** **** **** {metodo_pago["numero_tarjeta"][-4:]}')
+        flash('Membresía seleccionada con éxito', 'success')
+    else:
+        flash('Método de pago no válido', 'error')
 
     conn.close()
     return redirect(url_for('membresia_empresa'))
@@ -542,6 +551,7 @@ def cancelar_membresia_empresa():
     conn.commit()
     registrar_accion(user_id, 'Cancelada membresía de empresa')
     conn.close()
+    flash('Membresía de empresa dada de baja correctamente.', 'success')
     return redirect(url_for('membresia_empresa'))
 
 @app.route("/menu", methods=['GET'])
@@ -656,99 +666,25 @@ def get_all_productos(conn):
 
 @app.route("/pedidos", methods=['GET'])
 def pedidos():
-    empresa_id = session.get('user_id')
+    empresa_id = session.get('empresa_id')
     conn = get_db_connection()
-    
-    # Obtener pedidos no entregados
+    cursor = conn.cursor()
     pedidos = conn.execute('''
-        SELECT p.id, p.fecha, p.total, u.correo_electronico, d.calle, d.altura, d.localidad
-        FROM pedidos2 p
-        JOIN usuarios u ON p.usuario_id = u.id
-        JOIN direcciones d ON p.usuario_id = d.usuario_id
-        WHERE p.empresa_id = ? AND p.entregado = 0
-    ''', (empresa_id,)).fetchall()
-
-    # Obtener items de cada pedido
-    pedidos_con_items = []
-    for pedido in pedidos:
-        items = conn.execute('''
-            SELECT i.id, pr.nombre, i.cantidad, pr.imagen
-            FROM itemsPedido i
-            JOIN Productos pr ON i.idProducto = pr.id
-            WHERE i.idPedido = ?
-        ''', (pedido['id'],)).fetchall()
-
-        if items:
-            image = items[0]['imagen']
-            description = items[0]['nombre']
-        else:
-            image = ''  # Default image or empty if no items found
-            description = ''
-
-        pedidos_con_items.append({
-            'id': pedido['id'],
-            'fecha': pedido['fecha'],
-            'total': pedido['total'],
-            'usuario': pedido['correo_electronico'],
-            'direccion': f"{pedido['calle']} {pedido['altura']}, {pedido['localidad']}",
-            'items': items,
-            'image': url_for('static', filename=f'uploads/{image}'),
-            'description': description
-        })
-
+                           SELECT * 
+                           FROM pedidos2
+                           WHERE empresa_id = ? AND entregado IS FALSE''', 
+                           (empresa_id,)).fetchall()
     conn.close()
     
-    return render_template('general/pedidos.html', pedidos=pedidos_con_items)
-
+    return render_template('general/pedidos.html', pedidos=pedidos, completados_url=url_for('pedidosCompletados'))
 
 @app.route("/pedidosCompletados")
 def pedidosCompletados():
-    empresa_id = session.get('user_id')
-    conn = get_db_connection()
-    
-    # Obtener pedidos no entregados
-    pedidos = conn.execute('''
-        SELECT p.id, p.fecha, p.total, u.correo_electronico, d.calle, d.altura, d.localidad
-        FROM pedidos2 p
-        JOIN usuarios u ON p.usuario_id = u.id
-        JOIN direcciones d ON p.usuario_id = d.usuario_id
-        WHERE p.empresa_id = ? AND p.entregado = 1
-    ''', (empresa_id,)).fetchall()
-
-    # Obtener items de cada pedido
-    pedidos_con_items = []
-    for pedido in pedidos:
-        items = conn.execute('''
-            SELECT i.id, pr.nombre, i.cantidad, pr.imagen
-            FROM itemsPedido i
-            JOIN Productos pr ON i.idProducto = pr.id
-            WHERE i.idPedido = ?
-        ''', (pedido['id'],)).fetchall()
-
-        if items:
-            image = items[0]['imagen']
-            description = items[0]['nombre']
-        else:
-            image = ''  # Default image or empty if no items found
-            description = ''
-
-        pedidos_con_items.append({
-            'id': pedido['id'],
-            'fecha': pedido['fecha'],
-            'total': pedido['total'],
-            'usuario': pedido['correo_electronico'],
-            'direccion': f"{pedido['calle']} {pedido['altura']}, {pedido['localidad']}",
-            'items': items,
-            'image': url_for('static', filename=f'uploads/{image}'),
-            'description': description
-        })
-
-    conn.close()
-    return render_template('general/pedidosCompletados.html',pedidos=pedidos_con_items)
+    return render_template('general/pedidosCompletados.html')
 
 @app.route("/marcar_entregado/<int:pedido_id>", methods=['POST'])
 def marcar_entregado(pedido_id):
-    empresa_id = session.get('user_id')
+    empresa_id = session.get('empresa_id')
     conn = get_db_connection()
     conn.execute('''
                  UPDATE pedidos2
@@ -757,7 +693,7 @@ def marcar_entregado(pedido_id):
                  (pedido_id, empresa_id))
     conn.commit()
     conn.close()
-    return redirect(url_for('pedidos'))
+    return jsonify(success=True)
 
 
 @app.route("/pedidos_cliente")
@@ -814,81 +750,7 @@ def ver_resumen(idPedido):
     else:
         return "Pedido no encontrado", 404
 
-@app.route('/ver_resumenEmpresa/<int:idPedido>')
-def ver_resumenEmpresa(idPedido):
-    db = get_db_connection()
-    cursor = db.cursor()
-    
-    # Obtener detalles del pedido
-    cursor.execute('''
-        SELECT p.fecha, p.total, p.usuario_id, p.envio, p.servicio, p.propina, u.correo_electronico
-        FROM pedidos2 p
-        JOIN usuarios u ON p.usuario_id = u.id
-        WHERE p.id = ?
-    ''', (idPedido,))
-    pedido = cursor.fetchone()
 
-    # Obtener los productos del pedido
-    cursor.execute('''
-        SELECT pr.nombre, pr.precio, ip.cantidad
-        FROM itemsPedido ip
-        JOIN Productos pr ON ip.idProducto = pr.id
-        WHERE ip.idPedido = ?
-        GROUP BY pr.id
-    ''', (idPedido,))
-    productos = cursor.fetchall()
-
-    if pedido:
-        pedido_info = {
-            'fecha': pedido[0],
-            'total': pedido[1],
-            'usuario': pedido[2],
-            'envio': pedido[3],
-            'servicio': pedido[4],
-            'propina': pedido[5],
-            'nombre_usuario': pedido[6],
-            'productos': [{'nombre': p[0], 'precio': p[1], 'cantidad': p[2]} for p in productos]
-        }
-        return render_template('general/resumenEmpresa.html', pedido=pedido_info)
-    else:
-        return "Pedido no encontrado", 404
-    
-@app.route('/ver_detallePedido/<int:idPedido>')
-def ver_detallePedido(idPedido):
-    db = get_db_connection()
-    cursor = db.cursor()
-    
-    # Obtener detalles del pedido
-    cursor.execute('''
-        SELECT p.fecha, p.total, p.usuario_id, p.envio, p.servicio, p.propina
-        FROM pedidos2 p
-        WHERE p.id = ?
-    ''', (idPedido,))
-    pedido = cursor.fetchone()
-
-    # Obtener los productos del pedido
-    cursor.execute('''
-        SELECT pr.nombre, pr.precio, ip.cantidad
-        FROM itemsPedido ip
-        JOIN Productos pr ON ip.idProducto = pr.id
-        WHERE ip.idPedido = ?
-        GROUP BY pr.id
-    ''', (idPedido,))
-    productos = cursor.fetchall()
-
-    if pedido:
-        pedido_info = {
-            'fecha': pedido[0],
-            'total': pedido[1],
-            'usuario': pedido[2],
-            'envio': pedido[3],
-            'servicio': pedido[4],
-            'propina': pedido[5],
-            'productos': [{'nombre': p[0], 'precio': p[1], 'cantidad': p[2]} for p in productos]
-        }
-        return render_template('general/detalle.html', pedido=pedido_info)
-    else:
-        return "Pedido no encontrado", 404
 
 @app.route("/informacion", methods=['GET'])
 def informacion():
@@ -950,7 +812,7 @@ def menu_empresas():
     daily_sales = cursor.execute('SELECT COUNT(*) FROM pedidos2 WHERE empresa_id = ? AND fecha = DATE("now")', (empresa_id,)).fetchone()[0]
     pending_orders = cursor.execute('SELECT COUNT(*) FROM pedidos2 WHERE empresa_id = ? AND entregado = 0', (empresa_id,)).fetchone()[0]
     completed_orders = cursor.execute('SELECT COUNT(*) FROM pedidos2 WHERE empresa_id = ? AND entregado = 1', (empresa_id,)).fetchone()[0]
-    product_inventory = cursor.execute('SELECT SUM(stock) FROM Productos WHERE id_empresa = ?', (empresa_id,)).fetchone()[0]
+    product_inventory = cursor.execute('SELECT COUNT(*) FROM Productos WHERE id_empresa = ?', (empresa_id,)).fetchone()[0]
 
     # Consultar ingresos diarios
     daily_revenue = cursor.execute('''
@@ -979,6 +841,7 @@ def menu_empresas():
                         completed_orders=completed_orders,
                         product_inventory=product_inventory,
                         daily_revenue=daily_revenue)
+
 
 @app.route('/editar_perfil', methods=['GET', 'POST'])
 def editar_perfil():
@@ -1186,26 +1049,28 @@ def crear_producto():
         nombre = request.form['nombre']
         precio = request.form['precio']
         descripcion = request.form['descripcion']
-        categorias = request.form['categorias']
+        categorias = request.form['categorias']  # Obtener las categorías seleccionadas
         tipo_dieta = request.form['tipo_dieta']
-        stock = request.form['stock']  # Nuevo campo de stock
         file = request.files['imagen']
-                
+        
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             
+            # Crear directorio si no existe
             os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
             
             file.save(file_path)
             
+            # Asignar automáticamente "Todos" a tipoComida
             categorias += ",Todos"
             
+            # Guardar el producto en la base de datos
             conn = get_db_connection()
             conn.execute('''
-                INSERT INTO Productos (id_empresa, nombre, precio, descripcion, imagen, tipoComida, tipo_dieta, empresa, stock) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (session.get('user_id'), nombre, precio, descripcion, filename, categorias, tipo_dieta, session.get('user_name'), stock))
+                INSERT INTO Productos (id_empresa, nombre, precio, descripcion, imagen, tipoComida, tipo_dieta, empresa) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (session.get('user_id'), nombre, precio, descripcion, filename, categorias, tipo_dieta, session.get('user_name')))
             conn.commit()
             conn.close()
             return redirect(url_for('menu_empresas'))
@@ -1309,7 +1174,11 @@ def actualizar_membresia():
         conn = get_db_connection()
         conn.execute('UPDATE usuarios SET membresia = ? WHERE id = ?', (plan, user_id))
         conn.commit()
-        conn.close()    
+        conn.close()
+        flash('Membresía actualizada con éxito', 'success')
+    else:
+        flash('No se pudo actualizar la membresía. Usuario no autenticado.', 'error')
+    
     return redirect(url_for('membresia'))
 
 @app.route("/agregar_al_carrito1/<int:producto_id>", methods=['POST'])
@@ -1330,13 +1199,12 @@ def eliminar_del_carrito(producto_id):
 def agregar_a_favoritos(empresa_id):
     user_id = session.get('user_id')
     conn = get_db_connection()
-    # Verifica si el producto ya está en favoritos para el usuario
     item = conn.execute('SELECT * FROM favoritos WHERE usuario_id = ? AND empresa_id = ?', (user_id, empresa_id)).fetchone()
     
-    if item is None:  # Si el producto no está en favoritos, lo agrega
+    if item is None:
         conn.execute('INSERT INTO favoritos (usuario_id, empresa_id) VALUES (?, ?)', (user_id, empresa_id))
         message = 'Restaurante agregado a favoritos'
-    else:  # Si el producto ya está en favoritos, muestra un mensaje
+    else:
         message = 'Restaurante ya está en favoritos'
     
     conn.commit()
@@ -1347,7 +1215,6 @@ def agregar_a_favoritos(empresa_id):
 def eliminar_de_favoritos(empresa_id):
     user_id = session.get('user_id')
     conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
     conn.execute('DELETE FROM favoritos WHERE usuario_id = ? AND empresa_id = ?', (user_id, empresa_id))
     conn.commit()
     conn.close()

@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
             font-family: 'Nunito', sans-serif;
@@ -516,12 +517,15 @@
                 .then(data => {
                     const messageContainer = document.querySelector('#preview-modal .message-container');
                     if (data.success) {
-                        messageContainer.innerHTML = `<p class="success-message">${data.message}</p>`;
-                        setTimeout(() => {
-                            modal.classList.add('hidden');
-                            messageContainer.innerHTML = '';
-                            fetchCartItems();
-                        }, 2000);
+                        modal.classList.add('hidden');
+                        Swal.fire({
+                            title: 'Producto agregado',
+                            text: 'El producto se ha agregado al carrito con éxito.',
+                            icon: 'success',
+                            confirmButtonText: 'Cerrar',
+                            confirmButtonColor: '#27a2e8'
+                        });
+                        fetchCartItems();
                     } else {
                         messageContainer.innerHTML = `<p class="message">Error al agregar el producto al carrito</p>`;
                     }
@@ -547,6 +551,10 @@
             }
         });
     });
+
+    function fetchCartItems() {
+        // Implementación para actualizar los ítems del carrito
+    }
     </script>
 </body>
 

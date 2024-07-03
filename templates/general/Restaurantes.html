@@ -20,6 +20,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <style>
         #nombrerestaurante {
             font-size: 35px;
@@ -35,16 +36,19 @@
             cursor: pointer;
             font-weight: bold;
             transition: background-color 0.3s;
-            margin-top: 10px; /* Reduce space between buttons */ 
-            white-space: nowrap;  /* Prevent text from wrapping */
+            margin-top: 10px;
+            white-space: nowrap;
         }
 
         body {
             font-family: 'Nunito', sans-serif;
             background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
-            height: 100vh; /* Ensure the gradient covers the entire height */
+            height: 100vh;
+            background-repeat: no-repeat !important;
+            background-attachment: fixed !important;
+            background-size: auto !important;
             margin: 0;
-            overflow: hidden;
+            
         }
         .bg-custom-blue {
             background-color: #27a2e8;
@@ -57,7 +61,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 16px;
-            overflow: hidden;
+            
             display: flex;
             flex-direction: row;
             transition: transform 0.2s;
@@ -98,8 +102,8 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: center; /* Align items to the center */
-            width: 180px;  /* Ensure buttons are wide enough */
+            align-items: center;
+            width: 180px;
         }
         .action-buttons button {
             background-color: #27a2e8;
@@ -111,8 +115,8 @@
             cursor: pointer;
             font-weight: bold;
             transition: background-color 0.3s;
-            margin-top: 0px; /* Reduce space between buttons */
-            white-space: nowrap;  /* Prevent text from wrapping */
+            margin-top: 0px;
+            white-space: nowrap;
         }
         .action-buttons button:hover {
             background-color: #1e81b0;
@@ -151,7 +155,7 @@
         .star-rating {
             display: flex;
             align-items: center;
-            justify-content: center; /* Center stars horizontally */
+            justify-content: center;
         }
         .star-rating .star {
             font-size: 2rem;
@@ -171,7 +175,6 @@
         .rating-total .fa-star {
             color: #ff9800;
             margin-right: 3px;
-
         }
         #totalNumeros{
             font-size: 20px;
@@ -180,18 +183,15 @@
             font-size: 20px;
         }
         .container{
-            overflow-y: auto;
+            overflow-y: scroll;
+            
         }
     </style>
 </head>
 <body class="flex">
     <!-- Sidebar -->
     {% include 'Sidebars/SidebarUsuario.html' %}
-    <!-- Popup -->
-    <div id="popup" class="popup">
-        <p id="popup-message">El restaurante fue añadido a tus favoritos correctamente</p>
-        <button id="closePopup" class="popup-button">Cerrar</button>
-    </div>
+    
     <!-- Main content -->
     <div class="container p-6 content ml-64">
         <h1 class="text-4xl font-bold text-custom-blue mb-6">Restaurantes</h1>
@@ -200,7 +200,7 @@
             <div class="restaurant-card">
                 <img src="{{ url_for('static', filename='uploads/' ~ restaurant.imagen) }}" alt="{{ restaurant.nombre_usuario }}" id="fotorestaurante">
                 <div class="restaurant-info">
-                    <div class=" flex items-center" id="contfoto">
+                    <div class="flex items-center" id="contfoto">
                         <h3 id="nombrerestaurante">{{ restaurant.nombre_usuario }}</h3>
                         <div class="rating-total">
                             <i class="fas fa-star" id="Estrellatotal"></i>
@@ -214,9 +214,7 @@
                     <p id="direccion">{{ restaurant.calle }} {{ restaurant.altura }}, {{ restaurant.localidad }}</p>
                 </div>
                 <div class="action-buttons">
-                    <!-- Mover la calificación por estrellas aquí -->
                     <div class="rating mb-1">
-                        <!-- Custom star rating component -->
                         <div class="star-rating" data-restaurant-id="{{ restaurant.id }}" data-current-rating="{{ restaurant.current_rating }}">
                             <span class="star unselected" data-value="1">★</span>
                             <span class="star unselected" data-value="2">★</span>
@@ -251,42 +249,52 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                        const popup = document.getElementById('popup');
-                        const popupMessage = document.getElementById('popup-message');
-                        popupMessage.textContent = data.message;
-                        popup.classList.add('active');
+                        if (data.message === 'Restaurante ya está en favoritos') {
+                            Swal.fire({
+                              position: 'center',
+                              icon: 'error',
+                              title: data.message,
+                              showConfirmButton: false,
+                              timer: 1500
+                            });
+                        } else {
+                            Swal.fire({
+                              position: 'center',
+                              icon: 'success',
+                              title: data.message,
+                              showConfirmButton: false,
+                              timer: 1500
+                            }).then(() => {
+                                window.location.href = "{{ url_for('favoritos') }}";
+                            });
+                        }
                     })
                     .catch(error => console.error('Error:', error));
                 });
             });
 
-            document.getElementById('closePopup').addEventListener('click', function() {
-                document.getElementById('popup').classList.remove('active');
-                window.location.href = "{{ url_for('favoritos') }}";
-            });
-
             document.querySelectorAll('.star-rating').forEach(ratingElement => {
-                const stars = ratingElement.querySelectorAll('.star');
-                const currentRating = ratingElement.getAttribute('data-current-rating');
+                const restaurantId = ratingElement.getAttribute('data-restaurant-id');
+                const currentRating = localStorage.getItem(`restaurant-rating-${restaurantId}`);
 
-                // Set initial rating based on currentRating
                 if (currentRating) {
+                    const stars = ratingElement.querySelectorAll('.star');
                     stars.forEach((star, index) => {
                         if (index < currentRating) {
-                            star.classList.add('selected');
                             star.classList.remove('unselected');
+                            star.classList.add('selected');
                         } else {
-                            star.classList.add('unselected');
                             star.classList.remove('selected');
+                            star.classList.add('unselected');
                         }
                     });
                 }
 
-                stars.forEach(star => {
-                    star.addEventListener('click', () => {
-                        const rating = star.getAttribute('data-value');
+                ratingElement.querySelectorAll('.star').forEach(star => {
+                    star.addEventListener('click', function() {
+                        const rating = this.getAttribute('data-value');
                         
-                        // Update stars visually
+                        const stars = ratingElement.querySelectorAll('.star');
                         stars.forEach((s, i) => {
                             if (i < rating) {
                                 s.classList.remove('unselected');
@@ -297,13 +305,15 @@
                             }
                         });
 
-                        // Send rating to server
+                        // Guardar la calificación en localStorage
+                        localStorage.setItem(`restaurant-rating-${restaurantId}`, rating);
+
                         fetch('/guardar-calificacion', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
                             },
-                            body: JSON.stringify({ restaurant_id: ratingElement.getAttribute('data-restaurant-id'), rating: rating }),
+                            body: JSON.stringify({ restaurant_id: restaurantId, rating: rating }),
                         }).then(response => response.json())
                           .then(data => {
                               if (data.success) {

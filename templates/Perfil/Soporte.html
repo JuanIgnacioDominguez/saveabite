@@ -7,16 +7,20 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
             background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
             height: 100vh;
             display: flex;
+            overflow: hidden; /* Evitar scroll */
+            background-repeat: no-repeat !important;
+            background-attachment: fixed !important;
+            background-size: auto !important;
         }
         .content-container {
             height: auto;
             margin-left: 16rem;
-            /* margin-top: 4rem; */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
@@ -134,56 +138,15 @@
         .form-content {
             flex-grow: 1;
         }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0,0,0);
-            background-color: rgba(0,0,0,0.4);
-            padding-top: 60px;
+    </style>
+    <style>
+        .swal2-styled.swal2-confirm {
+            background-color: #27a2e8 !important;
+            color: white !important;
         }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            border-radius: 0.375rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .add-button {
-            background-color: #27a2e8;
-            color: white;
-            padding: 0.75rem;
-            border-radius: 0.375rem;
-            text-align: center;
-            display: inline-block;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.2s;
-            margin-top: 1rem;
-        }
-        .add-button:hover {
-            background-color: #1b7fbf;
-        }
-        .ml-16rem {
-            margin-left: 16rem;
+        .swal2-styled.swal2-cancel {
+            background-color: #e3342f !important;
+            color: white !important;
         }
     </style>
 </head>
@@ -222,54 +185,7 @@
         </div>
     </div>
 
-    <!-- Confirm Modal -->
-    <div id="confirmModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2 class="text-xl mb-4">Confirmar Envío</h2>
-            <p>¿Estás seguro de que deseas enviar este mensaje?</p>
-            <div class="flex justify-end mt-4">
-                <button class="add-button" onclick="submitForm()">Confirmar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Success Modal -->
-    <div id="successModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2 class="text-xl mb-4">Éxito</h2>
-            <p>El mensaje se ha enviado con éxito.</p>
-            <div class="flex justify-end mt-4">
-                <a href="{{ url_for('perfil_usuario') }}" class="add-button">Volver al Perfil</a>
-            </div>
-        </div>
-    </div>
-    
     <script>
-        // Get the modals
-        var confirmModal = document.getElementById("confirmModal");
-        var successModal = document.getElementById("successModal");
-        
-        // Get the <span> elements that close the modals
-        var spans = document.getElementsByClassName("close");
-        
-        // When the user clicks on <span> (x), close the modals
-        for (var i = 0; i < spans.length; i++) {
-            spans[i].onclick = function() {
-                confirmModal.style.display = "none";
-                successModal.style.display = "none";
-            }
-        }
-        
-        // When the user clicks anywhere outside of the modals, close them
-        window.onclick = function(event) {
-            if (event.target == confirmModal || event.target == successModal) {
-                confirmModal.style.display = "none";
-                successModal.style.display = "none";
-            }
-        }
-
         function validarFormulario() {
             var subject = document.getElementById("subject").value.trim();
             var message = document.getElementById("message").value.trim();
@@ -279,20 +195,50 @@
                 return false;
             }
             // Si todos los campos están completados, abrir el modal de confirmación
-            openConfirmModal();
+            mostrarConfirmacion();
         }
-        
-        // Function to open the confirm modal
-        function openConfirmModal() {
-            confirmModal.style.display = "block";
+
+        function mostrarConfirmacion() {
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: '¿Estás seguro?',
+                text: "¿Quieres enviar este mensaje?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, enviar',
+                cancelButtonText: 'No, cancelar',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    enviarFormulario();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    swalWithBootstrapButtons.fire(
+                        'Cancelado',
+                        'Tu mensaje no ha sido enviado',
+                        'error'
+                    );
+                }
+            });
         }
-        
-        // Function to submit the form
-        function submitForm() {
+
+        function enviarFormulario() {
             // Simulate form submission
-            confirmModal.style.display = "none";
             setTimeout(() => {
-                successModal.style.display = "block";
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: 'El mensaje se ha enviado con éxito.',
+                    confirmButtonText: 'Volver al Perfil'
+                }).then(() => {
+                    window.location.href = "{{ url_for('perfil_usuario') }}";
+                });
             }, 500); // Simulate a short delay for the submission
         }
     </script>

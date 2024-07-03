@@ -7,9 +7,12 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
             background: linear-gradient(to bottom right, #f1f5f9, #0284c7);
+            height: 100vh;
+            overflow: hidden;
         }
         .content-container {
             max-height: 100vh;
@@ -101,6 +104,7 @@
             margin-left: 16rem;
             flex: 1;
             padding: 1rem;
+            overflow-y: auto;
         }
         .nav-item {
             margin: 2rem 0;
@@ -143,10 +147,11 @@
             height: 100%;
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
         }
         .modal-content {
             background-color: #fefefe;
-            margin: 15% auto;
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
@@ -221,7 +226,7 @@
             editButtons.forEach(button => {
                 button.addEventListener('click', function(event) {
                     event.stopPropagation(); // Detener la propagación del evento
-                    modal.style.display = 'block';
+                    modal.style.display = 'flex';
                     const card = this.closest('.card');
                     const productName = card.querySelector('.product-name').textContent;
                     const productDescription = card.querySelector('.product-descripcion').textContent;
@@ -335,9 +340,6 @@
             }
 
             const deleteButtons = document.querySelectorAll('.delete-button');
-            const deleteModal = document.getElementById('deleteModal');
-            const cancelDelete = document.querySelector('.cancel-button');
-            const confirmDelete = document.querySelector('.confirm-delete-button');
 
             deleteButtons.forEach(button => {
                 button.addEventListener('click', function(event) {
@@ -347,46 +349,51 @@
                     const form = this.closest('form');
                     const productId = form.action.split('/').pop(); // Extract productId from form action URL
 
-                    // Show delete confirmation modal
-                    deleteModal.style.display = 'block';
-
-                    // Handle cancel button click
-                    cancelDelete.addEventListener('click', function() {
-                        deleteModal.style.display = 'none'; // Hide modal on cancel
-                    });
-
-                    // Handle confirm delete button click
-                    confirmDelete.addEventListener('click', function() {
-                        fetch(`/eliminar_producto/${productId}`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                // Remove the product card from the UI
-                                const card = document.querySelector(`.card[data-id='${productId}']`);
-                                card.remove();
-                                deleteModal.style.display = 'none'; // Hide the modal
-                            } else {
-                                alert('Error al eliminar el producto.');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                        });
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: "¿Quieres eliminar este producto?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#27a2e8',
+                        cancelButtonColor: '#e3342f',
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'No, cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fetch(`/eliminar_producto/${productId}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Remove the product card from the UI
+                                    const card = document.querySelector(`.card[data-id='${productId}']`);
+                                    card.remove();
+                                    Swal.fire({
+                                        title: '¡Eliminado!',
+                                        text: 'El producto ha sido eliminado.',
+                                        icon: 'success',
+                                        confirmButtonColor: '#27a2e8'
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        title: 'Error',
+                                        text: 'Error al eliminar el producto.',
+                                        icon: 'error',
+                                        confirmButtonColor: '#27a2e8'
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                            });
+                        }
                     });
                 });
             });
-
-            // Close the delete modal when clicking outside it
-            window.onclick = function(event) {
-                if (event.target == deleteModal) {
-                    deleteModal.style.display = 'none';
-                }
-            };
         });
     </script>
 </head>
@@ -462,17 +469,6 @@
                     <button type="submit" class="modal-button">Guardar Cambios</button>
                 </div>
             </form>
-        </div>
-    </div>
-
-    <div id="deleteModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>¿Estás seguro de eliminar este producto?</h2>
-            <div class="flex justify-between">
-                <button class="modal-button cancel-button">Cancelar</button>
-                <button class="modal-button confirm-delete-button">Eliminar</button>
-            </div>
         </div>
     </div>
 </body>

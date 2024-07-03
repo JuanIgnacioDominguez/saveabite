@@ -196,14 +196,16 @@
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            width: 250px;
+            width: 320px;
             text-align: center;
+            align-items: center;
         }
 
         .card img {
             width: 100px;
             height: auto;
             margin-bottom: 15px;
+            align-items: center;
         }
 
         .card button {
@@ -219,6 +221,28 @@
         .card button:hover {
             background-color: #1e91d6;
         }
+
+        .imagenReducirDesperdicio{
+            width: 150px;
+            height: auto;
+            margin-bottom: 15px;
+        } 
+        .imagenImpacto {
+            width: 200px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+        .imagenZeroWaste {
+            width: 200px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+        .imagenEconomiaCircular{
+            width: 200px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+        
     </style>
 </head>
 
@@ -314,22 +338,22 @@
         <h1 class="text-2xl font-bold text-center mb-4">Concientización</h1>
         <div class="card-container">
             <div class="card">
-                <img src="https://via.placeholder.com/100" alt="Desperdicio en Casa">
+                <img src="{{ url_for('static', filename='img/ReducirDesperdicio.png') }}" alt="Desperdicio en Casa" class="imagenReducirDesperdicio">
                 <h2>CÓMO REDUCIR EL DESPERDICIO EN CASA</h2>
                 <button onclick="scrollToInfo('info1')">LEER MAS</button>
             </div>
             <div class="card">
-                <img src="https://via.placeholder.com/100" alt="Impacto Ambiental">
+                <img src="{{ url_for('static', filename='img/Impacto.png') }}" alt="Impacto Ambiental" class="imagenImpacto">
                 <h2>IMPACTO AMBIENTAL DEL DESPERDICIO DE ALIMENTOS</h2>
                 <button onclick="scrollToInfo('info2')">LEER MAS</button>
             </div>
             <div class="card">
-                <img src="https://via.placeholder.com/100" alt="Recetas con Sobras">
+                <img src="{{ url_for('static', filename='img/ZeroWaste.png') }}" alt="Recetas con Sobras" class="imagenZeroWaste">
                 <h2>RECETAS DE COCINA CON SOBRAS</h2>
                 <button onclick="scrollToInfo('info3')">LEER MAS</button>
             </div>
             <div class="card">
-                <img src="https://via.placeholder.com/100" alt="Economía Circular">
+                <img src="{{ url_for('static', filename='img/EconomiaCircular.png') }}" alt="Economía Circular" class="imagenEconomiaCircular">
                 <h2>ECONOMÍA CIRCULAR</h2>
                 <button onclick="scrollToInfo('info4')">LEER MAS</button>
             </div>

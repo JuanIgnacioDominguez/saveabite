@@ -666,25 +666,98 @@ def get_all_productos(conn):
 
 @app.route("/pedidos", methods=['GET'])
 def pedidos():
-    empresa_id = session.get('empresa_id')
+    empresa_id = session.get('user_id')
     conn = get_db_connection()
-    cursor = conn.cursor()
+    
+    # Obtener pedidos no entregados
     pedidos = conn.execute('''
-                           SELECT * 
-                           FROM pedidos2
-                           WHERE empresa_id = ? AND entregado IS FALSE''', 
-                           (empresa_id,)).fetchall()
+        SELECT p.id, p.fecha, p.total, u.correo_electronico, d.calle, d.altura, d.localidad
+        FROM pedidos2 p
+        JOIN usuarios u ON p.usuario_id = u.id
+        JOIN direcciones d ON p.usuario_id = d.usuario_id
+        WHERE p.empresa_id = ? AND p.entregado = 0
+    ''', (empresa_id,)).fetchall()
+
+    # Obtener items de cada pedido
+    pedidos_con_items = []
+    for pedido in pedidos:
+        items = conn.execute('''
+            SELECT i.id, pr.nombre, i.cantidad, pr.imagen
+            FROM itemsPedido i
+            JOIN Productos pr ON i.idProducto = pr.id
+            WHERE i.idPedido = ?
+        ''', (pedido['id'],)).fetchall()
+
+        if items:
+            image = items[0]['imagen']
+            description = items[0]['nombre']
+        else:
+            image = ''  # Default image or empty if no items found
+            description = ''
+
+        pedidos_con_items.append({
+            'id': pedido['id'],
+            'fecha': pedido['fecha'],
+            'total': pedido['total'],
+            'usuario': pedido['correo_electronico'],
+            'direccion': f"{pedido['calle']} {pedido['altura']}, {pedido['localidad']}",
+            'items': items,
+            'image': url_for('static', filename=f'uploads/{image}'),
+            'description': description
+        })
+
     conn.close()
     
-    return render_template('general/pedidos.html', pedidos=pedidos, completados_url=url_for('pedidosCompletados'))
+    return render_template('general/pedidos.html', pedidos=pedidos_con_items)
 
 @app.route("/pedidosCompletados")
 def pedidosCompletados():
-    return render_template('general/pedidosCompletados.html')
+    empresa_id = session.get('user_id')
+    conn = get_db_connection()
+    
+    # Obtener pedidos no entregados
+    pedidos = conn.execute('''
+        SELECT p.id, p.fecha, p.total, u.correo_electronico, d.calle, d.altura, d.localidad
+        FROM pedidos2 p
+        JOIN usuarios u ON p.usuario_id = u.id
+        JOIN direcciones d ON p.usuario_id = d.usuario_id
+        WHERE p.empresa_id = ? AND p.entregado = 1
+    ''', (empresa_id,)).fetchall()
+
+    # Obtener items de cada pedido
+    pedidos_con_items = []
+    for pedido in pedidos:
+        items = conn.execute('''
+            SELECT i.id, pr.nombre, i.cantidad, pr.imagen
+            FROM itemsPedido i
+            JOIN Productos pr ON i.idProducto = pr.id
+            WHERE i.idPedido = ?
+        ''', (pedido['id'],)).fetchall()
+
+        if items:
+            image = items[0]['imagen']
+            description = items[0]['nombre']
+        else:
+            image = ''  # Default image or empty if no items found
+            description = ''
+
+        pedidos_con_items.append({
+            'id': pedido['id'],
+            'fecha': pedido['fecha'],
+            'total': pedido['total'],
+            'usuario': pedido['correo_electronico'],
+            'direccion': f"{pedido['calle']} {pedido['altura']}, {pedido['localidad']}",
+            'items': items,
+            'image': url_for('static', filename=f'uploads/{image}'),
+            'description': description
+        })
+
+    conn.close()
+    return render_template('general/pedidosCompletados.html',pedidos=pedidos_con_items)
 
 @app.route("/marcar_entregado/<int:pedido_id>", methods=['POST'])
 def marcar_entregado(pedido_id):
-    empresa_id = session.get('empresa_id')
+    empresa_id = session.get('user_id')
     conn = get_db_connection()
     conn.execute('''
                  UPDATE pedidos2
@@ -693,7 +766,7 @@ def marcar_entregado(pedido_id):
                  (pedido_id, empresa_id))
     conn.commit()
     conn.close()
-    return jsonify(success=True)
+    return redirect(url_for('pedidos'))
 
 
 @app.route("/pedidos_cliente")
@@ -749,8 +822,83 @@ def ver_resumen(idPedido):
         return render_template('general/resumen.html', pedido=pedido_info)
     else:
         return "Pedido no encontrado", 404
+    
+@app.route('/ver_resumenEmpresa/<int:idPedido>')
+def ver_resumenEmpresa(idPedido):
+    db = get_db_connection()
+    cursor = db.cursor()
+        
+        # Obtener detalles del pedido
+    cursor.execute('''
+        SELECT p.fecha, p.total, p.usuario_id, p.envio, p.servicio, p.propina, u.correo_electronico
+        FROM pedidos2 p
+        JOIN usuarios u ON p.usuario_id = u.id
+        WHERE p.id = ?
+    ''', (idPedido,))
+    pedido = cursor.fetchone()
 
+        # Obtener los productos del pedido
+    cursor.execute('''
+        SELECT pr.nombre, pr.precio, ip.cantidad
+        FROM itemsPedido ip
+        JOIN Productos pr ON ip.idProducto = pr.id
+        WHERE ip.idPedido = ?
+        GROUP BY pr.id
+    ''', (idPedido,))
+    productos = cursor.fetchall()
 
+    if pedido:
+        pedido_info = {
+            'fecha': pedido[0],
+            'total': pedido[1],
+            'usuario': pedido[2],
+            'envio': pedido[3],
+            'servicio': pedido[4],
+            'propina': pedido[5],
+            'nombre_usuario': pedido[6],
+            'productos': [{'nombre': p[0], 'precio': p[1], 'cantidad': p[2]} for p in productos]
+        }
+        return render_template('general/resumenEmpresa.html', pedido=pedido_info)
+    else:
+        return "Pedido no encontrado", 404
+        
+
+@app.route('/ver_detallePedido/<int:idPedido>')
+def ver_detallePedido(idPedido):
+    db = get_db_connection()
+    cursor = db.cursor()
+    
+    # Obtener detalles del pedido
+    cursor.execute('''
+        SELECT p.fecha, p.total, p.usuario_id, p.envio, p.servicio, p.propina
+        FROM pedidos2 p
+        WHERE p.id = ?
+    ''', (idPedido,))
+    pedido = cursor.fetchone()
+
+    # Obtener los productos del pedido
+    cursor.execute('''
+        SELECT pr.nombre, pr.precio, ip.cantidad
+        FROM itemsPedido ip
+        JOIN Productos pr ON ip.idProducto = pr.id
+        WHERE ip.idPedido = ?
+        GROUP BY pr.id
+    ''', (idPedido,))
+    productos = cursor.fetchall()
+
+    if pedido:
+        pedido_info = {
+            'fecha': pedido[0],
+            'total': pedido[1],
+            'usuario': pedido[2],
+            'envio': pedido[3],
+            'servicio': pedido[4],
+            'propina': pedido[5],
+            'productos': [{'nombre': p[0], 'precio': p[1], 'cantidad': p[2]} for p in productos]
+        }
+        return render_template('general/detalle.html', pedido=pedido_info)
+    else:
+        return "Pedido no encontrado", 404
 
 @app.route("/informacion", methods=['GET'])
 def informacion():

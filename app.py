@@ -669,7 +669,7 @@ def pedidos():
     
     # Obtener pedidos no entregados
     pedidos = conn.execute('''
-        SELECT p.id, p.fecha, p.total, u.nombre_usuario, d.calle, d.altura, d.localidad
+        SELECT p.id, p.fecha, p.total, u.correo_electronico, d.calle, d.altura, d.localidad
         FROM pedidos2 p
         JOIN usuarios u ON p.usuario_id = u.id
         JOIN direcciones d ON p.usuario_id = d.usuario_id
@@ -697,7 +697,7 @@ def pedidos():
             'id': pedido['id'],
             'fecha': pedido['fecha'],
             'total': pedido['total'],
-            'usuario': pedido['nombre_usuario'],
+            'usuario': pedido['correo_electronico'],
             'direccion': f"{pedido['calle']} {pedido['altura']}, {pedido['localidad']}",
             'items': items,
             'image': url_for('static', filename=f'uploads/{image}'),
@@ -716,7 +716,7 @@ def pedidosCompletados():
     
     # Obtener pedidos no entregados
     pedidos = conn.execute('''
-        SELECT p.id, p.fecha, p.total, u.nombre_usuario, d.calle, d.altura, d.localidad
+        SELECT p.id, p.fecha, p.total, u.correo_electronico, d.calle, d.altura, d.localidad
         FROM pedidos2 p
         JOIN usuarios u ON p.usuario_id = u.id
         JOIN direcciones d ON p.usuario_id = d.usuario_id
@@ -744,7 +744,7 @@ def pedidosCompletados():
             'id': pedido['id'],
             'fecha': pedido['fecha'],
             'total': pedido['total'],
-            'usuario': pedido['nombre_usuario'],
+            'usuario': pedido['correo_electronico'],
             'direccion': f"{pedido['calle']} {pedido['altura']}, {pedido['localidad']}",
             'items': items,
             'image': url_for('static', filename=f'uploads/{image}'),
@@ -829,8 +829,9 @@ def ver_resumenEmpresa(idPedido):
     
     # Obtener detalles del pedido
     cursor.execute('''
-        SELECT p.fecha, p.total, p.usuario_id, p.envio, p.servicio, p.propina
+        SELECT p.fecha, p.total, p.usuario_id, p.envio, p.servicio, p.propina, u.correo_electronico
         FROM pedidos2 p
+        JOIN usuarios u ON p.usuario_id = u.id
         WHERE p.id = ?
     ''', (idPedido,))
     pedido = cursor.fetchone()
@@ -853,6 +854,7 @@ def ver_resumenEmpresa(idPedido):
             'envio': pedido[3],
             'servicio': pedido[4],
             'propina': pedido[5],
+            'nombre_usuario': pedido[6],
             'productos': [{'nombre': p[0], 'precio': p[1], 'cantidad': p[2]} for p in productos]
         }
         return render_template('general/resumenEmpresa.html', pedido=pedido_info)

@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Bootstrap CSS -->
-      <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             font-family: 'Nunito', sans-serif;
@@ -17,7 +17,7 @@
         }
 
         .bg-custom-blue {
-            background-color: #ffffff;
+            background-color: #27a2e8;
             position: relative;
         }
 
@@ -92,10 +92,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 90%;
             max-width: 900px;
-            margin-top: 10px;
-            display: none;
-            position: relative;
-            margin-bottom: 120px; /* RENA LO PUSO EN 200px */
+            margin: 0 auto 60px auto; /* Cambiado para centrar y ajustar el margen inferior */
         }
 
         .contact-form h2 {
@@ -144,45 +141,46 @@
             font-size: 1.2rem;
             margin-top: 20px;
         }
-        .concientizacion-info{
-            display: none;
+
+        .concientizacion-info {
             padding: 20px;
-            margin-top: 10px;
-            width: 100%;
+            margin: 10px auto;
+            width: 90%;
+            max-width: 900px;
             border-radius: 10px;
-            margin-bottom: 120px; /* RENA LO PUSO EN 200px */
+            margin-bottom: 60px; /* Ajustar el margen inferior */
         }
+
         .acerca-de-nosotros {
-            display: none;
             max-height: 900px;
             padding: 20px;
-            margin-top: 10px;
-            width: 100%;
-            max-width: 1500px;
+            margin: 10px auto;
+            width: 90%;
+            max-width: 900px;
             border-radius: 10px;
             position: relative;
-            margin-bottom: 120px; /* RENA LO PUSO EN 200px */
+            margin-bottom: 60px; /* Ajustar el margen inferior */
         }
+
         .separator {
-            border-bottom: 4px solid #00a2ff;
-            width: 1400px;
+            border-bottom: 2px solid #27a2e8;
             margin: 1rem 0;
         }
-        .imagen1{
-            height: 200px;
+
+        .imagen1 {
+            height: 400px;
             object-fit: contain;
+            justify-content: center;
         }
-        .carousel1{
+
+        .carousel1 {
             text-align: center;
             align-items: center;
-        }
-        .carousel{
-            margin-bottom: 90px;
         }
     </style>
 </head>
 
-<body class="bg-custom-blue flex flex-col items-center min-h-screen relative">
+<body class="bg-custom-blue items-center min-h-screen relative">
     <div class="white-background w-full flex justify-between items-center">
         <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Save a Bite" class="h-14 ml-4">
         <button id="menu-toggle" class="block md:hidden focus:outline-none mr-4">
@@ -193,94 +191,76 @@
         <nav id="menu" class="hidden md:flex flex-col md:flex-row md:space-x-4 md:items-center">
             <ul class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
                 <li><a href="{{ url_for('index') }}" class="text-custom-blue ml-10">Menu</a></li>
-                <li><a href="#" class="text-custom-blue ml-10" id="acercadenosotros-link">Acerca de Nosotros</a></li>
-                <li><a href="#" class="text-custom-blue ml-10" id="concientizacion-link">Concientización</a></li>
-                <li><a href="#" class="text-custom-blue ml-10" id="consulta-link">Consultas</a></li>
+                <li><a href="#acercadenosotros-section" class="text-custom-blue ml-10">Acerca de Nosotros</a></li>
+                <li><a href="#concientizacion-section" class="text-custom-blue ml-10">Concientización</a></li>
+                <li><a href="#contact-form" class="text-custom-blue ml-10">Consultas</a></li>
             </ul>
-        </nav>         
+        </nav>
         <a href="{{ url_for('login') }}" class="btn-custom rounded-full mr-4">Acceder</a>
     </div>
-    <div class="separator"></div>
-
-    <!-- Main Content -->
-    <main class="main-content flex items-center justify-center text-center" id="main-section">
+    <main class="main-content flex justify-center text-center" id="main-section">
         <div class="flex-container 2x2 flex flex-row justify-center items-center">
             <div id="myCarousel" class="carousel slide" data-ride="carousel">
                 <!-- Indicators -->
                 <ul class="carousel-indicators">
-                  <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-                  <li data-target="#myCarousel" data-slide-to="1"></li>
-                  <li data-target="#myCarousel" data-slide-to="2"></li>
+                    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                    <li data-target="#myCarousel" data-slide-to="1"></li>
+                    <li data-target="#myCarousel" data-slide-to="2"></li>
                 </ul>
-              
+
                 <!-- The slideshow -->
                 <div class="carousel-inner">
-                  <div class="carousel-item active">
+                    <div class="carousel-item active">
                         <div class="carousel1">
-                            <h1 class="text-4xl text-blue-500 font-bold mt-10 mb-10">COME BARATO!</h1>
-                            <img src="{{ url_for('static', filename='img/desperdicio.png') }}" alt="Image 1" class="imagen1">
-                            <p class="text-4xl text-blue-500 font-bold mb-10 mt-10">Y AYUDA AL PLANETA</p>
+                            <h1 class="text-3xl text-white font-bold mt-20">COME BARATO!</h1>
+                            <img src="{{ url_for('static', filename='img/desperdicio.png') }}" alt="Image 1" class="imagen1 d-block w-50 mx-auto">
+                            <p class="text-4xl text-white font-bold mb-10">Y AYUDA AL PLANETA</p>
                         </div>
-                  </div>
-                  <div class="carousel-item">
-                    <div class="text-center">
-                        <h1 class="text-4xl text-white font-bold mt-20">¡como estas!</h1>
-                        <p class="text-lg mb-6 text-white">Encuentra platos frescos y de calidad que de otro modo se desperdiciarían.</p>
                     </div>
+                    <div class="carousel-item">
+                        <div class="carousel1">
+                            <h1 class="text-4xl text-white font-bold mt-20">¡como estas!</h1>
+                            <p class="text-lg mb-6 text-white">Encuentra platos frescos y de calidad que de otro modo se desperdiciarían.</p>
+                        </div>
                     </div>
-                  </div>
-                  <div class="carousel-item">
-                    <img src="{{ url_for('static', filename='img/salad_intro.png') }}" alt="Image 3" class="d-block w-50">
-                    <div class="text-center">
-                        <h1 class="text-4xl text-white font-bold">¡CHAU!</h1>
-                        <p class="text-lg mb-6 text-white">Encuentra platos frescos y de calidad que de otro modo se desperdiciarían.</p>
+                    <div class="carousel-item">
+                        <div class="carousel1">
+                            <img src="{{ url_for('static', filename='img/salad_intro.png') }}" alt="Image 3" class="imagen1 d-block w-50 mx-auto">
+                            <h1 class="text-4xl text-white font-bold">¡CHAU!</h1>
+                            <p class="text-lg mb-6 text-white">Encuentra platos frescos y de calidad que de otro modo se desperdiciarían.</p>
+                        </div>
                     </div>
-                  </div>
                 </div>
 
-                
-              
                 <!-- Left and right controls -->
                 <a class="carousel-control-prev" href="#myCarousel" data-slide="prev">
-                  <span class="carousel-control-prev-icon"></span>
+                    <span class="carousel-control-prev-icon"></span>
                 </a>
                 <a class="carousel-control-next" href="#myCarousel" data-slide="next">
-                  <span class="carousel-control-next-icon"></span>
+                    <span class="carousel-control-next-icon"></span>
                 </a>
-              </div>
-
-              
-
-
-           
-           
             </div>
         </div>
     </main>
-
     <!-- Acerca de Nosotros -->
     <div class="acerca-de-nosotros" id="acercadenosotros-section">
         <div class="content-container bg-white p-4 rounded">
             <h1 class="text-2xl font-bold text-center mb-4">Acerca de Nosotros</h1>
             <div class="separator mb-4"></div>
-            <div class="text-center mb-6">            
-                <p class="text-l mb-3">En Save a Bite, facilitamos la conexión entre los mejores restaurantes y los amantes de la buena
-                mesa.</p>
-                <p class="text-l mb-3">Fundada en 2023, nuestra plataforma permite descubrir y disfrutar de una amplia variedad de
-                opciones gastronómicas de calidad.</p>
-    
+            <div class="text-center mb-6">
+                <p class="text-l mb-3">En Save a Bite, facilitamos la conexión entre los mejores restaurantes y los amantes de la buena mesa.</p>
+                <p class="text-l mb-3">Fundada en 2023, nuestra plataforma permite descubrir y disfrutar de una amplia variedad de opciones gastronómicas de calidad.</p>
                 <p class="text-l mb-2">Nuestra misión es ofrecer una experiencia culinaria excepcional a través de la colaboración con una amplia variedad de restaurantes, asegurando siempre una oferta rica y de alta calidad. </p>
                 <p class="text-l mb-2">Nos dedicamos a la innovación y la simplicidad, creando una experiencia de usuario fluida y agradable. Además, priorizamos la satisfacción del cliente, esforzándonos por brindar un servicio excepcional y memorable en todo momento.</p>
-    
                 <p class="text-l mb-2">Nos comprometemos a ofrecer una plataforma inclusiva, que facilite el acceso a una amplia gama de restaurantes y tipos de cocina. </p>
                 <p class="text-l mb-10">Buscamos brindar una experiencia única, con soporte integral y personalizado en cada interacción. Además, promovemos la sostenibilidad, apoyando prácticas responsables y colaborando con restaurantes que comparten nuestros valores.</p>
-                
+
                 <h5 class="text-xl font-bold mb-5">Únete a Save a Bite y descubre nuevos restaurantes. Gracias por confiar en nosotros para tus aventuras culinarias. </h5>
                 <p class="text-l mb-5">¡Esperamos conectarte con tus próximos sabores favoritos!</p>
-            </div> 
-        </div>    
-    </div>
+            </div>
+        </div>
 
+    </div>
     <!-- Concientización -->
     <div class="concientizacion-info" id="concientizacion-section">
         <div class="content-container bg-white p-4 rounded shadow-md">
@@ -291,13 +271,13 @@
                     <div class="form-content">
                         <h2 class="text-2xl font-bold mb-2">¿Qué es el Desperdicio de Alimentos?</h2>
                         <p class="mb-4">El desperdicio de alimentos se refiere a todos aquellos alimentos que se producen y no llegan a ser consumidos. Este problema ocurre a lo largo de toda la cadena de suministro, desde la producción agrícola hasta el consumo final en los hogares. Incluye alimentos que se descartan, ya sea porque no cumplen con los estándares estéticos del mercado, por errores en la cadena de distribución, por mal almacenamiento, o porque simplemente no se consumen a tiempo y se deterioran.</p>
-                        
+
                         <h2 class="text-2xl font-bold mb-2 mt-4">Impacto del Desperdicio de Alimentos</h2>
                         <p class="mb-4">Socialmente, tiene implicaciones importantes para la seguridad alimentaria y el bienestar de las comunidades. A pesar de los avances en la producción de alimentos, según la Organización de las Naciones Unidas (ONU), “existen 821 millones de personas que padecen de hambre en el mundo. Una de cada nueve personas sufre de inseguridad alimentaria, pero en realidad se producen alimentos más que suficientes para todos” (ONU, 2018).</p>
                         <p class="mb-4">Desde un enfoque ambiental, la producción de alimentos requiere enormes cantidades de agua, tierra y energía, y cuando se desperdician alimentos, se está utilizando de manera ineficiente estos recursos. Además, cuando los alimentos no consumidos terminan en vertederos, liberan metano, un gas de efecto invernadero potente que agrava el cambio climático. Esta práctica no solo es insostenible desde un punto de vista ambiental, sino que también tiene consecuencias negativas a largo plazo para el planeta y para las generaciones futuras.</p>
                         <p class="mb-4">A nivel mundial, el desperdicio de alimentos afecta a todas las etapas de la cadena de suministro. Según la Organización de las Naciones Unidas para la Alimentación y la Agricultura (FAO), “anualmente se perdía o desperdiciaba en torno a un tercio de los alimentos a nivel mundial, es decir, unos 1 300 millones de toneladas de alimentos al año” (FAO, 2023). Teniendo así impactos significativos tanto en países desarrollados como en desarrollo.</p>
                         <p class="mb-4">En los países desarrollados, se concentra principalmente en el nivel de consumo, mientras que en los países en desarrollo, ocurre mayormente en las etapas de producción y distribución debido a la falta de infraestructura adecuada (ONU, 2024).</p>
-                        
+
                         <h2 class="text-2xl font-bold mb-2 mt-4">Consejos para Reducir el Desperdicio de Alimentos</h2>
                         <ul class="list-disc pl-6 mb-4">
                             <li>Planificar las comidas y hacer una lista de compras para evitar comprar en exceso.</li>
@@ -306,11 +286,11 @@
                             <li>Compostar los restos de comida en lugar de tirarlos a la basura.</li>
                             <li>Utilizar una solución para reducir el desperdicio como Save A Bite!.</li>
                         </ul>
-                        
+
                         <h2 class="text-2xl font-bold mb-2 mt-4">Iniciativas Globales contra el Desperdicio de Alimentos</h2>
                         <p class="mb-4">En todo el mundo, diversas iniciativas están trabajando para reducir el desperdicio de alimentos. La Organización de las Naciones Unidas para la Alimentación y la Agricultura (FAO) y otras organizaciones internacionales están promoviendo prácticas sostenibles de producción y consumo. Programas como el "Desafío de la Década de Acción de la ONU" buscan movilizar gobiernos, empresas y ciudadanos para adoptar medidas concretas y reducir significativamente el desperdicio de alimentos para 2030.</p>
                         <p class="mb-4">A nivel local, muchas comunidades están adoptando estrategias innovadoras para reutilizar alimentos que de otro modo se desperdiciarían. Proyectos de compostaje comunitario, bancos de alimentos, y aplicaciones móviles que conectan a las personas con excedentes de alimentos son solo algunas de las maneras en que las comunidades están abordando este problema crítico.</p>
-                        
+
                         <h2 class="text-2xl font-bold mb-2 mt-4">Estadísticas del Desperdicio de Alimentos</h2>
                         <ul class="list-disc pl-6 mb-4">
                             <li>Aproximadamente un tercio de los alimentos producidos en el mundo se pierden o desperdician cada año.</li>
@@ -318,7 +298,7 @@
                             <li>El desperdicio de alimentos en los hogares representa el 44% del total de los desperdicios alimentarios.</li>
                             <li>La reducción del desperdicio de alimentos podría ahorrar hasta 1.2 billones de dólares anualmente.</li>
                         </ul>
-                        
+
                         <h2 class="text-2xl font-bold mb-2 mt-4">Recursos y Herramientas</h2>
                         <p class="mb-4">Hay una variedad de recursos y herramientas disponibles para ayudar a reducir el desperdicio de alimentos:</p>
                         <ul class="list-disc pl-6 mb-4">
@@ -327,7 +307,7 @@
                             <li><a href="https://www.epa.gov/sustainable-management-food" target="_blank" class="text-blue-500 hover:underline">EPA Gestión Sostenible de Alimentos</a></li>
                             <li><a href="https://www.lovefoodhatewaste.com/" target="_blank" class="text-blue-500 hover:underline">Love Food Hate Waste</a></li>
                         </ul>
-                        
+
                         <h2 class="text-2xl font-bold mb-2 mt-4">Historias de Éxito</h2>
                         <p class="mb-4">Muchas organizaciones y comunidades han implementado iniciativas exitosas para reducir el desperdicio de alimentos:</p>
                         <ul class="list-disc pl-6 mb-4">
@@ -340,7 +320,6 @@
             </div>
         </div>
     </div>
-
     <!-- Contacto -->
     <div class="contact-form" id="contact-form">
         <h1 class="text-2xl font-bold text-center mb-4">Contáctanos</h1>
@@ -361,17 +340,13 @@
         </form>
         <p class="confirmation-message" id="confirmation-message">Nos pondremos en contacto contigo a la brevedad posible.</p>
     </div>
-
-    <!-- Footer -->
     <div class="wave">
         <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
             version="1.1">
             <path d="M0 387L50 379.5C100 372 200 357 300 362.5C400 368 500 394 600 394.5C700 395 800 370 850 357.5L900 345L900 451L850 451C800 451 700 451 600 451C500 451 400 451 300 451C200 451 100 451 50 451L0 451Z"
-                fill="#00a2ff" stroke-linecap="round" stroke-linejoin="miter"></path>
+                fill="#FFFFFF" stroke-linecap="round" stroke-linejoin="miter"></path>
         </svg>
     </div>
-
-    
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
@@ -385,36 +360,10 @@
             return false;
         }
 
-        document.getElementById('consulta-link').addEventListener('click', function (event) {
-            event.preventDefault();
-            hideAllSections();
-            document.getElementById('contact-form').style.display = 'block';
-        });
-
-        document.getElementById('concientizacion-link').addEventListener('click', function (event) {
-            event.preventDefault();
-            hideAllSections();
-            document.getElementById('concientizacion-section').style.display = 'block';
-        });
-
-        document.getElementById('acercadenosotros-link').addEventListener('click', function (event) {
-            event.preventDefault();
-            hideAllSections();
-            document.getElementById('acercadenosotros-section').style.display = 'block';
-        });
-
-        function hideAllSections() {
-            document.getElementById('main-section').style.display = 'none';
-            document.getElementById('contact-form').style.display = 'none';
-            document.getElementById('concientizacion-section').style.display = 'none';
-            document.getElementById('acercadenosotros-section').style.display = 'none';
-        }
-
         document.getElementById('menu-toggle').addEventListener('click', function () {
             const menu = document.getElementById('menu');
             menu.classList.toggle('hidden');
         });
     </script>
-    
 </body>
 </html>

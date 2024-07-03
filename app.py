@@ -568,7 +568,8 @@ def menu():
 
     # Construir la consulta base de productos
     productos_query = '''
-        SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen, usuarioEmpresa.ratingTotal AS rating_total
+        SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen, usuarioEmpresa.ratingTotal AS rating_total,
+               usuarioEmpresa.membresia
         FROM Productos
         JOIN usuarioEmpresa ON Productos.id_empresa = usuarioEmpresa.id
         WHERE Productos.estad = 'Disponible'
@@ -586,6 +587,15 @@ def menu():
             )
         '''
         params.extend([f'%{query}%', f'%{query}%', f'%{query}%', f'%{query}%'])
+
+    # Añadir orden por membresía
+    productos_query += '''
+        ORDER BY 
+            CASE 
+                WHEN usuarioEmpresa.membresia = 'Avanzada' THEN 1
+                ELSE 2
+            END, Productos.nombre
+    '''
 
     # Ejecutar la consulta con los parámetros
     productos = conn.execute(productos_query, params).fetchall()

@@ -158,7 +158,7 @@
                     <p class="text-gray-600">Usuario: {{ pedido['usuario_id'] }}</p>
                     <p class="text-gray-600">Precio: ${{ pedido['total'] }}</p>
                     <div class="button-container">
-                        <a href="{{ url_for('ver_resumen',idPedido=pedido['id'])}}" class="action-button">Ver Resumen</a>
+                        <a href="{{ url_for('ver_resumenEmpresa',idPedido=pedido['id'])}}" class="action-button">Ver Resumen</a>
                     </div>
                 </div>
                 {% endfor %}

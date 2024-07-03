@@ -664,9 +664,8 @@ def get_all_productos(conn):
 
 @app.route("/pedidos", methods=['GET'])
 def pedidos():
-    empresa_id = session.get('empresa_id')
+    empresa_id = session.get('user_id')
     conn = get_db_connection()
-    cursor = conn.cursor()
     pedidos = conn.execute('''
                            SELECT * 
                            FROM pedidos2
@@ -678,7 +677,7 @@ def pedidos():
 
 @app.route("/pedidosCompletados")
 def pedidosCompletados():
-    empresa_id = session.get('empresa_id')
+    empresa_id = session.get('user_id')
     conn = get_db_connection()
     cursor = conn.cursor()
     pedidos = conn.execute('''
@@ -691,7 +690,7 @@ def pedidosCompletados():
 
 @app.route("/marcar_entregado/<int:pedido_id>", methods=['POST'])
 def marcar_entregado(pedido_id):
-    empresa_id = session.get('empresa_id')
+    empresa_id = session.get('user_id')
     conn = get_db_connection()
     conn.execute('''
                  UPDATE pedidos2
@@ -700,7 +699,7 @@ def marcar_entregado(pedido_id):
                  (pedido_id, empresa_id))
     conn.commit()
     conn.close()
-    return jsonify(success=True)
+    return redirect(url_for('pedidos'))
 
 
 @app.route("/pedidos_cliente")
@@ -757,7 +756,79 @@ def ver_resumen(idPedido):
     else:
         return "Pedido no encontrado", 404
 
+@app.route('/ver_resumenEmpresa/<int:idPedido>')
+def ver_resumenEmpresa(idPedido):
+    db = get_db_connection()
+    cursor = db.cursor()
+    
+    # Obtener detalles del pedido
+    cursor.execute('''
+        SELECT p.fecha, p.total, p.usuario_id, p.envio, p.servicio, p.propina
+        FROM pedidos2 p
+        WHERE p.id = ?
+    ''', (idPedido,))
+    pedido = cursor.fetchone()
 
+    # Obtener los productos del pedido
+    cursor.execute('''
+        SELECT pr.nombre, pr.precio, ip.cantidad
+        FROM itemsPedido ip
+        JOIN Productos pr ON ip.idProducto = pr.id
+        WHERE ip.idPedido = ?
+        GROUP BY pr.id
+    ''', (idPedido,))
+    productos = cursor.fetchall()
+
+    if pedido:
+        pedido_info = {
+            'fecha': pedido[0],
+            'total': pedido[1],
+            'usuario': pedido[2],
+            'envio': pedido[3],
+            'servicio': pedido[4],
+            'propina': pedido[5],
+            'productos': [{'nombre': p[0], 'precio': p[1], 'cantidad': p[2]} for p in productos]
+        }
+        return render_template('general/resumenEmpresa.html', pedido=pedido_info)
+    else:
+        return "Pedido no encontrado", 404
+    
+@app.route('/ver_detallePedido/<int:idPedido>')
+def ver_detallePedido(idPedido):
+    db = get_db_connection()
+    cursor = db.cursor()
+    
+    # Obtener detalles del pedido
+    cursor.execute('''
+        SELECT p.fecha, p.total, p.usuario_id, p.envio, p.servicio, p.propina
+        FROM pedidos2 p
+        WHERE p.id = ?
+    ''', (idPedido,))
+    pedido = cursor.fetchone()
+
+    # Obtener los productos del pedido
+    cursor.execute('''
+        SELECT pr.nombre, pr.precio, ip.cantidad
+        FROM itemsPedido ip
+        JOIN Productos pr ON ip.idProducto = pr.id
+        WHERE ip.idPedido = ?
+        GROUP BY pr.id
+    ''', (idPedido,))
+    productos = cursor.fetchall()
+
+    if pedido:
+        pedido_info = {
+            'fecha': pedido[0],
+            'total': pedido[1],
+            'usuario': pedido[2],
+            'envio': pedido[3],
+            'servicio': pedido[4],
+            'propina': pedido[5],
+            'productos': [{'nombre': p[0], 'precio': p[1], 'cantidad': p[2]} for p in productos]
+        }
+        return render_template('general/detalle.html', pedido=pedido_info)
+    else:
+        return "Pedido no encontrado", 404
 
 @app.route("/informacion", methods=['GET'])
 def informacion():

@@ -151,7 +151,7 @@
         <h1 class="text-4xl font-bold text-custom-blue">Pedidos en Curso</h1>
         <div class="button-wrapper">
             <a href="{{ url_for('pedidosCompletados') }}">
-                <button class="action-button">Entregados</button>
+                <button class="action-button">Ver pedidos entregados</button>
             </a>
         </div>
         <div class="content-container bg-transparent rounded">
@@ -163,7 +163,10 @@
                     <p class="text-gray-600">Usuario: {{ pedido['usuario_id'] }}</p>
                     <p class="text-gray-600">Precio: ${{ pedido['total'] }}</p>
                     <div class="button-container">
-                        <button class="action-button" onclick="markAsDelivered(`{{ pedido['id'] }}`)">Entregado</button>
+                        <form method="POST" action="{{ url_for('marcar_entregado', pedido_id=pedido.id) }}">
+                            <button type="submit" class="action-button">Marcar como Entregado</button>
+                        </form>
+                        <a href="{{ url_for('ver_detallePedido',idPedido=pedido['id'])}}" class="action-button">Ver detalle</a>
                     </div>
                 </div>
                 {% endfor %}

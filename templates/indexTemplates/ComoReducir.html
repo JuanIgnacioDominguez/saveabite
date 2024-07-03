@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Save a Bite - Food Delivery</title>
+    <title>Economía Circular</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Nunito', sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
         }
 
         .bg-custom-blue {
-            background-color: #27a2e8;
+            background-color: #ffffff;
             position: relative;
         }
 
@@ -42,6 +42,80 @@
             z-index: 10;
         }
 
+        .separator {
+            border-bottom: 2px solid #27a2e8;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .concientizacion-info {
+            padding: 20px;
+            margin-top: 5px;
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 120px;
+            text-align: left;
+        }
+        
+        .container {
+            max-width: 1350px;
+            margin: auto;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #27a2e8; 
+            overflow: hidden; /* Para limpiar los floats dentro de los content-blocks */
+        }  
+
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .section-content {
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+        .content-block {
+            display: flex;
+            align-items: center;
+            clear: both; /* Limpiar floats */
+        }
+        .content-block img {
+            width: 150px;
+            height: auto;
+            margin-right: 20px;
+            float: left; /* Alinear las imágenes a la izquierda */
+        }
+        .content-block.reverse img {
+            margin-left: 490px;
+            float: right; /* Alinear las imágenes a la derecha */
+        }
+        
+        .call-to-action {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .call-to-action p {
+            font-weight: bold;
+            font-size: 20px;
+        }
+        .call-to-action button {
+            background-color: #113c54;
+            color: #27a2e8;
+            border: none;
+            padding: 15px 30px; /* Ajusta el tamaño del botón */
+            font-size: 18px; /* Ajusta el tamaño de la fuente */
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .call-to-action button:hover {
+            background-color:#17587e;
+        }
         .wave {
             position: absolute;
             bottom: 0;
@@ -49,45 +123,25 @@
             width: 100%;
             z-index: -1;
         }
-
         .wave svg {
             position: relative;
             display: block;
             width: 100%;
             height: auto;
         }
-
-        .main-content {
-            height: auto;
-        }
-
-        .concientizacion-info {
-            padding: 20px;
-            margin-top: 10px;
-            width: 100%;
-            border-radius: 10px;
-            margin-bottom: 120px;
-            text-align: center;
-        }
-
         .separator {
+            border-bottom: 2px solid #ffffff;
+            margin: 1rem 0;
+        }
+        .separator1 {
             border-bottom: 2px solid #27a2e8;
             margin: 1rem 0;
         }
-
-        
     </style>
 </head>
-
 <body class="bg-custom-blue items-center min-h-screen relative">
     <div class="white-background w-full flex justify-between items-center">
         <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Save a Bite" class="h-14 ml-4">
-        <button id="menu-toggle" class="block md:hidden focus:outline-none mr-4">
-            <svg class="h-6 w-6 text-custom-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-            </svg>
-        </button>
         <nav id="menu" class="hidden md:flex flex-col md:flex-row md:space-x-4 md:items-center">
             <ul class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
                 <li><a href="{{ url_for('index') }}" class="text-custom-blue ml-10">Menu</a></li>
@@ -95,9 +149,10 @@
         </nav>
         <a href="{{ url_for('login') }}" class="btn-custom rounded-full mr-4">Acceder</a>
     </div>
+    <div class="separator1"></div>
     <main class="main-content flex justify-center text-center" id="main-section">
         <div class="concientizacion-info" id="concientizacion-section">
-            <div class="content-container bg-white p-4 rounded shadow-md">
+            <div class="container">
                 <h1 class="text-2xl font-bold text-center mb-4">Cómo Reducir el Desperdicio en Casa</h1>
                 <div class="separator mb-4"></div>
                 <div class="profile-container">
@@ -120,12 +175,9 @@
             <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                 version="1.1">
                 <path d="M0 387L50 379.5C100 372 200 357 300 362.5C400 368 500 394 600 394.5C700 395 800 370 850 357.5L900 345L900 451L850 451C800 451 700 451 600 451C500 451 400 451 300 451C200 451 100 451 50 451L0 451Z"
-                    fill="#FFFFFF" stroke-linecap="round" stroke-linejoin="miter"></path>
+                    fill="#27a2e8" stroke-linecap="round" stroke-linejoin="miter"></path>
             </svg>
         </div>
-        
     </main>
-    
 </body>
-
 </html>

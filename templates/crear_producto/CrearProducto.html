@@ -236,8 +236,9 @@
             const precio = document.getElementById('precio').value;
             const descripcion = document.getElementById('descripcion').value;
             const categorias = document.getElementById('categorias').value;
+            const stock = document.getElementById('stock').value;
 
-            if (!imagen || !nombre || !precio || !descripcion || !categorias) {
+            if (!imagen || !nombre || !precio || !descripcion || !categorias || !stock) {
                 alert("Todos los campos son obligatorios.");
                 return false;
             }
@@ -266,10 +267,16 @@
                                 <input type="text" id="nombre" name="nombre" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
                             </label>
                         </div>
-                        <div style="flex: 1;">
+                        <div style="flex: 1; margin-right: 1rem;">
                             <label class="block mb-6">
                                 <span class="text-gray-700">Precio del Producto</span>
                                 <input type="text" id="precio" name="precio" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                            </label>
+                        </div>
+                        <div style="flex: 1;">
+                            <label class="block mb-6">
+                                <span class="text-gray-700">Stock del Producto</span>
+                                <input type="number" id="stock" name="stock" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" min="0" required>
                             </label>
                         </div>
                     </div>

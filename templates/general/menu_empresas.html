@@ -136,7 +136,6 @@
             border-radius: 12px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 16px;
-            
             width: 100%;
             margin-bottom: 1rem;
         }
@@ -265,11 +264,11 @@
         <!-- Información del restaurante -->
         <div class="card">
             <h3 class="text-xl font-bold mb-2">Información del Restaurante</h3>
-            <p><strong>Nombre:</strong> {{ restaurant['name'] }}</p>
-            <p><strong>Dirección:</strong> {{ restaurant['address'] }}</p>
-            <p><strong>Email:</strong> {{ restaurant['email'] }}</p>
-            <p><strong>Membresía:</strong> {{ restaurant['membership'] }}</p>
-            <p><strong>Rating Total:</strong> {{ restaurant['ratingTotal'] }}</p>
+            <p><strong>Nombre:</strong> {{ restaurant.name }}</p>
+            <p><strong>Dirección:</strong> {{ restaurant.address if restaurant.address else 'Dirección no disponible' }}</p>
+            <p><strong>Email:</strong> {{ restaurant.email }}</p>
+            <p><strong>Membresía:</strong> {{ restaurant.membership }}</p>
+            <p><strong>Rating Total:</strong> {{ restaurant.ratingTotal }}</p>
         </div>
 
         <!-- Sección de Estadísticas -->
@@ -281,6 +280,11 @@
             
             <!-- Contenedor de estadísticas en columna -->
             <div class="stat-container">
+                <!-- Ventas Diarias -->
+                <div class="stat-card">
+                    <a href="{{ url_for('pedidos') }}"><h4>Nuevas Ventas</h4>
+                    <p>{{ daily_sales }}</p></a>
+                </div>
                 <!-- Pedidos Pendientes -->
                 <div class="stat-card">
                     <a href="{{ url_for('pedidos') }}"><h4>Pedidos Pendientes</h4>
@@ -293,7 +297,7 @@
                 </div>
                 <div class="stat-card">
                     <a href="{{ url_for('VerComidas') }}"><h4>Productos en Inventario</h4>
-                    <p>{{ product_inventario }} </p></a>
+                    <p>{{ product_inventory }}</p></a>
                 </div>
             </div>
         </div>
@@ -301,11 +305,15 @@
 
     <script>
         // Datos para el gráfico de línea
+        const labels = Array.from({length: 30}, (_, i) => i + 1);
+        const dailyRevenue = {{ daily_revenue | tojson }};
+        const dataPoints = labels.map(day => dailyRevenue[day] || 0);
+        
         const data = {
-            labels: ['1', '7', '12', '17', '22', '30'],
+            labels: labels,
             datasets: [{
                 label: 'Ingresos Mensuales',
-                data: [5000, 7000, 3000, 9000, 5000, 8000],
+                data: dataPoints,
                 borderColor: 'rgba(0, 123, 255, 1)',
                 backgroundColor: 'rgba(0, 123, 255, 0.1)',
                 borderWidth: 2,

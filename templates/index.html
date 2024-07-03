@@ -237,10 +237,43 @@
         .card a:hover {
             background-color: #1e91d6;
         }
+        .alert-container {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .alert-success {
+            background-color: #4caf50;
+        }
+
+        .alert-error {
+            background-color: #f44336;
+        }
+
     </style>
 </head>
 
 <body class="bg-custom-blue items-center min-h-screen relative">
+    <!-- Mostrar mensajes flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="alert-container">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+   {% endwith %}
     <div class="white-background w-full flex justify-between items-center">
         <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Save a Bite" class="h-14 ml-4">
         <button id="menu-toggle" class="block md:hidden focus:outline-none mr-4">
@@ -354,26 +387,27 @@
         </div>
     </div>
 
+
     <!-- Contacto -->
-    <div class="contact-form" id="contact-form">
-        <h1 class="text-2xl font-bold text-center mb-4">Contáctanos</h1>
-        <div class="separator mb-4"></div>
-        <form action="#" method="post" onsubmit="return submitForm()">
-            <label for="name">Introduce tu nombre</label>
-            <input type="text" id="name" name="name" required>
+<div class="contact-form" id="contact-form">
+    <h1 class="text-2xl font-bold text-center mb-4">Contáctanos</h1>
+    <div class="separator mb-4"></div>
+    <form action="{{ url_for('contacto') }}" method="post">
+        <label for="name">Introduce tu nombre</label>
+        <input type="text" id="name" name="name" required>
 
-            <label for="email">Introduce tu email</label>
-            <input type="email" id="email" name="email" required>
+        <label for="email">Introduce tu email</label>
+        <input type="email" id="email" name="email" required>
 
-            <label for="message">Introduce tu mensaje</label>
-            <textarea id="message" name="message" required></textarea>
+        <label for="message">Introduce tu mensaje</label>
+        <textarea id="message" name="message" required></textarea>
 
-            <p>Déjanos tu consulta y nos contactaremos con usted a la brevedad</p>
+        <p>Déjanos tu consulta y nos contactaremos con usted a la brevedad</p>
 
-            <button type="submit">Enviar</button>
-        </form>
-        <p class="confirmation-message" id="confirmation-message">Nos pondremos en contacto contigo a la brevedad posible.</p>
-    </div>
+        <button type="submit">Enviar</button>
+    </form>
+    <p class="confirmation-message" id="confirmation-message">Nos pondremos en contacto contigo a la brevedad posible.</p>
+</div>
     <div class="wave">
         <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
             version="1.1">
@@ -381,6 +415,7 @@
                 fill="#FFFFFF" stroke-linecap="round" stroke-linejoin="miter"></path>
         </svg>
     </div>
+
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>

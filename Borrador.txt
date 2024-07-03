@@ -55,13 +55,6 @@ GENERAL
 
 RESTAURANTE
 -Faltaria arreglar lo del stock que funciona a medias
--hacer pedidos en curso (probablemente con una tabla pedidos, cuando se confirma el carrito se crea la de pedidos con el estado, preparando, entregado, etc)
--todas las stats del menu que se hagan en base a los datos de la bd
--Definir el costo de envio y si no lo ingreso que exista uno por default
-
-GENERAL
--HACER QUE EL INICIO EMPRESA TENGA FUNCIONALIDAD
--HACER QUE FUNCIONE PEDIDOS EN CURSO
 
 IMPORTANTISIMO (ULTIMO TASK)
 -INTENTAR ROMPER TODO EL CODIGO (PROBANDO) PARA SABER QUE SOLUCIONAR

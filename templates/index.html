@@ -17,7 +17,7 @@
         }
 
         .bg-custom-blue {
-            background-color: #27a2e8;
+            background-color: #ffffff;
             position: relative;
         }
 
@@ -164,16 +164,20 @@
             margin-bottom: 120px; /* RENA LO PUSO EN 200px */
         }
         .separator {
-            border-bottom: 2px solid #27a2e8;
+            border-bottom: 4px solid #00a2ff;
+            width: 1400px;
             margin: 1rem 0;
         }
         .imagen1{
-            height: 400px;
+            height: 200px;
             object-fit: contain;
         }
         .carousel1{
             text-align: center;
             align-items: center;
+        }
+        .carousel{
+            margin-bottom: 90px;
         }
     </style>
 </head>
@@ -196,6 +200,9 @@
         </nav>         
         <a href="{{ url_for('login') }}" class="btn-custom rounded-full mr-4">Acceder</a>
     </div>
+    <div class="separator"></div>
+
+    <!-- Main Content -->
     <main class="main-content flex items-center justify-center text-center" id="main-section">
         <div class="flex-container 2x2 flex flex-row justify-center items-center">
             <div id="myCarousel" class="carousel slide" data-ride="carousel">
@@ -210,9 +217,9 @@
                 <div class="carousel-inner">
                   <div class="carousel-item active">
                         <div class="carousel1">
-                            <h1 class="text-4xl text-white font-bold mt-20">COME BARATO!</h1>
-                            <img src="{{ url_for('static', filename='img/desperdicio.png') }}" alt="Image 1" class="imagen1 d-block w-50">
-                            <p class="text-4xl text-white font-bold mb-10">Y AYUDA AL PLANETA</p>
+                            <h1 class="text-4xl text-blue-500 font-bold mt-10 mb-10">COME BARATO!</h1>
+                            <img src="{{ url_for('static', filename='img/desperdicio.png') }}" alt="Image 1" class="imagen1">
+                            <p class="text-4xl text-blue-500 font-bold mb-10 mt-10">Y AYUDA AL PLANETA</p>
                         </div>
                   </div>
                   <div class="carousel-item">
@@ -250,6 +257,7 @@
             </div>
         </div>
     </main>
+
     <!-- Acerca de Nosotros -->
     <div class="acerca-de-nosotros" id="acercadenosotros-section">
         <div class="content-container bg-white p-4 rounded">
@@ -270,9 +278,9 @@
                 <h5 class="text-xl font-bold mb-5">Únete a Save a Bite y descubre nuevos restaurantes. Gracias por confiar en nosotros para tus aventuras culinarias. </h5>
                 <p class="text-l mb-5">¡Esperamos conectarte con tus próximos sabores favoritos!</p>
             </div> 
-        </div>
-        
+        </div>    
     </div>
+
     <!-- Concientización -->
     <div class="concientizacion-info" id="concientizacion-section">
         <div class="content-container bg-white p-4 rounded shadow-md">
@@ -332,6 +340,7 @@
             </div>
         </div>
     </div>
+
     <!-- Contacto -->
     <div class="contact-form" id="contact-form">
         <h1 class="text-2xl font-bold text-center mb-4">Contáctanos</h1>
@@ -352,13 +361,17 @@
         </form>
         <p class="confirmation-message" id="confirmation-message">Nos pondremos en contacto contigo a la brevedad posible.</p>
     </div>
+
+    <!-- Footer -->
     <div class="wave">
         <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
             version="1.1">
             <path d="M0 387L50 379.5C100 372 200 357 300 362.5C400 368 500 394 600 394.5C700 395 800 370 850 357.5L900 345L900 451L850 451C800 451 700 451 600 451C500 451 400 451 300 451C200 451 100 451 50 451L0 451Z"
-                fill="#FFFFFF" stroke-linecap="round" stroke-linejoin="miter"></path>
+                fill="#00a2ff" stroke-linecap="round" stroke-linejoin="miter"></path>
         </svg>
     </div>
+
+    
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>

@@ -917,6 +917,7 @@ def perfil_usuario():
 def menu_empresas():
     # Obtener el correo electrónico del usuario desde la sesión
     correo_electronico = session.get('user_email')
+    empresa_id = session.get('user_id')
     
     # Conectar a la base de datos
     conn = sqlite3.connect('flask_db.db')
@@ -953,7 +954,26 @@ def menu_empresas():
         membresia = 'N/A'
         rating_total = 0
         direccion_completa = 'Dirección no disponible'
+
+    product_inventario = cursor.execute('''
+        SELECT COUNT(*) FROM Productos WHERE id_empresa = ? 
+    ''', (empresa_id,)).fetchone()[0]
     
+    if empresa_id:
+        # Consultar la cantidad de pedidos pendientes y completados
+        cursor.execute('''
+            SELECT COUNT(*) FROM pedidos2 WHERE empresa_id = ? AND entregado = 0
+        ''', (empresa_id,))
+        pending_orders = cursor.fetchone()[0]
+        
+        cursor.execute('''
+            SELECT COUNT(*) FROM pedidos2 WHERE empresa_id = ? AND entregado = 1
+        ''', (empresa_id,))
+        completed_orders = cursor.fetchone()[0]
+    else:
+        pending_orders = 0
+        completed_orders = 0
+
     conn.close()
 
     restaurant = {
@@ -965,7 +985,7 @@ def menu_empresas():
         "ratingTotal": rating_total
     }
     
-    return render_template('general/menu_empresas.html', restaurant=restaurant)
+    return render_template('general/menu_empresas.html', restaurant=restaurant, pending_orders=pending_orders, completed_orders=completed_orders, product_inventario=product_inventario)
 
 
 @app.route('/editar_perfil', methods=['GET', 'POST'])

@@ -1,11 +1,159 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Impacto Ambiental del Desperdicio de Alimentos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1350px;
+            margin: auto;
+            margin-top: 1rem;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: rgba(97, 193, 77, 0.9); /* Verde #61C14D con opacidad del 90% */
+            overflow: hidden; /* Para limpiar los floats dentro de los content-blocks */
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #ffffff;
+            border-bottom: 2px solid #27a2e8;
+        }
+        header a {
+            text-decoration: none;
+            color: #27a2e8;
+            font-size: 18px;
+        }
+        header img {
+            height: 40px;
+        }
+
+        header button {
+            background-color: #27a2e8;
+            color: white;
+            border: none;
+            padding: 15px 30px; /* Ajusta el tamaño del botón */
+            font-size: 18px; /* Ajusta el tamaño de la fuente */
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        header button:hover {
+            background-color: #27a2e8;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .section-content {
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+        .content-block {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+            clear: both; /* Limpiar floats */
+        }
+        .content-block img {
+            width: 300px;
+            height: auto;
+            margin-right: 20px;
+            float: left; /* Alinear las imágenes a la izquierda */
+        }
+        .content-block.reverse img {
+            margin-left: 20px;
+            margin-right: 0;
+            float: right; /* Alinear las imágenes a la derecha */
+        }
+        .textBlue {
+            color: #27a2e8;
+        }
+
+        .call-to-action {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .call-to-action p {
+            font-weight: bold;
+            font-size: 20px;
+        }
+        .call-to-action button {
+            background-color: rgb(18, 78, 6);
+            color: rgba(97, 193, 77);
+            border: none;
+            padding: 15px 30px; /* Ajusta el tamaño del botón */
+            font-size: 18px; /* Ajusta el tamaño de la fuente */
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .call-to-action button:hover {
+            background-color:rgb(28, 111, 12);
+        }
+        
+    </style>
 </head>
 <body>
-    
+    <header>
+        <a href="{{ url_for('index') }}" class="textBlue">Volver</a>
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Save a Bite" class="h-14 ml-4">
+        <a href="{{ url_for('login') }}"><button>Acceder</button></a>
+    </header>
+    <div class="container">
+        <div class="title">Impacto Ambiental del Desperdicio de Alimentos: Desafíos y Soluciones</div>
+        <div class="section-content">
+            <p>El desperdicio de alimentos es un problema global alarmante que afecta profundamente al medio ambiente, la economía y la sociedad. Cada año, aproximadamente un tercio de todos los alimentos producidos en el mundo se pierden o se desperdician, lo que equivale a miles de millones de toneladas de alimentos que podrían haber alimentado a personas hambrientas en todo el planeta.</p>
+        </div>
+        
+
+        <div class="section-title">Impacto Ambiental del Desperdicio de Alimentos</div>      
+        <div class="content-block">
+            <div class="section-content">
+                <p>1. Contribución a las Emisiones de Gases de Efecto Invernadero: El desperdicio de alimentos es responsable de aproximadamente el 8% de las emisiones globales de gases de efecto invernadero. Cuando los alimentos se descomponen en vertederos, liberan metano, un gas de efecto invernadero mucho más potente que el dióxido de carbono.</p>
+                <p>2. Desperdicio en los Hogares: Sorprendentemente, el 44% del total de desperdicios alimentarios ocurre en los hogares. Este desperdicio no solo tiene un impacto económico directo en los consumidores, sino que también representa una pérdida significativa de recursos naturales y una contribución innecesaria a las emisiones de gases de efecto invernadero.</p>
+            </div>
+            <img src="{{ url_for('static', filename='img/world.png') }}" alt="Image 2" class="images1">
+        </div>
+                
+        <div class="section-title">Factores y Consecuencias</div>
+        <div class="content-block">
+            <div class="section-content">
+                <p>El desperdicio de alimentos está influenciado por varios factores, como las fechas de caducidad estrictas, las preferencias estéticas de los consumidores y las deficiencias en la cadena de distribución y almacenamiento. Estos problemas no solo afectan a los países desarrollados, sino que también se observan en todo el mundo, exacerbando la inseguridad alimentaria y aumentando la presión sobre los recursos naturales.</p>
+            </div>
+        </div>
+        
+        <div class="section-title">Beneficios Económicos y Ambientales</div>
+        <div class="content-block">
+            <div class="section-content">
+                <p>Reducir el desperdicio de alimentos no solo beneficia al medio ambiente y a la sociedad, sino que también tiene un impacto económico significativo. Se estima que la reducción efectiva del desperdicio de alimentos podría ahorrar hasta 1.2 billones de dólares anualmente, proporcionando una oportunidad clara para mejorar la eficiencia económica y promover la sostenibilidad global.</p>
+            </div>
+        </div>
+        
+        <div class="section-content">
+            <p>El desperdicio de alimentos es un problema multifacético que requiere acciones coordinadas a nivel global. Al adoptar prácticas sostenibles, mejorar la gestión de la cadena de suministro y apoyar iniciativas innovadoras, podemos trabajar juntos para reducir el desperdicio de alimentos y crear un futuro más sostenible y equitativo para todos.</p>
+        </div>
+        
+        <div class="call-to-action">
+            <p>¡Súmate a Save a Bite para empezar con el cambio y hacer una diferencia significativa!</p>
+            <a href="{{ url_for('login') }}"><button>Acceder</button></a>
+        </div>
+    </div>
 </body>
 </html>

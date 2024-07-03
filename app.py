@@ -666,27 +666,93 @@ def get_all_productos(conn):
 def pedidos():
     empresa_id = session.get('user_id')
     conn = get_db_connection()
+    
+    # Obtener pedidos no entregados
     pedidos = conn.execute('''
-                           SELECT * 
-                           FROM pedidos2
-                           WHERE empresa_id = ? AND entregado IS FALSE''', 
-                           (empresa_id,)).fetchall()
+        SELECT p.id, p.fecha, p.total, u.nombre_usuario, d.calle, d.altura, d.localidad
+        FROM pedidos2 p
+        JOIN usuarios u ON p.usuario_id = u.id
+        JOIN direcciones d ON p.usuario_id = d.usuario_id
+        WHERE p.empresa_id = ? AND p.entregado = 0
+    ''', (empresa_id,)).fetchall()
+
+    # Obtener items de cada pedido
+    pedidos_con_items = []
+    for pedido in pedidos:
+        items = conn.execute('''
+            SELECT i.id, pr.nombre, i.cantidad, pr.imagen
+            FROM itemsPedido i
+            JOIN Productos pr ON i.idProducto = pr.id
+            WHERE i.idPedido = ?
+        ''', (pedido['id'],)).fetchall()
+
+        if items:
+            image = items[0]['imagen']
+            description = items[0]['nombre']
+        else:
+            image = ''  # Default image or empty if no items found
+            description = ''
+
+        pedidos_con_items.append({
+            'id': pedido['id'],
+            'fecha': pedido['fecha'],
+            'total': pedido['total'],
+            'usuario': pedido['nombre_usuario'],
+            'direccion': f"{pedido['calle']} {pedido['altura']}, {pedido['localidad']}",
+            'items': items,
+            'image': url_for('static', filename=f'uploads/{image}'),
+            'description': description
+        })
+
     conn.close()
     
-    return render_template('general/pedidos.html', pedidos=pedidos, completados_url=url_for('pedidosCompletados'))
+    return render_template('general/pedidos.html', pedidos=pedidos_con_items)
+
 
 @app.route("/pedidosCompletados")
 def pedidosCompletados():
     empresa_id = session.get('user_id')
     conn = get_db_connection()
-    cursor = conn.cursor()
+    
+    # Obtener pedidos no entregados
     pedidos = conn.execute('''
-                           SELECT * 
-                           FROM pedidos2
-                           WHERE empresa_id = ? AND entregado IS TRUE''', 
-                           (empresa_id,)).fetchall()
+        SELECT p.id, p.fecha, p.total, u.nombre_usuario, d.calle, d.altura, d.localidad
+        FROM pedidos2 p
+        JOIN usuarios u ON p.usuario_id = u.id
+        JOIN direcciones d ON p.usuario_id = d.usuario_id
+        WHERE p.empresa_id = ? AND p.entregado = 1
+    ''', (empresa_id,)).fetchall()
+
+    # Obtener items de cada pedido
+    pedidos_con_items = []
+    for pedido in pedidos:
+        items = conn.execute('''
+            SELECT i.id, pr.nombre, i.cantidad, pr.imagen
+            FROM itemsPedido i
+            JOIN Productos pr ON i.idProducto = pr.id
+            WHERE i.idPedido = ?
+        ''', (pedido['id'],)).fetchall()
+
+        if items:
+            image = items[0]['imagen']
+            description = items[0]['nombre']
+        else:
+            image = ''  # Default image or empty if no items found
+            description = ''
+
+        pedidos_con_items.append({
+            'id': pedido['id'],
+            'fecha': pedido['fecha'],
+            'total': pedido['total'],
+            'usuario': pedido['nombre_usuario'],
+            'direccion': f"{pedido['calle']} {pedido['altura']}, {pedido['localidad']}",
+            'items': items,
+            'image': url_for('static', filename=f'uploads/{image}'),
+            'description': description
+        })
+
     conn.close()
-    return render_template('general/pedidosCompletados.html',pedidos=pedidos)
+    return render_template('general/pedidosCompletados.html',pedidos=pedidos_con_items)
 
 @app.route("/marcar_entregado/<int:pedido_id>", methods=['POST'])
 def marcar_entregado(pedido_id):

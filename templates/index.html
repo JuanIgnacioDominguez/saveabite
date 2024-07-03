@@ -92,7 +92,10 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 90%;
             max-width: 900px;
-            margin: 0 auto 60px auto; /* Cambiado para centrar y ajustar el margen inferior */
+            margin-top: 10px;
+            margin-bottom: 30px;
+            display: block;
+            margin: 0 auto;
         }
 
         .contact-form h2 {
@@ -144,22 +147,23 @@
 
         .concientizacion-info {
             padding: 20px;
-            margin: 10px auto;
-            width: 90%;
-            max-width: 900px;
+            margin-top: 10px;
+            width: 100%;
             border-radius: 10px;
-            margin-bottom: 60px; /* Ajustar el margen inferior */
+            margin-bottom: 120px;
+            text-align: center;
         }
 
         .acerca-de-nosotros {
             max-height: 900px;
             padding: 20px;
-            margin: 10px auto;
-            width: 90%;
-            max-width: 900px;
+            margin-top: 10px;
+            width: 100%;
+            max-width: 1500px;
             border-radius: 10px;
             position: relative;
-            margin-bottom: 60px; /* Ajustar el margen inferior */
+            margin-bottom: 30px;
+            margin: 0 auto;
         }
 
         .separator {
@@ -177,6 +181,44 @@
             text-align: center;
             align-items: center;
         }
+
+        .card-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 250px;
+            text-align: center;
+        }
+
+        .card img {
+            width: 100px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        .card button {
+            background-color: #27a2e8;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .card button:hover {
+            background-color: #1e91d6;
+        }
     </style>
 </head>
 
@@ -184,7 +226,8 @@
     <div class="white-background w-full flex justify-between items-center">
         <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Save a Bite" class="h-14 ml-4">
         <button id="menu-toggle" class="block md:hidden focus:outline-none mr-4">
-            <svg class="h-6 w-6 text-custom-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="h-6 w-6 text-custom-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
             </svg>
         </button>
@@ -213,21 +256,25 @@
                     <div class="carousel-item active">
                         <div class="carousel1">
                             <h1 class="text-3xl text-white font-bold mt-20">COME BARATO!</h1>
-                            <img src="{{ url_for('static', filename='img/desperdicio.png') }}" alt="Image 1" class="imagen1 d-block w-50 mx-auto">
+                            <img src="{{ url_for('static', filename='img/desperdicio.png') }}" alt="Image 1"
+                                class="imagen1 d-block w-50 mx-auto">
                             <p class="text-4xl text-white font-bold mb-10">Y AYUDA AL PLANETA</p>
                         </div>
                     </div>
                     <div class="carousel-item">
                         <div class="carousel1">
                             <h1 class="text-4xl text-white font-bold mt-20">¡como estas!</h1>
-                            <p class="text-lg mb-6 text-white">Encuentra platos frescos y de calidad que de otro modo se desperdiciarían.</p>
+                            <p class="text-lg mb-6 text-white">Encuentra platos frescos y de calidad que de otro modo se
+                                desperdiciarían.</p>
                         </div>
                     </div>
                     <div class="carousel-item">
                         <div class="carousel1">
-                            <img src="{{ url_for('static', filename='img/salad_intro.png') }}" alt="Image 3" class="imagen1 d-block w-50 mx-auto">
+                            <img src="{{ url_for('static', filename='img/salad_intro.png') }}" alt="Image 3"
+                                class="imagen1 d-block w-50 mx-auto">
                             <h1 class="text-4xl text-white font-bold">¡CHAU!</h1>
-                            <p class="text-lg mb-6 text-white">Encuentra platos frescos y de calidad que de otro modo se desperdiciarían.</p>
+                            <p class="text-lg mb-6 text-white">Encuentra platos frescos y de calidad que de otro modo se
+                                desperdiciarían.</p>
                         </div>
                     </div>
                 </div>
@@ -242,6 +289,7 @@
             </div>
         </div>
     </main>
+
     <!-- Acerca de Nosotros -->
     <div class="acerca-de-nosotros" id="acercadenosotros-section">
         <div class="content-container bg-white p-4 rounded">
@@ -259,67 +307,51 @@
                 <p class="text-l mb-5">¡Esperamos conectarte con tus próximos sabores favoritos!</p>
             </div>
         </div>
-
     </div>
+
     <!-- Concientización -->
     <div class="concientizacion-info" id="concientizacion-section">
-        <div class="content-container bg-white p-4 rounded shadow-md">
-            <h1 class="text-2xl font-bold text-center mb-4">Información sobre el Desperdicio de Alimentos</h1>
-            <div class="separator mb-4"></div>
-            <div class="profile-container">
-                <div class="profile-info form-container">
-                    <div class="form-content">
-                        <h2 class="text-2xl font-bold mb-2">¿Qué es el Desperdicio de Alimentos?</h2>
-                        <p class="mb-4">El desperdicio de alimentos se refiere a todos aquellos alimentos que se producen y no llegan a ser consumidos. Este problema ocurre a lo largo de toda la cadena de suministro, desde la producción agrícola hasta el consumo final en los hogares. Incluye alimentos que se descartan, ya sea porque no cumplen con los estándares estéticos del mercado, por errores en la cadena de distribución, por mal almacenamiento, o porque simplemente no se consumen a tiempo y se deterioran.</p>
-
-                        <h2 class="text-2xl font-bold mb-2 mt-4">Impacto del Desperdicio de Alimentos</h2>
-                        <p class="mb-4">Socialmente, tiene implicaciones importantes para la seguridad alimentaria y el bienestar de las comunidades. A pesar de los avances en la producción de alimentos, según la Organización de las Naciones Unidas (ONU), “existen 821 millones de personas que padecen de hambre en el mundo. Una de cada nueve personas sufre de inseguridad alimentaria, pero en realidad se producen alimentos más que suficientes para todos” (ONU, 2018).</p>
-                        <p class="mb-4">Desde un enfoque ambiental, la producción de alimentos requiere enormes cantidades de agua, tierra y energía, y cuando se desperdician alimentos, se está utilizando de manera ineficiente estos recursos. Además, cuando los alimentos no consumidos terminan en vertederos, liberan metano, un gas de efecto invernadero potente que agrava el cambio climático. Esta práctica no solo es insostenible desde un punto de vista ambiental, sino que también tiene consecuencias negativas a largo plazo para el planeta y para las generaciones futuras.</p>
-                        <p class="mb-4">A nivel mundial, el desperdicio de alimentos afecta a todas las etapas de la cadena de suministro. Según la Organización de las Naciones Unidas para la Alimentación y la Agricultura (FAO), “anualmente se perdía o desperdiciaba en torno a un tercio de los alimentos a nivel mundial, es decir, unos 1 300 millones de toneladas de alimentos al año” (FAO, 2023). Teniendo así impactos significativos tanto en países desarrollados como en desarrollo.</p>
-                        <p class="mb-4">En los países desarrollados, se concentra principalmente en el nivel de consumo, mientras que en los países en desarrollo, ocurre mayormente en las etapas de producción y distribución debido a la falta de infraestructura adecuada (ONU, 2024).</p>
-
-                        <h2 class="text-2xl font-bold mb-2 mt-4">Consejos para Reducir el Desperdicio de Alimentos</h2>
-                        <ul class="list-disc pl-6 mb-4">
-                            <li>Planificar las comidas y hacer una lista de compras para evitar comprar en exceso.</li>
-                            <li>Almacenar los alimentos de manera adecuada para prolongar su vida útil.</li>
-                            <li>Utilizar las sobras en nuevas recetas creativas.</li>
-                            <li>Compostar los restos de comida en lugar de tirarlos a la basura.</li>
-                            <li>Utilizar una solución para reducir el desperdicio como Save A Bite!.</li>
-                        </ul>
-
-                        <h2 class="text-2xl font-bold mb-2 mt-4">Iniciativas Globales contra el Desperdicio de Alimentos</h2>
-                        <p class="mb-4">En todo el mundo, diversas iniciativas están trabajando para reducir el desperdicio de alimentos. La Organización de las Naciones Unidas para la Alimentación y la Agricultura (FAO) y otras organizaciones internacionales están promoviendo prácticas sostenibles de producción y consumo. Programas como el "Desafío de la Década de Acción de la ONU" buscan movilizar gobiernos, empresas y ciudadanos para adoptar medidas concretas y reducir significativamente el desperdicio de alimentos para 2030.</p>
-                        <p class="mb-4">A nivel local, muchas comunidades están adoptando estrategias innovadoras para reutilizar alimentos que de otro modo se desperdiciarían. Proyectos de compostaje comunitario, bancos de alimentos, y aplicaciones móviles que conectan a las personas con excedentes de alimentos son solo algunas de las maneras en que las comunidades están abordando este problema crítico.</p>
-
-                        <h2 class="text-2xl font-bold mb-2 mt-4">Estadísticas del Desperdicio de Alimentos</h2>
-                        <ul class="list-disc pl-6 mb-4">
-                            <li>Aproximadamente un tercio de los alimentos producidos en el mundo se pierden o desperdician cada año.</li>
-                            <li>El desperdicio de alimentos genera alrededor del 8% de las emisiones globales de gases de efecto invernadero.</li>
-                            <li>El desperdicio de alimentos en los hogares representa el 44% del total de los desperdicios alimentarios.</li>
-                            <li>La reducción del desperdicio de alimentos podría ahorrar hasta 1.2 billones de dólares anualmente.</li>
-                        </ul>
-
-                        <h2 class="text-2xl font-bold mb-2 mt-4">Recursos y Herramientas</h2>
-                        <p class="mb-4">Hay una variedad de recursos y herramientas disponibles para ayudar a reducir el desperdicio de alimentos:</p>
-                        <ul class="list-disc pl-6 mb-4">
-                            <li><a href="https://www.fao.org/platform-food-loss-waste/en/" target="_blank" class="text-blue-500 hover:underline">FAO Plataforma de Pérdida y Desperdicio de Alimentos</a></li>
-                            <li><a href="https://www.un.org/en/actnow" target="_blank" class="text-blue-500 hover:underline">ONU ActNow</a></li>
-                            <li><a href="https://www.epa.gov/sustainable-management-food" target="_blank" class="text-blue-500 hover:underline">EPA Gestión Sostenible de Alimentos</a></li>
-                            <li><a href="https://www.lovefoodhatewaste.com/" target="_blank" class="text-blue-500 hover:underline">Love Food Hate Waste</a></li>
-                        </ul>
-
-                        <h2 class="text-2xl font-bold mb-2 mt-4">Historias de Éxito</h2>
-                        <p class="mb-4">Muchas organizaciones y comunidades han implementado iniciativas exitosas para reducir el desperdicio de alimentos:</p>
-                        <ul class="list-disc pl-6 mb-4">
-                            <li>El programa de compostaje comunitario de San Francisco ha logrado reducir significativamente los residuos alimentarios en la ciudad.</li>
-                            <li>La aplicación OLIO permite a los vecinos compartir el exceso de alimentos, reduciendo así el desperdicio.</li>
-                            <li>El Banco de Alimentos de Londres ha ayudado a redistribuir toneladas de alimentos a personas necesitadas.</li>
-                        </ul>
-                    </div>
-                </div>
+        <h1 class="text-2xl font-bold text-center mb-4">Concientización</h1>
+        <div class="card-container">
+            <div class="card">
+                <img src="https://via.placeholder.com/100" alt="Desperdicio en Casa">
+                <h2>CÓMO REDUCIR EL DESPERDICIO EN CASA</h2>
+                <button onclick="scrollToInfo('info1')">LEER MAS</button>
+            </div>
+            <div class="card">
+                <img src="https://via.placeholder.com/100" alt="Impacto Ambiental">
+                <h2>IMPACTO AMBIENTAL DEL DESPERDICIO DE ALIMENTOS</h2>
+                <button onclick="scrollToInfo('info2')">LEER MAS</button>
+            </div>
+            <div class="card">
+                <img src="https://via.placeholder.com/100" alt="Recetas con Sobras">
+                <h2>RECETAS DE COCINA CON SOBRAS</h2>
+                <button onclick="scrollToInfo('info3')">LEER MAS</button>
+            </div>
+            <div class="card">
+                <img src="https://via.placeholder.com/100" alt="Economía Circular">
+                <h2>ECONOMÍA CIRCULAR</h2>
+                <button onclick="scrollToInfo('info4')">LEER MAS</button>
             </div>
         </div>
+        <div id="info1" class="info-section">
+            <h2>CÓMO REDUCIR EL DESPERDICIO EN CASA</h2>
+            <p>Información sobre cómo reducir el desperdicio en casa.</p>
+        </div>
+        <div id="info2" class="info-section">
+            <h2>IMPACTO AMBIENTAL DEL DESPERDICIO DE ALIMENTOS</h2>
+            <p>Información sobre el impacto ambiental del desperdicio de alimentos.</p>
+        </div>
+        <div id="info3" class="info-section">
+            <h2>RECETAS DE COCINA CON SOBRAS</h2>
+            <p>Información sobre recetas de cocina con sobras.</p>
+        </div>
+        <div id="info4" class="info-section">
+            <h2>ECONOMÍA CIRCULAR</h2>
+            <p>Información sobre economía circular.</p>
+        </div>
     </div>
+
     <!-- Contacto -->
     <div class="contact-form" id="contact-form">
         <h1 class="text-2xl font-bold text-center mb-4">Contáctanos</h1>
@@ -360,10 +392,15 @@
             return false;
         }
 
+        function scrollToInfo(infoId) {
+            document.getElementById(infoId).scrollIntoView({ behavior: 'smooth' });
+        }
+
         document.getElementById('menu-toggle').addEventListener('click', function () {
             const menu = document.getElementById('menu');
             menu.classList.toggle('hidden');
         });
     </script>
 </body>
+
 </html>

@@ -155,8 +155,9 @@
                 <div class="recipe-card">
                     <img src="{{ pedido['image'] }}" alt="{{ pedido['description'] }}">
                     <h3 class="text-xl font-bold mb-2">{{ pedido['fecha'] }}</h3>
-                    <p class="text-gray-600">Usuario: {{ pedido['usuario_id'] }}</p>
-                    <p class="text-gray-600">Precio: ${{ pedido['total'] }}</p>
+                    <p class="text-gray-600">Usuario: {{ pedido['usuario'] }}</p>
+                    <p class="text-gray-600">Dirección: {{ pedido['direccion'] }}</p>
+                    <p class="text-gray-600">Total: ${{ pedido['total'] }}</p>
                     <div class="button-container">
                         <a href="{{ url_for('ver_resumenEmpresa',idPedido=pedido['id'])}}" class="action-button">Ver Resumen</a>
                     </div>

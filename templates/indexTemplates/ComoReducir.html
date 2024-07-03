@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save a Bite - Food Delivery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .bg-custom-blue {
+            background-color: #27a2e8;
+            position: relative;
+        }
+
+        .text-custom-blue {
+            color: #27a2e8;
+        }
+
+        .btn-custom {
+            background-color: #27a2e8;
+            color: white;
+            font-weight: bold;
+            padding: 1rem 2rem;
+            font-size: 1.25rem;
+        }
+
+        .btn-custom:hover {
+            background-color: #1e91d6;
+        }
+
+        .white-background {
+            background-color: white;
+            padding: 1rem 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: -1;
+        }
+
+        .wave svg {
+            position: relative;
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .main-content {
+            height: auto;
+        }
+
+        .main-image {
+            max-width: 600px;
+            width: 80%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .flex-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .main-image-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .contact-form {
+            background-color: #ffffff;
+            border: 2px solid #27a2e8;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 900px;
+            margin-top: 10px;
+            margin-bottom: 30px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .contact-form h2 {
+            color: #27a2e8;
+            text-align: center;
+        }
+
+        .contact-form label {
+            display: block;
+            margin-top: 10px;
+            color: #000000;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #27a2e8;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .contact-form button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background-color: #27a2e8;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .contact-form p {
+            text-align: center;
+            margin-top: 15px;
+            color: #27a2e8;
+        }
+
+        .confirmation-message {
+            display: none;
+            text-align: center;
+            color: #27a2e8;
+            font-size: 1.2rem;
+            margin-top: 20px;
+        }
+
+        .concientizacion-info {
+            padding: 20px;
+            margin-top: 10px;
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 120px;
+            text-align: center;
+        }
+
+        .acerca-de-nosotros {
+            max-height: 900px;
+            padding: 20px;
+            margin-top: 10px;
+            width: 100%;
+            max-width: 1500px;
+            border-radius: 10px;
+            position: relative;
+            margin-bottom: 30px;
+            margin: 0 auto;
+        }
+
+        .separator {
+            border-bottom: 2px solid #27a2e8;
+            margin: 1rem 0;
+        }
+
+        .imagen1 {
+            height: 400px;
+            object-fit: contain;
+            justify-content: center;
+        }
+
+        .carousel1 {
+            text-align: center;
+            align-items: center;
+        }
+
+        .card-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 320px;
+            text-align: center;
+            align-items: center;
+            height: 300px; /* Añadir una altura fija para las cards */
+        }
+
+        .card img {
+            width: 170px;  /* Fija el ancho de las imágenes */
+            height: 150px; /* Fija la altura de las imágenes */
+            object-fit: cover; /* Mantiene las proporciones sin distorsionar */
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .card h2 {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .card button {
+            background-color: #27a2e8;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: auto; /* Empuja el botón hacia la parte inferior */
+        }
+
+        .card button:hover {
+            background-color: #1e91d6;
+        }
+        
+    </style>
+</head>
+
+<body class="bg-custom-blue items-center min-h-screen relative">
+    <div class="white-background w-full flex justify-between items-center">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Save a Bite" class="h-14 ml-4">
+        <button id="menu-toggle" class="block md:hidden focus:outline-none mr-4">
+            <svg class="h-6 w-6 text-custom-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+            </svg>
+        </button>
+        <nav id="menu" class="hidden md:flex flex-col md:flex-row md:space-x-4 md:items-center">
+            <ul class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
+                <li><a href="{{ url_for('index') }}" class="text-custom-blue ml-10">Menu</a></li>
+                <li><a href="#acercadenosotros-section" class="text-custom-blue ml-10">Acerca de Nosotros</a></li>
+                <li><a href="#concientizacion-section" class="text-custom-blue ml-10">Concientización</a></li>
+                <li><a href="#contact-form" class="text-custom-blue ml-10">Consultas</a></li>
+            </ul>
+        </nav>
+        <a href="{{ url_for('login') }}" class="btn-custom rounded-full mr-4">Acceder</a>
+    </div>
+    <main class="main-content flex justify-center text-center" id="main-section">
+        <div class="concientizacion-info" id="concientizacion-section">
+            <div class="content-container bg-white p-4 rounded shadow-md">
+                <h1 class="text-2xl font-bold text-center mb-4">Cómo Reducir el Desperdicio en Casa</h1>
+                <div class="separator mb-4"></div>
+                <div class="profile-container">
+                    <div class="profile-info form-container">
+                        <div class="form-content">
+                            <p class="mb-4">Reducir el desperdicio en casa no solo es beneficioso para el medio ambiente, sino también para tu bolsillo. Adoptar hábitos sostenibles puede marcar una gran diferencia. Aquí te ofrecemos algunos consejos simples pero efectivos para minimizar el desperdicio en tu día a día:</p>
+                            <ul class="list-disc pl-6 mb-4">
+                                <li>Planificación Inteligente de Compras: Antes de dirigirte al supermercado, haz una lista detallada de lo que realmente necesitas. Comprar con un plan ayuda a evitar compras impulsivas y reduce el riesgo de terminar con alimentos que podrían desperdiciarse.</li>
+                                <li>Reutilización Creativa: Transforma las sobras en nuevas comidas creativas o consérvalas adecuadamente para su consumo posterior. La reutilización inteligente de alimentos puede reducir significativamente el desperdicio en casa.</li>
+                                <li>Compostaje Doméstico: Considera compostar los desechos de alimentos orgánicos como cáscaras de frutas, verduras y restos de comida. El compostaje no solo reduce la cantidad de desechos que van a parar a los vertederos, sino que también crea un fertilizante natural para tus plantas y jardines.
+                    Cómo hacer compost en casa: <a href="https://hipotecarioseguros.com.ar/blog/nota/como-hacer-un-compost-en-casa" target="_blank" class="text-blue-500 hover:underline">Guía paso a paso</a></li>
+                                <li>Utiliza Save a Bite: Utiliza la pagina Save a Bite, que te permite comprar alimentos a precios reducidos que de otra manera se desperdiciarían. Además, puedes vender tus excedentes de alimentos para asegurarte de que no se desperdicien.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </main>
+    
+</body>
+
+</html>

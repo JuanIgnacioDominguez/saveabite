@@ -167,7 +167,14 @@
             border-bottom: 2px solid #27a2e8;
             margin: 1rem 0;
         }
-        
+        .imagen1{
+            height: 400px;
+            object-fit: contain;
+        }
+        .carousel1{
+            text-align: center;
+            align-items: center;
+        }
     </style>
 </head>
 
@@ -189,9 +196,8 @@
         </nav>         
         <a href="{{ url_for('login') }}" class="btn-custom rounded-full mr-4">Acceder</a>
     </div>
-    <main class="main-content flex flex-col items-center justify-center text-center p-2" id="main-section">
+    <main class="main-content flex items-center justify-center text-center" id="main-section">
         <div class="flex-container 2x2 flex flex-row justify-center items-center">
-
             <div id="myCarousel" class="carousel slide" data-ride="carousel">
                 <!-- Indicators -->
                 <ul class="carousel-indicators">
@@ -201,16 +207,17 @@
                 </ul>
               
                 <!-- The slideshow -->
-                <div class="carousel-inner items-center justify-center">
+                <div class="carousel-inner">
                   <div class="carousel-item active">
-                        <div class="text-center">
-                            <h1 class="text-4xl text-white font-bold mt-20">¡Disfruta comida deliciosa a precios increíbles!</h1>
-                            <p class="text-lg mb-6 text-white">Encuentra platos frescos y de calidad que de otro modo se desperdiciarían.</p>
+                        <div class="carousel1">
+                            <h1 class="text-4xl text-white font-bold mt-20">COME BARATO!</h1>
+                            <img src="{{ url_for('static', filename='img/desperdicio.png') }}" alt="Image 1" class="imagen1 d-block w-50">
+                            <p class="text-4xl text-white font-bold mb-10">Y AYUDA AL PLANETA</p>
                         </div>
                   </div>
                   <div class="carousel-item">
                     <div class="text-center">
-                        <h1 class="text-4xl text-white font-bold mt-20">¡Disfruta comida deliciosa a precios increíbles!</h1>
+                        <h1 class="text-4xl text-white font-bold mt-20">¡como estas!</h1>
                         <p class="text-lg mb-6 text-white">Encuentra platos frescos y de calidad que de otro modo se desperdiciarían.</p>
                     </div>
                     </div>
@@ -218,7 +225,7 @@
                   <div class="carousel-item">
                     <img src="{{ url_for('static', filename='img/salad_intro.png') }}" alt="Image 3" class="d-block w-50">
                     <div class="text-center">
-                        <h1 class="text-4xl text-white font-bold">¡Disfruta comida deliciosa a precios increíbles!</h1>
+                        <h1 class="text-4xl text-white font-bold">¡CHAU!</h1>
                         <p class="text-lg mb-6 text-white">Encuentra platos frescos y de calidad que de otro modo se desperdiciarían.</p>
                     </div>
                   </div>

@@ -917,17 +917,13 @@ def perfil_usuario():
 
 @app.route("/menu_empresas", methods=['GET'])
 def menu_empresas():
-    # Obtener el correo electrónico del usuario desde la sesión
     correo_electronico = session.get('user_email')
-    empresa_id = session.get('user_id')
-    
-    # Conectar a la base de datos
-    conn = sqlite3.connect('flask_db.db')
+    conn = get_db_connection()
     cursor = conn.cursor()
     
     # Consultar la información del usuarioEmpresa
     cursor.execute('''
-         SELECT 
+        SELECT 
             u.nombre_usuario, 
             u.correo_electronico, 
             u.membresia, 
@@ -937,7 +933,7 @@ def menu_empresas():
             d.localidad
         FROM 
             usuarioEmpresa u
-        JOIN 
+        LEFT JOIN 
             direccionEmpresa d ON u.id = d.usuario_id
         WHERE 
             u.correo_electronico = ?
@@ -949,46 +945,48 @@ def menu_empresas():
         correo = usuario[1]
         membresia = usuario[2]
         rating_total = usuario[3]
-        direccion_completa = f"{usuario[4]} {usuario[5]}, {usuario[6]}"
+        direccion_completa = f"{usuario[4]} {usuario[5]}, {usuario[6]}" if usuario[4] and usuario[5] and usuario[6] else "Dirección no disponible"
     else:
         nombre_usuario = 'N/A'
         correo = 'N/A'
         membresia = 'N/A'
         rating_total = 0
-        direccion_completa = 'Dirección no disponible'
-
-    product_inventario = cursor.execute('''
-        SELECT COUNT(*) FROM Productos WHERE id_empresa = ? 
-    ''', (empresa_id,)).fetchone()[0]
+        direccion_completa = "Dirección no disponible"
     
-    if empresa_id:
-        # Consultar la cantidad de pedidos pendientes y completados
-        cursor.execute('''
-            SELECT COUNT(*) FROM pedidos2 WHERE empresa_id = ? AND entregado = 0
-        ''', (empresa_id,))
-        pending_orders = cursor.fetchone()[0]
-        
-        cursor.execute('''
-            SELECT COUNT(*) FROM pedidos2 WHERE empresa_id = ? AND entregado = 1
-        ''', (empresa_id,))
-        completed_orders = cursor.fetchone()[0]
-    else:
-        pending_orders = 0
-        completed_orders = 0
+    # Consultar estadísticas
+    empresa_id = session.get('user_id')
+    daily_sales = cursor.execute('SELECT COUNT(*) FROM pedidos2 WHERE empresa_id = ? AND fecha = DATE("now")', (empresa_id,)).fetchone()[0]
+    pending_orders = cursor.execute('SELECT COUNT(*) FROM pedidos2 WHERE empresa_id = ? AND entregado = 0', (empresa_id,)).fetchone()[0]
+    completed_orders = cursor.execute('SELECT COUNT(*) FROM pedidos2 WHERE empresa_id = ? AND entregado = 1', (empresa_id,)).fetchone()[0]
+    product_inventory = cursor.execute('SELECT SUM(stock) FROM Productos WHERE id_empresa = ?', (empresa_id,)).fetchone()[0]
 
+    # Consultar ingresos diarios
+    daily_revenue = cursor.execute('''
+        SELECT strftime('%d', fecha) AS dia, SUM(total) AS ingresos
+        FROM pedidos2
+        WHERE empresa_id = ? AND strftime('%m', fecha) = strftime('%m', 'now')
+        GROUP BY dia
+    ''', (empresa_id,)).fetchall()
+    
+    daily_revenue = {int(row['dia']): row['ingresos'] for row in daily_revenue}
+    
     conn.close()
 
     restaurant = {
         "name": nombre_usuario,
         "email": correo,
         "address": direccion_completa,
-        "phone": 'N/A',  # Agrega el teléfono si lo tienes en otra tabla
         "membership": membresia,
         "ratingTotal": rating_total
     }
     
-    return render_template('general/menu_empresas.html', restaurant=restaurant, pending_orders=pending_orders, completed_orders=completed_orders, product_inventario=product_inventario)
-
+    return render_template('general/menu_empresas.html', 
+                        restaurant=restaurant,
+                        daily_sales=daily_sales,
+                        pending_orders=pending_orders,
+                        completed_orders=completed_orders,
+                        product_inventory=product_inventory,
+                        daily_revenue=daily_revenue)
 
 @app.route('/editar_perfil', methods=['GET', 'POST'])
 def editar_perfil():
@@ -1196,28 +1194,36 @@ def crear_producto():
         nombre = request.form['nombre']
         precio = request.form['precio']
         descripcion = request.form['descripcion']
-        categorias = request.form['categorias']  # Obtener las categorías seleccionadas
+        categorias = request.form['categorias']
         tipo_dieta = request.form['tipo_dieta']
+        stock = request.form['stock']  # Nuevo campo de stock
         file = request.files['imagen']
+
+        # Validación de stock no negativo
+        try:
+            stock = int(stock)
+            if stock < 0:
+                flash('El stock no puede ser negativo', 'error')
+                return redirect(url_for('crear_producto'))
+        except ValueError:
+            flash('El stock debe ser un número entero', 'error')
+            return redirect(url_for('crear_producto'))
         
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             
-            # Crear directorio si no existe
             os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
             
             file.save(file_path)
             
-            # Asignar automáticamente "Todos" a tipoComida
             categorias += ",Todos"
             
-            # Guardar el producto en la base de datos
             conn = get_db_connection()
             conn.execute('''
-                INSERT INTO Productos (id_empresa, nombre, precio, descripcion, imagen, tipoComida, tipo_dieta, empresa) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (session.get('user_id'), nombre, precio, descripcion, filename, categorias, tipo_dieta, session.get('user_name')))
+                INSERT INTO Productos (id_empresa, nombre, precio, descripcion, imagen, tipoComida, tipo_dieta, empresa, stock) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (session.get('user_id'), nombre, precio, descripcion, filename, categorias, tipo_dieta, session.get('user_name'), stock))
             conn.commit()
             conn.close()
             return redirect(url_for('menu_empresas'))

@@ -208,11 +208,11 @@
                         </div>
                         <div class="item">
                             <span>Envío</span>
-                            <span>$1289</span>
+                            <span>${{ envio }}</span>
                         </div>
                         <div class="item">
                             <span>Tarifa de servicio</span>
-                            <span>$285</span>
+                            <span>${{ tarifa }}</span>
                         </div>
                         <div class="item">
                             <span>Propina</span>
@@ -270,8 +270,8 @@
             document.getElementById('selected_tip').value = amount;
             document.getElementById('tip_amount').innerText = '$' + amount;
             const productTotal = parseFloat("{{ product_total }}");
-            const envio = 1289;
-            const tarifa = 285;
+            const envio = parseFloat("{{ envio }}");
+            const tarifa = parseFloat("{{ tarifa }}");
             const total = productTotal + envio + tarifa + amount;
             document.getElementById('total_amount').innerText = '$' + total;
             document.getElementById('total_button_amount').innerText = total;

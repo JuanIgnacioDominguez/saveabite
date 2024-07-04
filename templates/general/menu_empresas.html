@@ -272,6 +272,7 @@
         </div>
 
         <!-- Sección de Estadísticas -->
+        {% if restaurant.membership == 'Avanzada' %}
         <div class="statistics">
             <!-- Gráfico de Línea para Ventas Mensuales -->
             <div class="line-chart-container">
@@ -301,6 +302,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
 
     <script>

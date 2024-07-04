@@ -165,7 +165,7 @@
             <div class="profile-container">
                 <div class="profile-info form-container">
                     <!-- Support Form -->
-                    <form id="support-form" class="flex flex-col h-full">
+                    <form id="support-form" class="flex flex-col h-full" method="POST" action="{{ url_for('enviar_soporte') }}">
                         <div class="form-content">
                             <div class="form-group">
                                 <label for="subject">Asunto</label>
@@ -177,9 +177,10 @@
                             </div>
                         </div>
                         <div class="mt-2">
-                            <button type="button" class="submit-button" onclick="validarFormulario()">Enviar</button>
+                            <button type="submit" class="submit-button">Enviar</button>
                         </div>
                     </form>
+                    
                 </div>
             </div>
         </div>

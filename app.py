@@ -1407,6 +1407,7 @@ def confirmar_compra_page():
     user_id = session.get('user_id')
     if not user_id:
         return redirect(url_for('login'))
+    
     conn = get_db_connection()
     carrito_items = conn.execute('''
         SELECT Productos.id, Productos.nombre, Productos.precio, Productos.imagen, carrito.cantidad
@@ -1414,15 +1415,20 @@ def confirmar_compra_page():
         JOIN Productos ON carrito.producto_id = Productos.id
         WHERE carrito.usuario_id = ?
     ''', (user_id,)).fetchall()
+    
     metodos_pago = conn.execute('SELECT * FROM metodos_pago WHERE usuario_id = ?', (user_id,)).fetchall()
     direcciones = conn.execute('SELECT * FROM direcciones WHERE usuario_id = ?', (user_id,)).fetchall()
+    user_membresia = conn.execute('SELECT membresia FROM Usuarios WHERE id = ?', (user_id,)).fetchone()['membresia']
+    
     product_total = sum(item['precio'] * item['cantidad'] for item in carrito_items)
-    envio = 1289
-    tarifa = 285
+    envio = 0 if user_membresia == 'Avanzado' else 1289
+    tarifa = 0 if user_membresia == 'Avanzado' else 285
     propina = 0
     total = product_total + envio + tarifa + propina
+    
     conn.close()
-    return render_template('carrito/confirmar_compra.html', carrito_items=carrito_items, metodos_pago=metodos_pago, direcciones=direcciones, product_total=product_total, total=total)
+    return render_template('carrito/confirmar_compra.html', carrito_items=carrito_items, metodos_pago=metodos_pago, direcciones=direcciones, product_total=product_total, envio=envio, tarifa=tarifa, total=total)
+
 
 @app.route('/update_product/<int:product_id>', methods=['POST'])
 def update_product(product_id):
@@ -1490,9 +1496,10 @@ def procesar_compra():
     if not carrito_items:
         carrito_items = []
 
+    user_membresia = conn.execute('SELECT membresia FROM Usuarios WHERE id = ?', (user_id,)).fetchone()['membresia']
     product_total = sum(item['cantidad'] * item['precio'] for item in carrito_items)
-    envio = 1289
-    tarifa = 285
+    envio = 0 if user_membresia == 'Avanzado' else 1289
+    tarifa = 0 if user_membresia == 'Avanzado' else 285
     total = product_total + envio + tarifa + selected_tip
     ahora = datetime.now().date()
     first = carrito_items[0] if carrito_items else {}
@@ -1517,6 +1524,7 @@ def procesar_compra():
 
     return jsonify(success=True)
 
+
 @app.route("/finalizar_pedido", methods=['POST'])
 def finalizar_pedido():
     user_id = session.get('user_id')
@@ -1535,13 +1543,14 @@ def finalizar_pedido():
     if not carrito_items:
         return redirect(url_for('carrito'))
 
+    user_membresia = conn.execute('SELECT membresia FROM Usuarios WHERE id = ?', (user_id,)).fetchone()['membresia']
     total1 = sum(item['cantidad'] * item['precio'] for item in carrito_items)
     ahora = datetime.now().date()
     first = carrito_items[0]
     nombre = first['empresa']
     id_empresa = first['id_empresa']
-    envio = 1289
-    tarifa = 285
+    envio = 0 if user_membresia == 'Avanzado' else 1289
+    tarifa = 0 if user_membresia == 'Avanzado' else 285
     propina = request.form.get('selected_tip')
     if propina is None:
         propina = 0.0
@@ -1572,12 +1581,12 @@ def finalizar_pedido():
             WHERE id = ?
         ''', (item['cantidad'], item['producto_id']))
 
-
     cursor.execute('DELETE FROM carrito WHERE usuario_id = ? AND producto_id IN (SELECT id FROM Productos WHERE id_empresa = ?)', (user_id, id_empresa))
     conn.commit()
     conn.close()
 
     return redirect(url_for('menu'))
+
 
 @app.route("/confirmar_compra", methods=['POST'])
 def confirmar_compra():

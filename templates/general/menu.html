@@ -328,6 +328,36 @@
                 </form>
             </div>
         </div>
+		<div class="button-container">
+            <button class="btn-custom {% if tipo_comida == 'todos' %}active{% endif %}" onclick="filterCategory('todos')">
+                <i class="fas fa-utensils"></i>
+                Todos
+            </button>
+            <button class="btn-custom {% if 'Hamburguesas' in tipo_comida %}active{% endif %}" onclick="filterCategory('Hamburguesas')">
+                <i class="fas fa-hamburger"></i>
+                Hamburguesas
+            </button>
+            <button class="btn-custom {% if 'Pizzas' in tipo_comida %}active{% endif %}" onclick="filterCategory('Pizzas')">
+                <i class="fas fa-pizza-slice"></i>
+                Pizzas
+            </button>
+            <button class="btn-custom {% if 'Pastas' in tipo_comida %}active{% endif %}" onclick="filterCategory('Pastas')">
+                <i class="material-icons">ramen_dining</i>
+                Pastas
+            </button>
+            <button class="btn-custom {% if 'Ensaladas' in tipo_comida %}active{% endif %}" onclick="filterCategory('Ensaladas')">
+                <i class="fas fa-leaf"></i>
+                Ensaladas
+            </button>
+            <button class="btn-custom {% if 'Cafeteria' in tipo_comida %}active{% endif %}" onclick="filterCategory('Cafeteria')">
+                <i class="fas fa-coffee"></i>
+                Cafeteria
+            </button>
+            <button class="btn-custom {% if 'Carnes' in tipo_comida %}active{% endif %}" onclick="filterCategory('Carnes')">
+                <i class="fas fa-drumstick-bite"></i>
+                Carnes
+            </button>
+        </div>							  
         {% if membresia == 'Avanzado' and tipo_dieta and recomendados %}
 <div class="mt-8">
     <h2 class="text-2xl font-bold text-custom-blue mb-4">Recomendados</h2>
@@ -341,6 +371,17 @@
                         <div>
                             <div class="info-icon">
                                 <div class="info-icon"><i class="fas fa-user"></i></div>
+										  
+											
+									  
+									 
+												  
+											
+									  
+									 
+													
+											  
+									  
                             </div>
                             <p class="text-gray-600">{{ producto.empresa }}</p>
                         </div>

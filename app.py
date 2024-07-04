@@ -562,14 +562,14 @@ def menu():
     query = request.args.get('query', '').lower()
     conn = get_db_connection()
 
-    # Obtener el tipo de dieta del usuario
-    user = conn.execute('SELECT tipo_dieta FROM usuarios WHERE id = ?', (user_id,)).fetchone()
+    # Obtener el tipo de dieta y la membresía del usuario
+    user = conn.execute('SELECT tipo_dieta, membresia FROM usuarios WHERE id = ?', (user_id,)).fetchone()
     tipo_dieta = user['tipo_dieta'] if user else None
+    membresia = user['membresia'] if user else None
 
     # Construir la consulta base de productos
     productos_query = '''
-        SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen, usuarioEmpresa.ratingTotal AS rating_total,
-               usuarioEmpresa.membresia
+        SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen, usuarioEmpresa.ratingTotal AS rating_total
         FROM Productos
         JOIN usuarioEmpresa ON Productos.id_empresa = usuarioEmpresa.id
         WHERE Productos.estad = 'Disponible'
@@ -588,7 +588,7 @@ def menu():
         '''
         params.extend([f'%{query}%', f'%{query}%', f'%{query}%', f'%{query}%'])
 
-    # Añadir orden por membresía
+         # Añadir orden por membresía
     productos_query += '''
         ORDER BY 
             CASE 
@@ -600,9 +600,9 @@ def menu():
     # Ejecutar la consulta con los parámetros
     productos = conn.execute(productos_query, params).fetchall()
 
-    # Filtrar productos recomendados si hay tipo de dieta definido
+    # Filtrar productos recomendados si hay tipo de dieta definido y membresía avanzada
     recomendados = []
-    if tipo_dieta:
+    if membresia == 'Avanzado' and tipo_dieta:
         recomendados = conn.execute('''
             SELECT Productos.*, usuarioEmpresa.imagen AS empresa_imagen, usuarioEmpresa.ratingTotal AS rating_total
             FROM Productos
@@ -614,7 +614,7 @@ def menu():
 
     conn.close()
 
-    return render_template('general/menu.html', user_name=user_name, user_image=user_image, productos=productos, recomendados=recomendados, tipo_dieta=tipo_dieta)
+    return render_template('general/menu.html', user_name=user_name, user_image=user_image, productos=productos, recomendados=recomendados, tipo_dieta=tipo_dieta, membresia=membresia)
 
 @app.route('/filter_menu', methods=['GET'])
 def filter_menu():

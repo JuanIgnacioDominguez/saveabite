@@ -92,7 +92,8 @@
         .acerca-de-nosotros {
             padding: 20px; /* Ajusta el padding según sea necesario */
             margin: 20px auto; /* Ajusta el margen para centrarlo */
-            max-width: 1000px; /* Ajusta el ancho máximo */
+
+            width: 1300px;
             display: flex;
             align-items: center;
             justify-content: space-between; /* Alinea el contenido y la imagen */
@@ -115,13 +116,13 @@
 
         .acerca-de-nosotros h1 {
             font-size: 2.5rem;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .acerca-de-nosotros p {
             font-size: 1.1rem;
             line-height: 1.6;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .acerca-de-nosotros .btn-custom {
@@ -207,10 +208,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 50px auto;
+            margin: 30px auto;
             padding: 40px;
-            max-width: 1000px;
-            background-color: #0066cc;
+            margin-bottom: 110px;
+            width: 1200px;
+            background-color: #004c99;
             border-radius: 20px;
             color: white;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -230,7 +232,7 @@
         }
 
         .contact-form label {
-            margin-top: 10px;
+            margin-top: 5px;
             font-size: 1rem;
         }
 
@@ -251,7 +253,7 @@
         .contact-form button {
             margin-top: 20px;
             background-color: white;
-            color: #0066cc;
+            color: #2fa4e3;
             border: none;
             padding: 10px 20px;
             font-size: 1rem;
@@ -261,8 +263,8 @@
         }
 
         .contact-form button:hover {
-            background-color: #004c99;
-            color: white;
+            background-color:#cfe3ef;
+            color: #004c99;
         }
 
         .carousel-indicators button {
@@ -285,19 +287,31 @@
             object-fit: cover; /* Asegura que la imagen cubra toda el área del contenedor */
         }
 
-        .imagen1-container {
+        .imagen1-container, .imagen2-container, .imagen3-container {
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
-            background-color: white;
+            align-items: center;
+            text-align: center;
+            height: 100%;
+            padding: 20px; /* Opcional: agregar padding para dar espacio alrededor del contenido */
         }
-
         .imagen1 {
             max-height: 300px;
             width: auto;
             object-fit: contain;
-
+        }
+        .imagen2 {
+            max-height: 300px;
+            width: auto;
+            object-fit: contain;
+            margin-top: 2rem;
+        }
+        .imagen3{
+            max-height: 300px;
+            width: auto;
+            object-fit: contain;
+            margin-top: 2rem;
         }
         .carousel-control-prev-icon,
         .carousel-control-next-icon {
@@ -307,6 +321,30 @@
         .carousel-control-next {
             color: black;
         }
+        .text1{
+            color: #cf68e6;
+        }
+        .text2{
+            color: #de421f;
+        }
+        .text3{
+            color: #1A8D2A;
+        }
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: -1;
+        }
+
+        .wave svg {
+            position: relative;
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
     </style>
 </head>
 <body class="items-center min-h-screen relative">
@@ -333,16 +371,24 @@
             <div class="carousel-inner">
                 <div class="carousel-item active">
                     <div class="imagen1-container">
-                        <h1 class="text-xl text-black font-bold mt-10 mb-5">COME BARATO!</h1>
+                        <h1 class="text-xl text1 font-bold mt-10 mb-5">COME BARATO!</h1>
                         <img src="{{ url_for('static', filename='img/desperdicio.png') }}" alt="Image 1" class="imagen1 w-50 mx-auto">
-                        <p class="text-xl text-black font-bold mb-20 mt-10">Y AYUDA AL PLANETA</p>
+                        <p class="text-xl text1 font-bold mb-20 mt-10">Y AYUDA AL PLANETA</p>
                     </div>
                 </div>
                 <div class="carousel-item">
-                    <img src="{{ url_for('static', filename='img/imagen2.jpg') }}" alt="imagen2">
+                    <div class="imagen2-container">
+                        <h1 class="text-xl text2 font-bold mt-10 mb-15">ACTUALMENTE SE TIRAN 44 MIL TONELADAS DE ALIMENTOS POR DIA</h1>
+                        <img src="{{ url_for('static', filename='img/fORANGE2.png') }}" alt="Image 1" class="imagen2 w-50 mx-auto">
+                        <p class="text-xl text2 font-bold mb-20 mt-10">TRANSFORMA CADA COMIDA EN UNA OPORTUNIDAD PARA SER RESPONSABLE</p>
+                    </div>
                 </div>
                 <div class="carousel-item">
-                    <img src="{{ url_for('static', filename='img/imagen3.jpg') }}" alt="imagen3">
+                    <div class="imagen3-container">
+                        <h1 class="text-xl text3 font-bold mt-10 mb-15">CON TU COMPRA AYUDAS A DISMINUIR EL DESPERDICIO DE ALIMENTOS</h1>
+                        <img src="{{ url_for('static', filename='img/mundoFOOD2.png') }}" alt="Image 1" class="imagen3 w-50 mx-auto">
+                        <p class="text-xl text3 font-bold mb-20 mt-10">¡JUNTOS PODEMOS HACER UNA DIFERENCIA!</p>
+                    </div>
                 </div>
             </div>
             <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
@@ -417,7 +463,6 @@
     <br id="contact-form">
     <br>
     <br>
-    <br>
 
 
     <div class="contact-form" id="contact-form">
@@ -439,13 +484,16 @@
         </form>
     </div>
 
-    <div class="wave">
-        <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-            version="1.1">
-            <path d="M0 387L50 379.5C100 372 200 357 300 362.5C400 368 500 394 600 394.5C700 395 800 370 850 357.5L900 345L900 451L850 451C800 451 700 451 600 451C500 451 400 451 300 451C200 451 100 451 50 451L0 451Z"
-                fill="#FFFFFF" stroke-linecap="round" stroke-linejoin="miter"></path>
-        </svg>
-    </div>
+    <!-- Footer -->
+    <footer class="relative">
+        <div class="wave">
+            <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
+                <path d="M0 387L50 379.5C100 372 200 357 300 362.5C400 368 500 394 600 394.5C700 395 800 370 850 357.5L900 345L900 451L850 451C800 451 700 451 600 451C500 451 400 451 300 451C200 451 100 451 50 451L0 451Z"
+                    fill="#27a2e8" stroke-linecap="round" stroke-linejoin="miter"></path>
+            </svg>
+        </div>
+    </footer>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

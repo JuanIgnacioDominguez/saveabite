@@ -1624,15 +1624,17 @@ def confirmar_pago(empresa_id):
     
     metodos_pago = conn.execute('SELECT * FROM metodos_pago WHERE usuario_id = ?', (user_id,)).fetchall()
     direcciones = conn.execute('SELECT * FROM direcciones WHERE usuario_id = ?', (user_id,)).fetchall()
+
+    user_membresia = conn.execute('SELECT membresia FROM Usuarios WHERE id = ?', (user_id,)).fetchone()['membresia']
     
     product_total = sum(item['precio'] * item['cantidad'] for item in carrito_items)
-    envio = 1289  # Valor fijo de envío
-    tarifa = 285  # Valor fijo de tarifa
+    envio = 0 if user_membresia == 'Avanzado' else 1289  # Valor de envío, sin cargo para membresía avanzada
+    tarifa = 0 if user_membresia == 'Avanzado' else 285  # Tarifa de servicio, sin cargo para membresía avanzada
     propina = 0  # Inicialmente, sin propina
     total = product_total + envio + tarifa + propina
     
     conn.close()
-    return render_template('carrito/ConfirmarPago.html', carrito_items=carrito_items, metodos_pago=metodos_pago, direcciones=direcciones, product_total=product_total, total=total)
+    return render_template('carrito/ConfirmarPago.html', carrito_items=carrito_items, metodos_pago=metodos_pago, direcciones=direcciones, product_total=product_total, envio=envio, tarifa=tarifa, total=total)
 
 @app.route('/actualizar_carrito/<int:producto_id>', methods=['POST'])
 def actualizar_carrito(producto_id):

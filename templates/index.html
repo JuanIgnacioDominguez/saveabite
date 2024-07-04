@@ -90,25 +90,27 @@
         }
 
         .acerca-de-nosotros {
-            padding: 40px;
-            margin: 50px auto;
-            max-width: 1200px;
+            padding: 20px; /* Ajusta el padding según sea necesario */
+            margin: 20px auto; /* Ajusta el margen para centrarlo */
+            max-width: 1000px; /* Ajusta el ancho máximo */
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between; /* Alinea el contenido y la imagen */
             background-color: #f9f9f9;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .acerca-de-nosotros img {
-            max-width: 100%;
+            max-width: 300px; /* Reducir el tamaño de la imagen */
             border-radius: 50%;
-            margin-right: 40px;
+            margin-right: 20px;
         }
 
         .acerca-de-nosotros .content {
-            max-width: 600px;
+            max-width: calc(100% - 340px); /* Ajusta el ancho del contenido para dejar espacio para la imagen */
+            font-size: 1rem; /* Ajusta el tamaño del texto */
+            line-height: 1.6; /* Ajusta el espaciado entre líneas */
         }
 
         .acerca-de-nosotros h1 {
@@ -132,13 +134,18 @@
         }
 
         .concientizacion-info {
-            padding: 20px;
-            margin-top: 10px;
+            padding: 40px; /* Incrementa el padding */
+            margin-top: 20px; /* Aumenta el margen superior */
             width: 100%;
             border-radius: 10px;
             margin-bottom: 120px;
             text-align: center;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #004c99;
+            height: 660px; /* Ajusta la altura según tus necesidades */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Asegura que los elementos hijos estén centrados verticalmente */
         }
 
         .card-container {
@@ -158,16 +165,17 @@
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            width: 320px;
+            width: 350px;
             text-align: center;
             align-items: center;
-            height: 300px;
+            height: 350px;
         }
 
         .card img {
             width: 170px;
             height: 150px;
             object-fit: cover;
+            margin-top: 25px;
             margin-bottom: 15px;
             align-items: center;
         }
@@ -264,11 +272,41 @@
         .carousel-controls span {
             background-color: black !important;
         }
-        .c-image{
+
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            height: 75vh; /* Ocupa toda la altura de la pantalla */
+        }
+
+        .carousel-container img {
             width: 100%;
             height: 100%;
+            object-fit: cover; /* Asegura que la imagen cubra toda el área del contenedor */
         }
-        
+
+        .imagen1-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+        }
+
+        .imagen1 {
+            max-height: 300px;
+            width: auto;
+            object-fit: contain;
+
+        }
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            filter: invert(100%) !important; /* Invierte el color del icono */
+        }
+        .carousel-control-prev,
+        .carousel-control-next {
+            color: black;
+        }
     </style>
 </head>
 <body class="items-center min-h-screen relative">
@@ -276,87 +314,59 @@
         <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Save a Bite">
         <nav class="nav-menu">
             <ul>
-                <li><a href="#main-section">Inicio</a></li>
-                <li><a href="#acercadenosotros-section">Acerca de Nosotros</a></li>
+                <li><a href="{{url_for ('index')}}">Inicio</a></li>
                 <li><a href="#concientizacion-section">Concientización</a></li>
+                <li><a href="#acercadenosotros-section">Acerca de Nosotros</a></li>
                 <li><a href="#contact-form">Consultas</a></li>
             </ul>
         </nav>
         <a href="{{ url_for('login') }}" class="btn-custom">Acceder</a>
     </header>
 
-    <main class="main-content flex justify-center text-center" id="main-section">
-        <div id="default-carousel" class="relative w-full max-w-4xl mx-auto my-8" data-carousel="slide">
-            <!-- Carousel wrapper -->
-            <div class="relative h-[35rem] overflow-hidden rounded-lg"> <!-- Ajuste de la altura aquí -->
-                <!-- Item 1 -->
-                <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                    <img src="{{ url_for('static', filename='img/imagen1.png') }}" class="absolute block w-full h-full object-fit" alt="Imagen 1">
+    <main class="main-section relative">
+        <div id="carouselExampleIndicators" class="carousel slide carousel-container" data-ride="carousel">
+            <ol class="carousel-indicators">
+                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+            </ol>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="imagen1-container">
+                        <h1 class="text-xl text-black font-bold mt-10 mb-5">COME BARATO!</h1>
+                        <img src="{{ url_for('static', filename='img/desperdicio.png') }}" alt="Image 1" class="imagen1 w-50 mx-auto">
+                        <p class="text-xl text-black font-bold mb-20 mt-10">Y AYUDA AL PLANETA</p>
+                    </div>
                 </div>
-                <!-- Item 2 -->
-                <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                    <img src="{{ url_for('static', filename='img/imagen2.png') }}" class="absolute block w-full h-full object-fit" alt="Imagen 2">
+                <div class="carousel-item">
+                    <img src="{{ url_for('static', filename='img/imagen2.jpg') }}" alt="imagen2">
                 </div>
-                <!-- Item 3 -->
-                <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                    <img src="{{ url_for('static', filename='img/imagen3.png') }}" class="absolute block w-full h-full object-fit" alt="Imagen 3">
+                <div class="carousel-item">
+                    <img src="{{ url_for('static', filename='img/imagen3.jpg') }}" alt="imagen3">
                 </div>
             </div>
-            <!-- Slider indicators -->
-            <div class="carousel-indicators absolute z-30 flex -translate-x-1 bottom-5 left-1/5 space-x-3">
-                <button type="button" class="w-3 h-3 rounded-full" aria-current="true" aria-label="Slide 1" data-carousel-slide-to="0"></button>
-                <button type="button" class="w-3 h-3 rounded-full" aria-current="false" aria-label="Slide 2" data-carousel-slide-to="1"></button>
-                <button type="button" class="w-3 h-3 rounded-full" aria-current="false" aria-label="Slide 3" data-carousel-slide-to="2"></button>
-            </div>
-            <!-- Slider controls -->
-            <button type="button" class="carousel-controls absolute top-0 left-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-prev>
-                <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-black/30 group-hover:bg-black/50 focus:ring-4 focus:ring-white focus:outline-none">
-                    <svg class="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
-                    </svg>
-                    <span class="sr-only">Previous</span>
-                </span>
-            </button>
-            <button type="button" class="carousel-controls absolute top-0 right-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-next>
-                <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-black/30 group-hover:bg-black/50 focus:ring-4 focus:ring-white focus:outline-none">
-                    <svg class="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-                    </svg>
-                    <span class="sr-only">Next</span>
-                </span>
-            </button>
+            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
         </div>
-    </main>
-
-    <br>
-    <br id="acercadenosotros-section">
-    <br>
-    <br>
-    <br>
-    
-    <div class="acerca-de-nosotros" id="acercadenosotros-section">
-        <img src="{{ url_for('static', filename='img/contact.png') }}" alt="About Us Image">
-        <div class="content">
-            <h1>SAVE A BITE</h1>
-            <h2>CADA BOCADO ES UNA OPORTUNIDAD PARA DISFRUTAR SIN DESPERDICIAR.</h2>
-            <br>
-            <p>Fundada en 2024, nuestra plataforma permite descubrir y disfrutar de una amplia variedad de opciones gastronómicas de calidad. Nuestra misión es ofrecer una experiencia culinaria excepcional a través de la colaboración con una amplia variedad de restaurantes, asegurando siempre una oferta rica y de alta calidad. Nos dedicamos a la innovación y la simplicidad, creando una experiencia de usuario fluida y agradable. Además, priorizamos la satisfacción del cliente, esforzándonos por brindar un servicio excepcional y memorable en todo momento. Nos comprometemos a ofrecer una plataforma inclusiva, que facilite el acceso a una amplia gama de restaurantes y tipos de cocina.</p>
-            <p>Buscamos brindar una experiencia única, con soporte integral y personalizado en cada interacción. Además, promovemos la sostenibilidad, apoyando prácticas responsables y colaborando con restaurantes que comparten nuestros valores.</p>
-            <p>¡Esperamos conectarte con tus próximos sabores favoritos!</p>
-            <br>
-            <a href="{{ url_for('login') }}" class="btn-custom rounded-full">Acceder</a>
+        <!--
+        <div class="white-background text-center">
+            <a href="{{ url_for('register') }}" class="btn-custom">Regístrate</a>
         </div>
-    </div>
+        -->
+    </main>   
 
-
+    <br>
     <br id="concientizacion-section">
-    <br>
-    <br>
-    <br>
+    
     
 
     <div class="concientizacion-info">
-        <h1 class="text-2xl font-bold text-center mb-4">Concientización</h1>
         <div class="card-container">
             <div class="card">
                 <img src="{{ url_for('static', filename='img/ReducirDesperdicio.png') }}" alt="Desperdicio en Casa">
@@ -383,6 +393,25 @@
                 <!-- <button onclick="scrollToInfo('info4')">LEER MAS</button>-->
             </div>
         </div>
+    </div>
+
+    <br id="acercadenosotros-section">
+    <br>
+    <br>
+    <br>
+    
+    <div class="acerca-de-nosotros" id="acercadenosotros-section">
+        <div class="content">
+            <h1>SAVE A BITE</h1>
+            <h2>CADA BOCADO ES UNA OPORTUNIDAD PARA DISFRUTAR SIN DESPERDICIAR.</h2>
+            <br>
+            <p>Fundada en 2024, nuestra plataforma permite descubrir y disfrutar de una amplia variedad de opciones gastronómicas de calidad. Nuestra misión es ofrecer una experiencia culinaria excepcional a través de la colaboración con una amplia variedad de restaurantes, asegurando siempre una oferta rica y de alta calidad. Nos dedicamos a la innovación y la simplicidad, creando una experiencia de usuario fluida y agradable. Además, priorizamos la satisfacción del cliente, esforzándonos por brindar un servicio excepcional y memorable en todo momento. Nos comprometemos a ofrecer una plataforma inclusiva, que facilite el acceso a una amplia gama de restaurantes y tipos de cocina.</p>
+            <p>Buscamos brindar una experiencia única, con soporte integral y personalizado en cada interacción. Además, promovemos la sostenibilidad, apoyando prácticas responsables y colaborando con restaurantes que comparten nuestros valores.</p>
+            <p>¡Esperamos conectarte con tus próximos sabores favoritos!</p>
+            <br>
+            <a href="{{ url_for('login') }}" class="btn-custom rounded-full">Acceder</a>
+        </div>
+        <img src="{{ url_for('static', filename='img/contact.png') }}" alt="About Us Image">
     </div>
 
     <br id="contact-form">

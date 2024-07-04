@@ -1,19 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Save a Bite - Food Delivery</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             font-family: 'Nunito', sans-serif;
             margin: 0;
             padding: 0;
+            background-color: white;
         }
 
         .bg-custom-blue {
@@ -31,6 +30,7 @@
             font-weight: bold;
             padding: 1rem 2rem;
             font-size: 1.25rem;
+            border-radius: 20px;
         }
 
         .btn-custom:hover {
@@ -42,107 +42,93 @@
             padding: 1rem 2rem;
             position: relative;
             z-index: 10;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .wave {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            z-index: -1;
-        }
-
-        .wave svg {
-            position: relative;
-            display: block;
-            width: 100%;
-            height: auto;
-        }
-
-        .main-content {
-            height: auto;
-        }
-
-        .main-image {
-            max-width: 600px;
-            width: 80%;
-            height: auto;
-            object-fit: contain;
-        }
-
-        .flex-container {
+        .header {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background-color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 3px solid #27a2e8;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header img {
+            height: 50px;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-menu ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-menu ul li {
+            margin: 0 15px;
+        }
+
+        .nav-menu ul li a {
+            text-decoration: none;
+            color: #27a2e8;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .nav-menu ul li a:hover {
+            color: #1e91d6;
+        }
+
+        .acerca-de-nosotros {
+            padding: 40px;
+            margin: 50px auto;
+            max-width: 1200px;
+            display: flex;
             align-items: center;
             justify-content: center;
-            height: 100%;
-        }
-
-        .main-image-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-
-        .contact-form {
-            background-color: #ffffff;
-            border: 2px solid #27a2e8;
+            background-color: #f9f9f9;
             border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 900px;
-            margin-top: 10px;
-            margin-bottom: 30px;
-            display: block;
-            margin: 0 auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .contact-form h2 {
-            color: #27a2e8;
-            text-align: center;
+        .acerca-de-nosotros img {
+            max-width: 100%;
+            border-radius: 50%;
+            margin-right: 40px;
         }
 
-        .contact-form label {
-            display: block;
-            margin-top: 10px;
-            color: #000000;
+        .acerca-de-nosotros .content {
+            max-width: 600px;
         }
 
-        .contact-form input,
-        .contact-form textarea {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #27a2e8;
-            border-radius: 5px;
-            font-size: 16px;
+        .acerca-de-nosotros h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
         }
 
-        .contact-form button {
-            width: 100%;
-            padding: 12px;
+        .acerca-de-nosotros p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .acerca-de-nosotros .btn-custom {
             margin-top: 20px;
-            background-color: #27a2e8;
-            border: none;
-            border-radius: 5px;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
         }
 
-        .contact-form p {
-            text-align: center;
-            margin-top: 15px;
-            color: #27a2e8;
-        }
-
-        .confirmation-message {
-            display: none;
-            text-align: center;
-            color: #27a2e8;
-            font-size: 1.2rem;
-            margin-top: 20px;
+        .separator {
+            border-bottom: 2px solid #27a2e8;
+            margin: 1rem 0;
         }
 
         .concientizacion-info {
@@ -152,34 +138,7 @@
             border-radius: 10px;
             margin-bottom: 120px;
             text-align: center;
-        }
-
-        .acerca-de-nosotros {
-            max-height: 900px;
-            padding: 20px;
-            margin-top: 10px;
-            width: 100%;
-            max-width: 1500px;
-            border-radius: 10px;
-            position: relative;
-            margin-bottom: 30px;
-            margin: 0 auto;
-        }
-
-        .separator {
-            border-bottom: 2px solid #27a2e8;
-            margin: 1rem 0;
-        }
-
-        .imagen1 {
-            height: 400px;
-            object-fit: contain;
-            justify-content: center;
-        }
-
-        .carousel1 {
-            text-align: center;
-            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .card-container {
@@ -202,13 +161,13 @@
             width: 320px;
             text-align: center;
             align-items: center;
-            height: 300px; /* Añadir una altura fija para las cards */
+            height: 300px;
         }
 
         .card img {
-            width: 170px;  /* Fija el ancho de las imágenes */
-            height: 150px; /* Fija la altura de las imágenes */
-            object-fit: cover; /* Mantiene las proporciones sin distorsionar */
+            width: 170px;
+            height: 150px;
+            object-fit: cover;
             margin-bottom: 15px;
             align-items: center;
         }
@@ -221,7 +180,7 @@
             text-align: center;
         }
 
-        .card a {
+        .card button {
             background-color: #27a2e8;
             color: white;
             padding: 10px 20px;
@@ -229,184 +188,222 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.2s;
-            margin-top: auto; /* Empuja el botón hacia la parte inferior */
-            text-decoration: none; /* Remove underline from links */
-            display: inline-block; /* Make the link act like a button */
+            margin-top: auto;
         }
 
-        .card a:hover {
+        .card button:hover {
             background-color: #1e91d6;
         }
-        .alert-container {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 1000;
-        }
 
-        .alert {
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 10px;
+        .contact-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 50px auto;
+            padding: 40px;
+            max-width: 1000px;
+            background-color: #0066cc;
+            border-radius: 20px;
             color: white;
-            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .alert-success {
-            background-color: #4caf50;
+        .contact-form img {
+            border-radius: 20px 0 0 20px;
+            max-width: 300px;
+            height: auto;
         }
 
-        .alert-error {
-            background-color: #f44336;
+        .contact-form form {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
         }
 
+        .contact-form label {
+            margin-top: 10px;
+            font-size: 1rem;
+        }
+
+        .contact-form input, .contact-form textarea {
+            padding: 10px;
+            margin-top: 5px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            width: 100%;
+            color: black;
+        }
+
+        .contact-form input {
+            height: 40px;
+        }
+
+        .contact-form button {
+            margin-top: 20px;
+            background-color: white;
+            color: #0066cc;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .contact-form button:hover {
+            background-color: #004c99;
+            color: white;
+        }
+
+        .carousel-indicators button {
+            background-color: black !important;
+        }
+
+        .carousel-controls span {
+            background-color: black !important;
+        }
+        .c-image{
+            width: 100%;
+            height: 100%;
+        }
     </style>
 </head>
-
-<body class="bg-custom-blue items-center min-h-screen relative">
-    <!-- Mostrar mensajes flash -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        <div class="alert-container">
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">{{ message }}</div>
-            {% endfor %}
-        </div>
-    {% endif %}
-   {% endwith %}
-    <div class="white-background w-full flex justify-between items-center">
-        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Save a Bite" class="h-14 ml-4">
-        <button id="menu-toggle" class="block md:hidden focus:outline-none mr-4">
-            <svg class="h-6 w-6 text-custom-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-            </svg>
-        </button>
-        <nav id="menu" class="hidden md:flex flex-col md:flex-row md:space-x-4 md:items-center">
-            <ul class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
-                <li><a href="{{ url_for('index') }}" class="text-custom-blue ml-10">Menu</a></li>
-                <li><a href="#acercadenosotros-section" class="text-custom-blue ml-10">Acerca de Nosotros</a></li>
-                <li><a href="#concientizacion-section" class="text-custom-blue ml-10">Concientización</a></li>
-                <li><a href="#contact-form" class="text-custom-blue ml-10">Consultas</a></li>
+<body class="items-center min-h-screen relative">
+    <header class="header">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Save a Bite">
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="#acercadenosotros-section">Acerca de Nosotros</a></li>
+                <li><a href="#concientizacion-section">Concientización</a></li>
+                <li><a href="#contact-form">Consultas</a></li>
             </ul>
         </nav>
-        <a href="{{ url_for('login') }}" class="btn-custom rounded-full mr-4">Acceder</a>
-    </div>
+        <a href="{{ url_for('login') }}" class="btn-custom">Acceder</a>
+    </header>
+
     <main class="main-content flex justify-center text-center" id="main-section">
-        <div class="flex-container 2x2 flex flex-row justify-center items-center">
-            <div id="myCarousel" class="carousel slide" data-ride="carousel">
-                <!-- Indicators -->
-                <ul class="carousel-indicators">
-                    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-                    <li data-target="#myCarousel" data-slide-to="1"></li>
-                    <li data-target="#myCarousel" data-slide-to="2"></li>
-                </ul>
-
-                <!-- The slideshow -->
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <div class="carousel1">
-                            <h1 class="text-3xl text-white font-bold mt-20">COME BARATO!</h1>
-                            <img src="{{ url_for('static', filename='img/desperdicio.png') }}" alt="Image 1"
-                                class="imagen1 d-block w-50 mx-auto">
-                            <p class="text-4xl text-white font-bold mb-10">Y AYUDA AL PLANETA</p>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="carousel1">
-                            <h1 class="text-4xl text-white font-bold mt-20">¡como estas!</h1>
-                            <p class="text-lg mb-6 text-white">Encuentra platos frescos y de calidad que de otro modo se
-                                desperdiciarían.</p>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="carousel1">
-                            <img src="{{ url_for('static', filename='img/salad_intro.png') }}" alt="Image 3"
-                                class="imagen1 d-block w-50 mx-auto">
-                            <h1 class="text-4xl text-white font-bold">¡CHAU!</h1>
-                            <p class="text-lg mb-6 text-white">Encuentra platos frescos y de calidad que de otro modo se
-                                desperdiciarían.</p>
-                        </div>
-                    </div>
+        <div id="default-carousel" class="relative w-full max-w-4xl mx-auto my-8" data-carousel="slide">
+            <!-- Carousel wrapper -->
+            <div class="relative h-[35rem] overflow-hidden rounded-lg"> <!-- Ajuste de la altura aquí -->
+                <!-- Item 1 -->
+                <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                    <img src="{{ url_for('static', filename='img/imagen1.png') }}" class="absolute block w-full h-full object-fit" alt="Imagen 1">
                 </div>
-
-                <!-- Left and right controls -->
-                <a class="carousel-control-prev" href="#myCarousel" data-slide="prev">
-                    <span class="carousel-control-prev-icon"></span>
-                </a>
-                <a class="carousel-control-next" href="#myCarousel" data-slide="next">
-                    <span class="carousel-control-next-icon"></span>
-                </a>
+                <!-- Item 2 -->
+                <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                    <img src="{{ url_for('static', filename='img/imagen2.png') }}" class="absolute block w-full h-full object-fit" alt="Imagen 2">
+                </div>
+                <!-- Item 3 -->
+                <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                    <img src="{{ url_for('static', filename='img/imagen3.png') }}" class="absolute block w-full h-full object-fit" alt="Imagen 3">
+                </div>
             </div>
+            <!-- Slider indicators -->
+            <div class="carousel-indicators absolute z-30 flex -translate-x-1 bottom-5 left-1/5 space-x-3">
+                <button type="button" class="w-3 h-3 rounded-full" aria-current="true" aria-label="Slide 1" data-carousel-slide-to="0"></button>
+                <button type="button" class="w-3 h-3 rounded-full" aria-current="false" aria-label="Slide 2" data-carousel-slide-to="1"></button>
+                <button type="button" class="w-3 h-3 rounded-full" aria-current="false" aria-label="Slide 3" data-carousel-slide-to="2"></button>
+            </div>
+            <!-- Slider controls -->
+            <button type="button" class="carousel-controls absolute top-0 left-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-prev>
+                <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-black/30 group-hover:bg-black/50 focus:ring-4 focus:ring-white focus:outline-none">
+                    <svg class="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
+                    </svg>
+                    <span class="sr-only">Previous</span>
+                </span>
+            </button>
+            <button type="button" class="carousel-controls absolute top-0 right-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-next>
+                <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-black/30 group-hover:bg-black/50 focus:ring-4 focus:ring-white focus:outline-none">
+                    <svg class="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                    </svg>
+                    <span class="sr-only">Next</span>
+                </span>
+            </button>
         </div>
     </main>
 
-    <!-- Acerca de Nosotros -->
+    <br>
+    <br id="acercadenosotros-section">
+    <br>
+    <br>
+    <br>
+    
     <div class="acerca-de-nosotros" id="acercadenosotros-section">
-        <div class="content-container bg-white p-4 rounded">
-            <h1 class="text-2xl font-bold text-center mb-4">Acerca de Nosotros</h1>
-            <div class="separator mb-4"></div>
-            <div class="text-center mb-6">
-                <p class="text-l mb-3">En Save a Bite, facilitamos la conexión entre los mejores restaurantes y los amantes de la buena mesa.</p>
-                <p class="text-l mb-3">Fundada en 2023, nuestra plataforma permite descubrir y disfrutar de una amplia variedad de opciones gastronómicas de calidad.</p>
-                <p class="text-l mb-2">Nuestra misión es ofrecer una experiencia culinaria excepcional a través de la colaboración con una amplia variedad de restaurantes, asegurando siempre una oferta rica y de alta calidad. </p>
-                <p class="text-l mb-2">Nos dedicamos a la innovación y la simplicidad, creando una experiencia de usuario fluida y agradable. Además, priorizamos la satisfacción del cliente, esforzándonos por brindar un servicio excepcional y memorable en todo momento.</p>
-                <p class="text-l mb-2">Nos comprometemos a ofrecer una plataforma inclusiva, que facilite el acceso a una amplia gama de restaurantes y tipos de cocina. </p>
-                <p class="text-l mb-10">Buscamos brindar una experiencia única, con soporte integral y personalizado en cada interacción. Además, promovemos la sostenibilidad, apoyando prácticas responsables y colaborando con restaurantes que comparten nuestros valores.</p>
-
-                <h5 class="text-xl font-bold mb-5">Únete a Save a Bite y descubre nuevos restaurantes. Gracias por confiar en nosotros para tus aventuras culinarias. </h5>
-                <p class="text-l mb-5">¡Esperamos conectarte con tus próximos sabores favoritos!</p>
-            </div>
+        <img src="{{ url_for('static', filename='img/contact.png') }}" alt="About Us Image">
+        <div class="content">
+            <h1>SAVE A BITE</h1>
+            <h2>CADA BOCADO ES UNA OPORTUNIDAD PARA DISFRUTAR SIN DESPERDICIAR.</h2>
+            <br>
+            <p>Fundada en 2024, nuestra plataforma permite descubrir y disfrutar de una amplia variedad de opciones gastronómicas de calidad. Nuestra misión es ofrecer una experiencia culinaria excepcional a través de la colaboración con una amplia variedad de restaurantes, asegurando siempre una oferta rica y de alta calidad. Nos dedicamos a la innovación y la simplicidad, creando una experiencia de usuario fluida y agradable. Además, priorizamos la satisfacción del cliente, esforzándonos por brindar un servicio excepcional y memorable en todo momento. Nos comprometemos a ofrecer una plataforma inclusiva, que facilite el acceso a una amplia gama de restaurantes y tipos de cocina.</p>
+            <p>Buscamos brindar una experiencia única, con soporte integral y personalizado en cada interacción. Además, promovemos la sostenibilidad, apoyando prácticas responsables y colaborando con restaurantes que comparten nuestros valores.</p>
+            <p>¡Esperamos conectarte con tus próximos sabores favoritos!</p>
+            <br>
+            <a href="{{ url_for('login') }}" class="btn-custom rounded-full">Acceder</a>
         </div>
     </div>
 
-    <!-- Concientización -->
-    <div class="concientizacion-info" id="concientizacion-section">
+
+    <br id="concientizacion-section">
+    <br>
+    <br>
+    <br>
+    
+
+    <div class="concientizacion-info">
+        <h1 class="text-2xl font-bold text-center mb-4">Concientización</h1>
         <div class="card-container">
             <div class="card">
                 <img src="{{ url_for('static', filename='img/ReducirDesperdicio.png') }}" alt="Desperdicio en Casa">
                 <h2>CÓMO REDUCIR EL DESPERDICIO EN CASA</h2>
-                <a href="{{ url_for('como_reducir') }}" class="btn">LEER MAS</a>
+                <button onclick="scrollToInfo('info1')">LEER MAS</button>
             </div>
             <div class="card">
                 <img src="{{ url_for('static', filename='img/Impacto.png') }}" alt="Impacto Ambiental">
                 <h2>IMPACTO AMBIENTAL DEL DESPERDICIO DE ALIMENTOS</h2>
-                <a href="{{ url_for('impacto_ambiental') }}" class="btn">LEER MAS</a>
+                <button onclick="scrollToInfo('info2')">LEER MAS</button>
             </div>
             <div class="card">
                 <img src="{{ url_for('static', filename='img/ZeroWaste.png') }}" alt="Recetas con Sobras">
                 <h2>RECETAS DE COCINA CON SOBRAS</h2>
-                <a href="{{ url_for('recetas_sobras') }}" class="btn">LEER MAS</a>
+                <button onclick="scrollToInfo('info3')">LEER MAS</button>
             </div>
             <div class="card">
                 <img src="{{ url_for('static', filename='img/EconomiaCircular.png') }}" alt="Economía Circular">
                 <h2>ECONOMÍA CIRCULAR</h2>
-                <a href="{{ url_for('economia_circular') }}" class="btn">LEER MAS</a>
+                <button onclick="scrollToInfo('info4')">LEER MAS</button>
             </div>
         </div>
     </div>
 
+    <br id="contact-form">
+    <br>
+    <br>
+    <br>
 
-    <!-- Contacto -->
-<div class="contact-form" id="contact-form">
-    <h1 class="text-2xl font-bold text-center mb-4">Contáctanos</h1>
-    <div class="separator mb-4"></div>
-    <form action="{{ url_for('contacto') }}" method="post">
-        <label for="name">Introduce tu nombre</label>
-        <input type="text" id="name" name="name" required>
 
-        <label for="email">Introduce tu email</label>
-        <input type="email" id="email" name="email" required>
+    <div class="contact-form" id="contact-form">
+        <img src="{{ url_for('static', filename='img/formulario.png') }}" alt="form">
+        <form action="#" method="post" onsubmit="return submitForm()">
+            <label for="name">Nombre</label>
+            <input type="text" id="name" name="name" required>
 
-        <label for="message">Introduce tu mensaje</label>
-        <textarea id="message" name="message" required></textarea>
+            <label for="phone">Teléfono *</label>
+            <input type="tel" id="phone" name="phone" required>
 
-        <p>Déjanos tu consulta y nos contactaremos con usted a la brevedad</p>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
 
-        <button type="submit">Enviar</button>
-    </form>
-    <p class="confirmation-message" id="confirmation-message">Nos pondremos en contacto contigo a la brevedad posible.</p>
-</div>
+            <label for="message">Mensaje</label>
+            <textarea id="message" name="message" rows="4" required></textarea>
+
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+
     <div class="wave">
         <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
             version="1.1">
@@ -414,18 +411,17 @@
                 fill="#FFFFFF" stroke-linecap="round" stroke-linejoin="miter"></path>
         </svg>
     </div>
-
-    <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
     <script>
         function submitForm() {
-            // Mostrar el mensaje de confirmación
             document.getElementById("confirmation-message").style.display = "block";
-            // Evitar que el formulario se envíe realmente
             return false;
+        }
+
+        function scrollToInfo(infoId) {
+            document.getElementById(infoId).scrollIntoView({ behavior: 'smooth' });
         }
 
         document.getElementById('menu-toggle').addEventListener('click', function () {
@@ -433,6 +429,39 @@
             menu.classList.toggle('hidden');
         });
     </script>
-</body>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const carouselItems = document.querySelectorAll('[data-carousel-item]');
+            let currentIndex = 0;
 
+            const updateCarousel = (index) => {
+                carouselItems.forEach((item, i) => {
+                    item.classList.toggle('hidden', i !== index);
+                });
+            };
+
+            const nextSlide = () => {
+                currentIndex = (currentIndex + 1) % carouselItems.length;
+                updateCarousel(currentIndex);
+            };
+
+            const prevSlide = () => {
+                currentIndex = (currentIndex - 1 + carouselItems.length) % carouselItems.length;
+                updateCarousel(currentIndex);
+            };
+
+            document.querySelector('[data-carousel-next]').addEventListener('click', nextSlide);
+            document.querySelector('[data-carousel-prev]').addEventListener('click', prevSlide);
+            document.querySelectorAll('[data-carousel-slide-to]').forEach((indicator, index) => {
+                indicator.addEventListener('click', () => {
+                    currentIndex = index;
+                    updateCarousel(currentIndex);
+                });
+            });
+
+            updateCarousel(currentIndex);
+            setInterval(nextSlide, 5000); // Cambia de imagen cada 5 segundos
+        });
+    </script>
+</body>
 </html>

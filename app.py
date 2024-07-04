@@ -1786,12 +1786,13 @@ def economia_circular():
 @app.route("/contacto", methods=['POST'])
 def contacto():
     name = request.form['name']
+    phone = request.form['phone']
     email = request.form['email']
     message = request.form['message']
     
     # Crear el mensaje de correo electrónico
     msg = Message('Nuevo mensaje de contacto', recipients=['saveabite.sip@gmail.com'])
-    msg.body = f"Nombre: {name}\nEmail: {email}\n\nMensaje:\n{message}"
+    msg.body = f"Nombre: {name}\nTeléfono: {phone}\nEmail: {email}\n\nMensaje:\n{message}"
     
     # Enviar el mensaje de correo electrónico
     try:

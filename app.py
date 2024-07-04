@@ -1803,5 +1803,71 @@ def contacto():
     
     return redirect(url_for('index'))
 
+@app.route("/enviar_soporte", methods=['POST'])
+def enviar_soporte():
+    user_id = session.get('user_id')
+    if not user_id:
+        flash('Debes iniciar sesión para enviar un mensaje de soporte', 'error')
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    user = conn.execute('SELECT nombre_usuario, correo_electronico FROM usuarios WHERE id = ?', (user_id,)).fetchone()
+    conn.close()
+    
+    if not user:
+        flash('Usuario no encontrado', 'error')
+        return redirect(url_for('soporte'))
+    
+    subject = request.form['subject']
+    message_content = request.form['message']
+    
+    # Crear el mensaje de correo electrónico
+    msg = Message(f"{user['nombre_usuario']} - {subject}",
+                  sender='saveabite.sip@gmail.com',
+                  recipients=['saveabite.sip@gmail.com'])
+    msg.body = f"Nombre de usuario: {user['nombre_usuario']}\nCorreo electrónico: {user['correo_electronico']}\n\nMensaje:\n{message_content}"
+    
+    # Enviar el mensaje de correo electrónico
+    try:
+        mail.send(msg)
+        flash('Tu mensaje ha sido enviado con éxito.', 'success')
+    except Exception as e:
+        flash(f'Hubo un error al enviar tu mensaje: {str(e)}', 'error')
+    
+    return redirect(url_for('perfil_usuario'))
+
+@app.route("/enviar_soporte_empresa", methods=['POST'])
+def enviar_soporte_empresa():
+    user_id = session.get('user_id')
+    if not user_id:
+        flash('Debes iniciar sesión para enviar un mensaje de soporte', 'error')
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    user = conn.execute('SELECT nombre_usuario, correo_electronico FROM usuarioEmpresa WHERE id = ?', (user_id,)).fetchone()
+    conn.close()
+    
+    if not user:
+        flash('Usuario no encontrado', 'error')
+        return redirect(url_for('soporte_empresa'))
+    
+    subject = request.form['subject']
+    message_content = request.form['message']
+    
+    # Crear el mensaje de correo electrónico
+    msg = Message(f"{user['nombre_usuario']} - {subject}",
+                  sender='saveabite.sip@gmail.com',
+                  recipients=['saveabite.sip@gmail.com'])
+    msg.body = f"Nombre de usuario: {user['nombre_usuario']}\nCorreo electrónico: {user['correo_electronico']}\n\nMensaje:\n{message_content}"
+    
+    # Enviar el mensaje de correo electrónico
+    try:
+        mail.send(msg)
+        flash('Tu mensaje ha sido enviado con éxito.', 'success')
+    except Exception as e:
+        flash(f'Hubo un error al enviar tu mensaje: {str(e)}', 'error')
+    
+    return redirect(url_for('perfil_empresa'))
+
 if __name__ == "__main__":
     app.run(debug=True)

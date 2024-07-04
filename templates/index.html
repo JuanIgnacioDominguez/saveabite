@@ -180,7 +180,7 @@
             text-align: center;
         }
 
-        .card button {
+        .card-button {
             background-color: #27a2e8;
             color: white;
             padding: 10px 20px;
@@ -268,6 +268,7 @@
             width: 100%;
             height: 100%;
         }
+        
     </style>
 </head>
 <body class="items-center min-h-screen relative">
@@ -275,6 +276,7 @@
         <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Save a Bite">
         <nav class="nav-menu">
             <ul>
+                <li><a href="#main-section">Inicio</a></li>
                 <li><a href="#acercadenosotros-section">Acerca de Nosotros</a></li>
                 <li><a href="#concientizacion-section">Concientización</a></li>
                 <li><a href="#contact-form">Consultas</a></li>
@@ -359,22 +361,26 @@
             <div class="card">
                 <img src="{{ url_for('static', filename='img/ReducirDesperdicio.png') }}" alt="Desperdicio en Casa">
                 <h2>CÓMO REDUCIR EL DESPERDICIO EN CASA</h2>
-                <button onclick="scrollToInfo('info1')">LEER MAS</button>
+                <!--<button onclick="scrollToInfo('info1')">LEER MAS</button>-->
+                <a href="{{ url_for('como_reducir') }}" class="card-button">LEER MAS</a>
             </div>
             <div class="card">
                 <img src="{{ url_for('static', filename='img/Impacto.png') }}" alt="Impacto Ambiental">
                 <h2>IMPACTO AMBIENTAL DEL DESPERDICIO DE ALIMENTOS</h2>
-                <button onclick="scrollToInfo('info2')">LEER MAS</button>
+                <a href="{{ url_for('impacto_ambiental') }}" class="card-button">LEER MAS</a>
+                <!-- <button onclick="scrollToInfo('info2')">LEER MAS</button>-->
             </div>
-            <div class="card">
+            <!--<div class="card">
                 <img src="{{ url_for('static', filename='img/ZeroWaste.png') }}" alt="Recetas con Sobras">
                 <h2>RECETAS DE COCINA CON SOBRAS</h2>
+                <a href="{{ url_for('recetas_sobras') }}" class="btn">LEER MAS</a>
                 <button onclick="scrollToInfo('info3')">LEER MAS</button>
-            </div>
+            </div>-->
             <div class="card">
                 <img src="{{ url_for('static', filename='img/EconomiaCircular.png') }}" alt="Economía Circular">
                 <h2>ECONOMÍA CIRCULAR</h2>
-                <button onclick="scrollToInfo('info4')">LEER MAS</button>
+                <a href="{{ url_for('economia_circular') }}" class="card-button">LEER MAS</a>
+                <!-- <button onclick="scrollToInfo('info4')">LEER MAS</button>-->
             </div>
         </div>
     </div>

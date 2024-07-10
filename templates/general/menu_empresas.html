@@ -305,10 +305,23 @@
         {% endif %}
     </div>
 
+    <div id="popup" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+        <div class="bg-white p-8 rounded-lg shadow-lg text-center relative max-w-6xl mx-auto">
+            <button id="closePopup" class="absolute top-2 right-2 text-black text-xl">&times;</button>
+            <img src="{{ url_for('static', filename='img/ZeroWaste.png') }}" alt="Save a Bite" class="mx-auto mb-4" style="width: 300px; height: auto;">
+            <h1 class="text-2xl font-bold mb-2">¡Conviértete en un Héroe del Alimento y Genera Ingresos Adicionales!</h1>
+            <p class="text-xl mb-4">¿Tienes alimentos de calidad que no quieres desperdiciar? ¡No los tires! Únete a Save a Bite y conviértelos en una oportunidad para generar ingresos adicionales. Al vender tus excedentes de comida, no solo ayudas a reducir el desperdicio, sino que también apoyas a la comunidad ofreciendo alimentos frescos a precios accesibles.</p>
+            <div class="flex justify-center space-x-4">
+                <button class="bg-blue-500 text-white px-4 py-2 rounded">Empeza ahora</button>
+                <button class="bg-blue-500 text-white px-4 py-2 rounded">Seguinos en Instagram</button>
+            </div>
+        </div>
+    </div>
+    
     <script>
         // Datos para el gráfico de línea
         const labels = Array.from({length: 30}, (_, i) => i + 1);
-        const dailyRevenue = {{ daily_revenue | tojson }};
+        const dailyRevenue = `{{ daily_revenue | tojson }}`;
         const dataPoints = labels.map(day => dailyRevenue[day] || 0);
         
         const data = {
@@ -375,6 +388,30 @@
         // Renderizar el gráfico de línea
         const ctx = document.getElementById('lineChart').getContext('2d');
         new Chart(ctx, config);
+
+        //POPUPS
+        document.addEventListener('DOMContentLoaded', function() {
+                // Mostrar el popup al cargar la página
+                const popup = document.getElementById('popup');
+                popup.classList.remove('hidden');
+
+                // Cerrar el popup cuando se haga clic en el botón de cerrar
+                const closePopup = document.getElementById('closePopup');
+                closePopup.addEventListener('click', function() {
+                    popup.classList.add('hidden');
+                });
+
+                // Agregar funcionalidad a los botones
+                document.querySelector('button.bg-blue-500').addEventListener('click', function() {
+                    document.getElementById('popup').style.display = 'none';
+                });
+
+                document.querySelector('button.bg-blue-500:nth-child(2)').addEventListener('click', function() {
+                    var instagramUrl = 'https://www.instagram.com/saveabite_/'; // Reemplaza con la URL correcta de Instagram
+                    window.open(instagramUrl, '_blank');
+                });
+            });
+
     </script>
 </body>
 </html>

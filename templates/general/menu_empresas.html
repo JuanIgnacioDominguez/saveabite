@@ -312,36 +312,43 @@
             <h1 class="text-2xl font-bold mb-2">¡Conviértete en un Héroe del Alimento y Genera Ingresos Adicionales!</h1>
             <p class="text-xl mb-4">¿Tienes alimentos de calidad que no quieres desperdiciar? ¡No los tires! Únete a Save a Bite y conviértelos en una oportunidad para generar ingresos adicionales. Al vender tus excedentes de comida, no solo ayudas a reducir el desperdicio, sino que también apoyas a la comunidad ofreciendo alimentos frescos a precios accesibles.</p>
             <div class="flex justify-center space-x-4">
-                <button class="bg-blue-500 text-white px-4 py-2 rounded">Empeza ahora</button>
-                <button class="bg-blue-500 text-white px-4 py-2 rounded">Seguinos en Instagram</button>
+                <button id="startNowButton" class="bg-blue-500 text-white px-4 py-2 rounded">Empeza ahora</button>
+                <button id="followInstagramButton" class="bg-blue-500 text-white px-4 py-2 rounded">Seguinos en Instagram</button>
             </div>
         </div>
     </div>
     
     <script>
-
         //POPUPS
         document.addEventListener('DOMContentLoaded', function() {
-                // Mostrar el popup al cargar la página
+            // Mostrar el popup al cargar la página si no se ha mostrado antes
+            if (!localStorage.getItem('popupShown')) {
                 const popup = document.getElementById('popup');
                 popup.classList.remove('hidden');
+                localStorage.setItem('popupShown', 'true');
+            }
 
-                // Cerrar el popup cuando se haga clic en el botón de cerrar
-                const closePopup = document.getElementById('closePopup');
-                closePopup.addEventListener('click', function() {
-                    popup.classList.add('hidden');
-                });
-
-                // Agregar funcionalidad a los botones
-                document.querySelector('button.bg-blue-500').addEventListener('click', function() {
-                    document.getElementById('popup').style.display = 'none';
-                });
-
-                document.querySelector('button.bg-blue-500:nth-child(2)').addEventListener('click', function() {
-                    var instagramUrl = 'https://www.instagram.com/saveabite_/'; // Reemplaza con la URL correcta de Instagram
-                    window.open(instagramUrl, '_blank');
-                });
+            // Cerrar el popup cuando se haga clic en el botón de cerrar
+            const closePopup = document.getElementById('closePopup');
+            closePopup.addEventListener('click', function() {
+                const popup = document.getElementById('popup');
+                popup.classList.add('hidden');
             });
+
+            // Agregar funcionalidad al botón "Empeza ahora"
+            const startNowButton = document.getElementById('startNowButton');
+            startNowButton.addEventListener('click', function() {
+                const popup = document.getElementById('popup');
+                popup.classList.add('hidden');
+            });
+
+            // Agregar funcionalidad al botón de Instagram
+            const followInstagramButton = document.getElementById('followInstagramButton');
+            followInstagramButton.addEventListener('click', function() {
+                var instagramUrl = 'https://www.instagram.com/saveabite_/'; // Reemplaza con la URL correcta de Instagram
+                window.open(instagramUrl, '_blank');
+            });
+        });
 
         // Datos para el gráfico de línea
         const labels = Array.from({length: 30}, (_, i) => i + 1);

@@ -494,9 +494,6 @@ def seleccionar_membresia(membresia):
         conn.execute('UPDATE usuarios SET membresia = ? WHERE id = ?', (membresia, user_id))
         conn.commit()
         registrar_accion(user_id, f'Seleccionada membresía {membresia} con método de pago {metodo_pago["tipo_tarjeta"]}: **** **** **** {metodo_pago["numero_tarjeta"][-4:]}')
-        flash('Membresía seleccionada con éxito', 'success')
-    else:
-        flash('Método de pago no válido', 'error')
 
     conn.close()
     return redirect(url_for('membresia'))
@@ -509,7 +506,6 @@ def cancelar_membresia():
     conn.commit()
     registrar_accion(user_id, 'Cancelada membresía')
     conn.close()
-    flash('Membresía dada de baja correctamente.', 'success')
     return redirect(url_for('membresia'))
 
 @app.route('/membresia_empresa', methods=['GET', 'POST'])
@@ -536,9 +532,6 @@ def seleccionar_membresia_empresa(empresa_membresia):
         conn.execute('UPDATE usuarioEmpresa SET membresia = ? WHERE id = ?', (empresa_membresia, user_id))
         conn.commit()
         registrar_accion(user_id, f'Seleccionada membresía de empresa {empresa_membresia} con método de pago {metodo_pago["tipo_tarjeta"]}: **** **** **** {metodo_pago["numero_tarjeta"][-4:]}')
-        flash('Membresía seleccionada con éxito', 'success')
-    else:
-        flash('Método de pago no válido', 'error')
 
     conn.close()
     return redirect(url_for('membresia_empresa'))

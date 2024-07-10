@@ -319,6 +319,30 @@
     </div>
     
     <script>
+
+        //POPUPS
+        document.addEventListener('DOMContentLoaded', function() {
+                // Mostrar el popup al cargar la página
+                const popup = document.getElementById('popup');
+                popup.classList.remove('hidden');
+
+                // Cerrar el popup cuando se haga clic en el botón de cerrar
+                const closePopup = document.getElementById('closePopup');
+                closePopup.addEventListener('click', function() {
+                    popup.classList.add('hidden');
+                });
+
+                // Agregar funcionalidad a los botones
+                document.querySelector('button.bg-blue-500').addEventListener('click', function() {
+                    document.getElementById('popup').style.display = 'none';
+                });
+
+                document.querySelector('button.bg-blue-500:nth-child(2)').addEventListener('click', function() {
+                    var instagramUrl = 'https://www.instagram.com/saveabite_/'; // Reemplaza con la URL correcta de Instagram
+                    window.open(instagramUrl, '_blank');
+                });
+            });
+
         // Datos para el gráfico de línea
         const labels = Array.from({length: 30}, (_, i) => i + 1);
         const dailyRevenue = `{{ daily_revenue | tojson }}`;
@@ -388,29 +412,6 @@
         // Renderizar el gráfico de línea
         const ctx = document.getElementById('lineChart').getContext('2d');
         new Chart(ctx, config);
-
-        //POPUPS
-        document.addEventListener('DOMContentLoaded', function() {
-                // Mostrar el popup al cargar la página
-                const popup = document.getElementById('popup');
-                popup.classList.remove('hidden');
-
-                // Cerrar el popup cuando se haga clic en el botón de cerrar
-                const closePopup = document.getElementById('closePopup');
-                closePopup.addEventListener('click', function() {
-                    popup.classList.add('hidden');
-                });
-
-                // Agregar funcionalidad a los botones
-                document.querySelector('button.bg-blue-500').addEventListener('click', function() {
-                    document.getElementById('popup').style.display = 'none';
-                });
-
-                document.querySelector('button.bg-blue-500:nth-child(2)').addEventListener('click', function() {
-                    var instagramUrl = 'https://www.instagram.com/saveabite_/'; // Reemplaza con la URL correcta de Instagram
-                    window.open(instagramUrl, '_blank');
-                });
-            });
 
     </script>
 </body>

@@ -560,17 +560,17 @@
                         });
                         fetchCartItems();
                     } else {
-                        messageContainer.innerHTML = <p class="message">Error al agregar el producto al carrito</p>;
+                        messageContainer.innerHTML = `<p class="message">Error al agregar el producto al carrito</p>`;
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
                     const messageContainer = document.querySelector('#preview-modal .message-container');
-                    messageContainer.innerHTML = <p class="message">Error al agregar el producto al carrito</p>;
+                    messageContainer.innerHTML = `<p class="message">Error al agregar el producto al carrito</p>`;
                 });
             } else {
                 const messageContainer = document.querySelector('#preview-modal .message-container');
-                messageContainer.innerHTML = <p class="message">Cantidad no válida. Disponible: ${currentStock}</p>;
+                messageContainer.innerHTML = `<p class="message">Cantidad no válida. Disponible: ${currentStock}</p>`;
             }
         });
 

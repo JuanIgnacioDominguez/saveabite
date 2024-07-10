@@ -90,48 +90,48 @@
         }
 
         .acerca-de-nosotros {
-            padding: 20px; /* Ajusta el padding según sea necesario */
+            padding: 15px; /* Ajusta el padding según sea necesario */
             margin: 20px auto; /* Ajusta el margen para centrarlo */
 
-            width: 1300px;
+            width: 1400px;
             display: flex;
             align-items: center;
             justify-content: space-between; /* Alinea el contenido y la imagen */
             background-color: #f9f9f9;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px #004c99;
         }
 
         .acerca-de-nosotros img {
             max-width: 300px; /* Reducir el tamaño de la imagen */
-            border-radius: 50%;
-            margin-right: 20px;
+            border-radius: 30%;
+            margin-right: 5px;
         }
 
         .acerca-de-nosotros .content {
-            max-width: calc(100% - 340px); /* Ajusta el ancho del contenido para dejar espacio para la imagen */
+            max-width: calc(100% - 320px); /* Ajusta el ancho del contenido para dejar espacio para la imagen */
             font-size: 1rem; /* Ajusta el tamaño del texto */
             line-height: 1.6; /* Ajusta el espaciado entre líneas */
         }
 
         .acerca-de-nosotros h1 {
             font-size: 2.5rem;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
+        }
+
+        .acerca-de-nosotros h2 {
+            font-size: 1.1rem;
+            margin-bottom: 1px;
         }
 
         .acerca-de-nosotros p {
             font-size: 1.1rem;
             line-height: 1.6;
-            margin-bottom: 15px;
+            margin-bottom: 8px;
         }
 
         .acerca-de-nosotros .btn-custom {
-            margin-top: 20px;
-        }
-
-        .separator {
-            border-bottom: 2px solid #27a2e8;
-            margin: 1rem 0;
+            margin-bottom: 10px;
         }
 
         .concientizacion-info {
@@ -451,9 +451,10 @@
             <h1>SAVE A BITE</h1>
             <h2>CADA BOCADO ES UNA OPORTUNIDAD PARA DISFRUTAR SIN DESPERDICIAR.</h2>
             <br>
-            <p>Fundada en 2024, nuestra plataforma permite descubrir y disfrutar de una amplia variedad de opciones gastronómicas de calidad. Nuestra misión es ofrecer una experiencia culinaria excepcional a través de la colaboración con una amplia variedad de restaurantes, asegurando siempre una oferta rica y de alta calidad. Nos dedicamos a la innovación y la simplicidad, creando una experiencia de usuario fluida y agradable. Además, priorizamos la satisfacción del cliente, esforzándonos por brindar un servicio excepcional y memorable en todo momento. Nos comprometemos a ofrecer una plataforma inclusiva, que facilite el acceso a una amplia gama de restaurantes y tipos de cocina.</p>
-            <p>Buscamos brindar una experiencia única, con soporte integral y personalizado en cada interacción. Además, promovemos la sostenibilidad, apoyando prácticas responsables y colaborando con restaurantes que comparten nuestros valores.</p>
-            <p>¡Esperamos conectarte con tus próximos sabores favoritos!</p>
+            <p>Fundada en 2024, nuestra plataforma es tu pasaporte para descubrir y disfrutar una amplia variedad de opciones gastronómicas de calidad. Nos apasiona ofrecer una experiencia culinaria excepcional, trabajando mano a mano con una diversa selección de restaurantes que aseguran siempre una oferta rica y de alta calidad. Con un firme compromiso hacia la innovación y la simplicidad, hemos creado una experiencia de usuario fluida y agradable, siempre priorizando la satisfacción del cliente. Nos esforzamos por brindar un servicio excepcional y memorable en todo momento.</p>
+            <p>En nuestra plataforma, no solo te conectamos con una amplia gama de restaurantes y tipos de cocina, sino que también promovemos la sostenibilidad y apoyamos prácticas responsables. Colaboramos con restaurantes que comparten nuestros valores, creando un impacto positivo en el medio ambiente y en la comunidad.</p>
+            <p>Una de nuestras mayores prioridades es concientizar sobre el desperdicio de alimentos. Fomentamos prácticas que ayudan a reducirlo y aprovechamos al máximo cada ingrediente. Nuestro objetivo es sacarle provecho a esa comida que comúnmente se suele tirar a la basura, transformándola en deliciosos platos que deleitan el paladar y nutren el alma.</p>
+            <p>¡Estamos aquí para conectarte con tus próximos sabores favoritos y para hacer de cada comida una experiencia inolvidable!</p>
             <br>
             <a href="{{ url_for('login') }}" class="btn-custom rounded-full">Acceder</a>
         </div>
@@ -472,7 +473,7 @@
             <input type="text" id="name" name="name" required>
     
             <label for="phone">Teléfono *</label>
-            <input type="tel" id="phone" name="phone" required>
+            <input type="tel" id="phone" name="phone">
     
             <label for="email">Email</label>
             <input type="email" id="email" name="email" required>
@@ -502,7 +503,7 @@
             document.getElementById("confirmation-message").style.display = "block";
             return false;
         }
-
+        
         function scrollToInfo(infoId) {
             document.getElementById(infoId).scrollIntoView({ behavior: 'smooth' });
         }

@@ -239,6 +239,7 @@
                 cancelButtonText: 'No, cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    localStorage.removeItem('popupShown'); // Remove popupShown from localStorage
                     document.getElementById('logout-form').submit();
                 }
             });

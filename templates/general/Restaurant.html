@@ -410,7 +410,7 @@
                     <h2>{{ restaurant.nombre_usuario }}</h2>
                     <div class="rating-total">
                         <i class="fas fa-star" id="Estrellatotal"></i>
-                        <span ID="totalNumeros">{{ restaurant.ratingTotal }}</span>
+                        <span ID="totalNumeros">{{ restaurant.ratingTotal|round(1) }}</span>
                     </div>
                     <p>{{ restaurant.calle }} {{ restaurant.altura }}, {{ restaurant.localidad }}</p>
                 </div>

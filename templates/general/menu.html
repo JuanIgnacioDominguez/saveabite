@@ -373,7 +373,7 @@
                             <div class="info-icon"><i class="fas fa-dollar-sign"></i></div>
                             <p class="text-gray-600">$ {{ producto.precio }}</p>
                             <div class="info-icon"><i class="fas fa-star"></i></div>
-                            <p class="text-gray-600">{{ producto.rating_total }}</p>
+                            <p class="text-gray-600">{{ producto.rating_total|round(1) }}</p>
                         </div>
                         <div class="button-container">
                             <button class="action-button add-to-cart-btn" data-stock="{{ producto.stock }}" data-id="{{ producto.id }}" data-name="{{ producto.nombre }}" data-description="{{ producto.descripcion }}" data-price="{{ producto.precio }}" data-image="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}">Añadir al carrito</button>
@@ -407,7 +407,7 @@
                         </div>
                         <div>
                             <div class="info-icon rating-icon"><i class="fas fa-star"></i></div>
-                            <p class="text-gray-600">{{ producto.rating_total }}</p>
+                            <p class="text-gray-600">{{ producto.rating_total|round(1) }}</p>
                         </div>
                     </div>
                     <div class="button-container">

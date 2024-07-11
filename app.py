@@ -544,7 +544,6 @@ def cancelar_membresia_empresa():
     conn.commit()
     registrar_accion(user_id, 'Cancelada membresía de empresa')
     conn.close()
-    flash('Membresía de empresa dada de baja correctamente.', 'success')
     return redirect(url_for('membresia_empresa'))
 
 @app.route("/menu", methods=['GET'])
@@ -1326,7 +1325,6 @@ def actualizar_membresia():
         conn.execute('UPDATE usuarios SET membresia = ? WHERE id = ?', (plan, user_id))
         conn.commit()
         conn.close()
-        flash('Membresía actualizada con éxito', 'success')
     else:
         flash('No se pudo actualizar la membresía. Usuario no autenticado.', 'error')
     

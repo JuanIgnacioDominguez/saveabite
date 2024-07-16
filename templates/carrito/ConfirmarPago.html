@@ -223,7 +223,7 @@
                             <span id="total_amount">${{ total }}</span>
                         </div>
                     </div>
-                    <button type="submit" class="confirm-button mt-4" id="confirmButton">Pedir ($<span id="total_button_amount">{{ total }}</span>)</button>
+                    <button type="button" class="confirm-button mt-4" id="confirmButton" onclick="showConfirmationModal()">Pedir ($<span id="total_button_amount">{{ total }}</span>)</button>
                 </form>
             {% else %}
                 <p class="text-center text-gray-500">Tu carrito está vacío.</p>
@@ -246,6 +246,7 @@
     <!-- Thank You Modal -->
     <div id="thankYouModal" class="modal">
         <div class="modal-content">
+            <img id="thankYouImage" src="" alt="Order Confirmed" style="width: 100%; max-width: 200px; margin: 0 auto;">
             <h2>¡Muchas gracias por tu pedido!</h2>
             <p>Tu pedido ha sido realizado con éxito.</p>
             <form id="finalizarPedidoForm" method="POST" action="{{ url_for('finalizar_pedido') }}">
@@ -323,7 +324,7 @@
                 console.log('Response from server:', data);  // Add this for debugging
                 if (data.success) {
                     // Show thank you modal
-                    document.getElementById('thankYouModal').style.display = 'block';
+                    showThankYouModal();
                 } else {
                     console.error('Error al procesar la compra');
                 }
@@ -331,6 +332,20 @@
             .catch(error => {
                 console.error('Error:', error);
             });
+        }
+
+        function showThankYouModal() {
+            fetch('{{ url_for("random_image") }}')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.image_url) {
+                        document.getElementById('thankYouImage').src = data.image_url;
+                    }
+                    document.getElementById('thankYouModal').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error fetching random image:', error);
+                });
         }
 
         // Initialize the default selected tip

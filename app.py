@@ -1,6 +1,7 @@
 import os
 import datetime
 import uuid
+import random
 from flask import Flask, jsonify, render_template, request, redirect, url_for, flash, session
 from flask_mail import Mail, Message
 import sqlite3
@@ -1859,6 +1860,16 @@ def enviar_soporte_empresa():
         flash(f'Hubo un error al enviar tu mensaje: {str(e)}', 'error')
     
     return redirect(url_for('perfil_empresa'))
+
+@app.route('/random_image')
+def random_image():
+    img_folder = os.path.join(app.static_folder, 'img/PopUps')
+    images = [f for f in os.listdir(img_folder) if os.path.isfile(os.path.join(img_folder, f))]
+    if images:
+        selected_image = random.choice(images)
+        return jsonify({'image_url': url_for('static', filename=f'img/PopUps/{selected_image}')})
+    return jsonify({'error': 'No images found'}), 404
+
 
 if __name__ == "__main__":
     app.run(debug=True)

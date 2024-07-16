@@ -456,8 +456,7 @@
     </div>
 
     <script>
-         //POPUPS
-         document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() {
             const popup = document.getElementById('popup');
             const closePopup = document.getElementById('closePopup');
 
@@ -483,111 +482,130 @@
             });
         });
 
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('preview-modal');
+            const closeButton = document.querySelector('.close-button');
+            const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+            const quantityInput = document.getElementById('quantity');
+            const searchInput = document.getElementById('search-input');
+            const searchButton = document.getElementById('search-button');
+            const clearButton = document.getElementById('clear-button');
+            const modalAddToCartButton = document.getElementById('modal-add-to-cart');
+            
+            let currentStock = 0;
+            let productId = 0;
 
+            // Mostrar la cruz roja cuando hay texto en el input
+            if (searchInput.value.trim() !== '') {
+                clearButton.style.display = 'inline-block';
+                searchButton.style.display = 'none';
+            } else {
+                clearButton.style.display = 'none';
+                searchButton.style.display = 'inline-block';
+            }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const modal = document.getElementById('preview-modal');
-        const closeButton = document.querySelector('.close-button');
-        const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
-        const quantityInput = document.getElementById('quantity');
-        const searchInput = document.getElementById('search-input');
-        const searchButton = document.getElementById('search-button');
-        const clearButton = document.getElementById('clear-button');
-        const modalAddToCartButton = document.getElementById('modal-add-to-cart');
-        
-        let currentStock = 0;
-        let productId = 0;
+            // Limpiar el campo de búsqueda y ocultar la cruz roja
+            clearButton.addEventListener('click', function () {
+                searchInput.value = '';
+                clearButton.style.display = 'none';
+                searchButton.style.display = 'inline-block';
+                document.getElementById('search-form').submit();
+            });
 
-        // Mostrar la cruz roja cuando hay texto en el input
-        if (searchInput.value.trim() !== '') {
-            clearButton.style.display = 'inline-block';
-            searchButton.style.display = 'none';
-        } else {
-            clearButton.style.display = 'none';
-            searchButton.style.display = 'inline-block';
-        }
+            // Manejo de los botones de añadir al carrito
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const title = button.getAttribute('data-name');
+                    const description = button.getAttribute('data-description');
+                    const price = parseFloat(button.getAttribute('data-price'));
+                    currentStock = parseInt(button.getAttribute('data-stock'));
+                    const imageSrc = button.getAttribute('data-image');
+                    productId = button.getAttribute('data-id');
 
-        // Limpiar el campo de búsqueda y ocultar la cruz roja
-        clearButton.addEventListener('click', function () {
-            searchInput.value = '';
-            clearButton.style.display = 'none';
-            searchButton.style.display = 'inline-block';
-            document.getElementById('search-form').submit();
-        });
+                    document.getElementById('modal-title').textContent = title;
+                    document.getElementById('modal-description').textContent = description;
+                    document.getElementById('modal-price').textContent = "Precio: $" + price.toFixed(2);
+                    document.getElementById('modal-stock').textContent = "Stock disponible: " + currentStock;
+                    document.getElementById('modal-image').src = imageSrc;
+                    document.getElementById('add-to-cart-form').action = `/agregar_al_carrito/${productId}`;
 
-        // Manejo de los botones de añadir al carrito
-        addToCartButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const title = button.getAttribute('data-name');
-                const description = button.getAttribute('data-description');
-                const price = parseFloat(button.getAttribute('data-price'));
-                currentStock = parseInt(button.getAttribute('data-stock'));
-                const imageSrc = button.getAttribute('data-image');
-                productId = button.getAttribute('data-id');
+                    modal.classList.remove('hidden');
+                });
+            });
 
-                document.getElementById('modal-title').textContent = title;
-                document.getElementById('modal-description').textContent = description;
-                document.getElementById('modal-price').textContent = "Precio: $" + price.toFixed(2);
-                document.getElementById('modal-stock').textContent = "Stock disponible: " + currentStock;
-                document.getElementById('modal-image').src = imageSrc;
-                document.getElementById('add-to-cart-form').action = `/agregar_al_carrito/${productId}`;
+            // Manejo del botón en el modal para añadir al carrito
+            modalAddToCartButton.addEventListener('click', function (event) {
+                event.preventDefault();
+                const quantity = parseInt(quantityInput.value);
+                if (quantity > 0 && quantity <= currentStock) {
+                    const formData = new FormData(document.getElementById('add-to-cart-form'));
+                    fetch(document.getElementById('add-to-cart-form').action, {
+                        method: 'POST',
+                        body: formData,
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const messageContainer = document.querySelector('#preview-modal .message-container');
+                        if (data.success) {
+                            modal.classList.add('hidden');
+                            fetch('/random_image')
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.image_url) {
+                                        Swal.fire({
+                                            title: 'Producto agregado',
+                                            text: 'El producto se ha agregado al carrito con éxito.',
+                                            imageUrl: data.image_url,
+                                            imageWidth: 400,
+                                            imageHeight: 200,
+                                            imageAlt: 'Imagen',
+                                            confirmButtonText: 'Cerrar',
+                                            confirmButtonColor: '#27a2e8'
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            title: 'Producto agregado',
+                                            text: 'El producto se ha agregado al carrito con éxito.',
+                                            icon: 'success',
+                                            confirmButtonText: 'Cerrar',
+                                            confirmButtonColor: '#27a2e8'
+                                        });
+                                    }
+                                });
+                            fetchCartItems();
+                        } else {
+                            messageContainer.innerHTML = `<p class="message">Error al agregar el producto al carrito</p>`;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        const messageContainer = document.querySelector('#preview-modal .message-container');
+                        messageContainer.innerHTML = `<p class="message">Error al agregar el producto al carrito</p>`;
+                    });
+                } else {
+                    const messageContainer = document.querySelector('#preview-modal .message-container');
+                    messageContainer.innerHTML = `<p class="message">Cantidad no válida. Disponible: ${currentStock}</p>`;
+                }
+            });
 
-                modal.classList.remove('hidden');
+            closeButton.addEventListener('click', function () {
+                modal.classList.add('hidden');
+            });
+
+            window.addEventListener('click', function (event) {
+                if (event.target === modal) {
+                    modal.classList.add('hidden');
+                }
             });
         });
 
-        // Manejo del botón en el modal para añadir al carrito
-        modalAddToCartButton.addEventListener('click', function (event) {
-            event.preventDefault();
-            const quantity = parseInt(quantityInput.value);
-            if (quantity > 0 && quantity <= currentStock) {
-                const formData = new FormData(document.getElementById('add-to-cart-form'));
-                fetch(document.getElementById('add-to-cart-form').action, {
-                    method: 'POST',
-                    body: formData,
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const messageContainer = document.querySelector('#preview-modal .message-container');
-                    if (data.success) {
-                        modal.classList.add('hidden');
-                        Swal.fire({
-                            title: 'Producto agregado',
-                            text: 'El producto se ha agregado al carrito con éxito.',
-                            icon: 'success',
-                            confirmButtonText: 'Cerrar',
-                            confirmButtonColor: '#27a2e8'
-                        });
-                        fetchCartItems();
-                    } else {
-                        messageContainer.innerHTML = `<p class="message">Error al agregar el producto al carrito</p>`;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    const messageContainer = document.querySelector('#preview-modal .message-container');
-                    messageContainer.innerHTML = `<p class="message">Error al agregar el producto al carrito</p>`;
-                });
-            } else {
-                const messageContainer = document.querySelector('#preview-modal .message-container');
-                messageContainer.innerHTML = `<p class="message">Cantidad no válida. Disponible: ${currentStock}</p>`;
-            }
-        });
+        function fetchCartItems() {
+            // Implementación para actualizar los ítems del carrito
+        }
 
-        closeButton.addEventListener('click', function () {
-            modal.classList.add('hidden');
-        });
-
-        window.addEventListener('click', function (event) {
-            if (event.target === modal) {
-                modal.classList.add('hidden');
-            }
-        });
-    });
-
-    function fetchCartItems() {
-        // Implementación para actualizar los ítems del carrito
-    }
+        function filterCategory(category) {
+            window.location.href = `/filter_menu?tipoComida=${category}`;
+        }
     </script>
 </body>
 </html>

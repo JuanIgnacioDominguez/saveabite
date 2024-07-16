@@ -204,7 +204,7 @@
                         <h3 id="nombrerestaurante">{{ restaurant.nombre_usuario }}</h3>
                         <div class="rating-total">
                             <i class="fas fa-star" id="Estrellatotal"></i>
-                            <span ID="totalNumeros">{{ restaurant.rating_total }}</span>
+                            <span ID="totalNumeros">{{ restaurant.rating_total|round(1) }}</span>
                         </div>
                     </div>
                     <div class="flex items-center">

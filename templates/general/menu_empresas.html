@@ -158,14 +158,14 @@
             display: flex;
             flex-wrap: wrap;
             gap: 1rem;
-            margin-top: hidden;
+            margin-top: 1rem;
         }
         .stat-container {
+            margin-top: 15px;
             display: flex;
-            margin-top: hidden;
             flex-direction: column;
             flex: 1;
-            max-width: auto;
+            max-width: 1000px;
         }
         .stat-card {
             background-color: white;
@@ -243,7 +243,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 16px;
-            margin-top: hidden;
+            margin-top: 1rem;
             width: 100%;
             max-width: 600px;
             height: 450px;
@@ -272,7 +272,6 @@
         </div>
 
         <!-- Sección de Estadísticas -->
-        {% if restaurant.membership == 'Avanzada' %}
         <div class="statistics">
             <!-- Gráfico de Línea para Ventas Mensuales -->
             <div class="line-chart-container">
@@ -302,7 +301,6 @@
                 </div>
             </div>
         </div>
-        {% endif %}
     </div>
 
     <div id="popup" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
@@ -352,8 +350,8 @@
 
         // Datos para el gráfico de línea
         const labels = Array.from({length: 30}, (_, i) => i + 1);
-        const dailyRevenue = `{{ daily_revenue | tojson }}`;
-        const dataPoints = labels.map(day => dailyRevenue[day] || 0);
+        const dailyRevenue = {{ daily_revenue | tojson }};
+        const dataPoints = labels.map(day => dailyRevenue[day - 1] || 0);
         
         const data = {
             labels: labels,

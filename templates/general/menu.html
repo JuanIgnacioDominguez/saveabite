@@ -367,6 +367,27 @@
                 <i class="fas fa-drumstick-bite"></i>
                 Carnes
             </button>
+            <button class="btn-custom {% if 'Verduras y Frutas' in tipo_comida %}active{% endif %}" onclick="filterCategory('Verduras y Frutas')">
+                <i class="fas fa-apple-alt"></i>
+                Verduras y Frutas
+            </button>
+            <button class="btn-custom {% if 'Pescado' in tipo_comida %}active{% endif %}" onclick="filterCategory('Pescado')">
+                <i class="fas fa-fish"></i>
+                Pescado
+            </button>
+            <button class="btn-custom {% if 'Bebidas' in tipo_comida %}active{% endif %}" onclick="filterCategory('Bebidas')">
+                <i class="fas fa-wine-glass-alt"></i>
+                Bebidas
+            </button>
+            <button class="btn-custom {% if 'Dulce' in tipo_comida %}active{% endif %}" onclick="filterCategory('Dulce')">
+                <i class="fas fa-ice-cream"></i>
+                Dulce
+            </button>
+            <button class="btn-custom {% if 'Frio' in tipo_comida %}active{% endif %}" onclick="filterCategory('Frio')">
+                <i class="fas fa-snowflake"></i>
+                Frio
+            </button>
+
         </div>							  
         {% if membresia == 'Avanzado' and tipo_dieta and recomendados %}
     <div class="mt-8">

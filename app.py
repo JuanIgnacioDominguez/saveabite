@@ -1200,7 +1200,7 @@ def crear_producto():
         nombre = request.form['nombre']
         precio = request.form['precio']
         descripcion = request.form['descripcion']
-        categorias = request.form['categorias']  
+        categorias = request.form['categorias']
         tipo_dieta = request.form['tipo_dieta']
         stock = request.form['stock']
         file = request.files['imagen']

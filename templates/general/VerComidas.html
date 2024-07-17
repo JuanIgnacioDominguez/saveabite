@@ -207,65 +207,73 @@
             const cards = document.querySelectorAll('.card');
             const baseUrl = "{{ url_for('producto', id=0) }}";
             const productBaseUrl = baseUrl.slice(0, -1);
-
+        
             cards.forEach(card => {
                 card.addEventListener('click', function(event) {
-                    // Verificar si el click se hizo en un select o en un botón de edición
                     if (event.target.tagName.toLowerCase() !== 'select' && !event.target.classList.contains('edit-button') && !event.target.classList.contains('delete-button')) {
-                        // Evitar la redirección al no hacer nada
                         event.preventDefault();
                         event.stopPropagation();
                     }
                 });
             });
-
+        
             const editButtons = document.querySelectorAll('.edit-button');
             const modal = document.getElementById('myModal');
             const closeModal = document.getElementsByClassName('close')[0];
-
+        
             editButtons.forEach(button => {
                 button.addEventListener('click', function(event) {
-                    event.stopPropagation(); // Detener la propagación del evento
+                    event.stopPropagation();
                     modal.style.display = 'flex';
                     const card = this.closest('.card');
                     const productName = card.querySelector('.product-name').textContent;
                     const productDescription = card.querySelector('.product-descripcion').textContent;
                     const productPrice = card.querySelector('.product-price').textContent;
                     const productStock = card.querySelector('.product-stock').textContent;
-                    const productCategory = card.getAttribute('data-category'); // Obtener la categoría del producto
-                    const productId = card.getAttribute('data-id'); // Obtener el ID del producto
-
+                    const productCategories = card.getAttribute('data-category').split(','); // Obtener las categorías del producto
+                    const productId = card.getAttribute('data-id');
+        
                     // Setear valores en el formulario
                     document.getElementById('product-id').value = productId;
                     document.getElementById('product-name').value = productName;
                     document.getElementById('product-descripcion').value = productDescription;
                     document.getElementById('product-price').value = productPrice;
                     document.getElementById('product-stock').value = productStock;
-                    document.getElementById('product-category').value = productCategory;
+        
+                    // Establecer los checkboxes de categoría
+                    const categoryCheckboxes = document.querySelectorAll('#product-category input[type="checkbox"]');
+                    categoryCheckboxes.forEach(checkbox => {
+                        checkbox.checked = productCategories.includes(checkbox.value);
+                    });
                 });
             });
-                        
+        
             closeModal.onclick = function() {
                 modal.style.display = 'none';
             };
-
+        
             window.onclick = function(event) {
                 if (event.target == modal) {
                     modal.style.display = 'none';
                 }
             };
-
+        
             // Manejar la actualización del producto a través de AJAX
             const editProductForm = document.getElementById('edit-product-form');
             editProductForm.addEventListener('submit', function(event) {
-                event.preventDefault(); // Evitar que el formulario se envíe de la manera tradicional
+                event.preventDefault();
                 const productId = document.getElementById('product-id').value;
                 const productName = document.getElementById('product-name').value;
                 const productDescription = document.getElementById('product-descripcion').value;
                 const productPrice = document.getElementById('product-price').value;
                 const productStock = document.getElementById('product-stock').value;
-                const productCategory = document.getElementById('product-category').value;
-
+        
+                // Mantener la categoría "todos" y actualizar otras categorías
+                const selectedCategories = [...document.querySelectorAll('#product-category input[type="checkbox"]:checked')].map(checkbox => checkbox.value);
+                if (!selectedCategories.includes('todos')) {
+                    selectedCategories.push('todos');
+                }
+        
                 fetch(`/update_product/${productId}`, {
                     method: 'POST',
                     headers: {
@@ -276,19 +284,18 @@
                         descripcion: productDescription,
                         precio: productPrice,
                         stock: productStock,
-                        tipoComida: productCategory
+                        tipoComida: selectedCategories.join(',')
                     })
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // Actualizar la interfaz de usuario sin recargar la página
                         const card = document.querySelector(`.card[data-id='${productId}']`);
                         card.querySelector('.product-name').textContent = productName;
                         card.querySelector('.product-descripcion').textContent = productDescription;
                         card.querySelector('.product-price').textContent = `${productPrice}`;
                         card.querySelector('.product-stock').textContent = `${productStock}`;
-                        card.setAttribute('data-category', productCategory);
+                        card.setAttribute('data-category', selectedCategories.join(','));
                         modal.style.display = 'none';
                     } else {
                         alert('Error al actualizar el producto.');
@@ -298,18 +305,17 @@
                     console.error('Error:', error);
                 });
             });
-
-            // Actualizar estado visualmente y en la base de datos
+        
             const selects = document.querySelectorAll('.estado-select');
             selects.forEach(select => {
                 const currentState = select.value;
-                updateSelectBackground(select, currentState); // Establecer el color inicial del select basado en el estado actual
-
+                updateSelectBackground(select, currentState);
+        
                 select.addEventListener('change', function(event) {
                     const card = this.closest('.card');
                     const selectedValue = this.value;
                     const productId = card.getAttribute('data-id');
-
+        
                     fetch(`/update_product_status/${productId}`, {
                         method: 'POST',
                         headers: {
@@ -320,7 +326,7 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            updateSelectBackground(this, selectedValue); // Actualizar el color del select basado en el estado
+                            updateSelectBackground(this, selectedValue);
                         } else {
                             alert('Error al actualizar el estado del producto.');
                         }
@@ -330,7 +336,7 @@
                     });
                 });
             });
-
+        
             function updateSelectBackground(select, estado) {
                 if (estado === 'Disponible') {
                     select.style.backgroundColor = '#22c55e';
@@ -338,17 +344,17 @@
                     select.style.backgroundColor = '#f87171';
                 }
             }
-
+        
             const deleteButtons = document.querySelectorAll('.delete-button');
-
+        
             deleteButtons.forEach(button => {
                 button.addEventListener('click', function(event) {
-                    event.preventDefault(); // Prevent default form submission
-                    event.stopPropagation(); // Stop event propagation
-
+                    event.preventDefault();
+                    event.stopPropagation();
+        
                     const form = this.closest('form');
-                    const productId = form.action.split('/').pop(); // Extract productId from form action URL
-
+                    const productId = form.action.split('/').pop();
+        
                     Swal.fire({
                         title: '¿Estás seguro?',
                         text: "¿Quieres eliminar este producto?",
@@ -369,7 +375,6 @@
                             .then(response => response.json())
                             .then(data => {
                                 if (data.success) {
-                                    // Remove the product card from the UI
                                     const card = document.querySelector(`.card[data-id='${productId}']`);
                                     card.remove();
                                     Swal.fire({
@@ -456,14 +461,20 @@
                 </label>
                 <label class="block mb-6">
                     <span class="text-gray-700">Categoría del Producto</span>
-                    <select id="product-category" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                        <option value="Hamburguesas">Hamburguesas</option>
-                        <option value="Pizzas">Pizzas</option>
-                        <option value="Pastas">Pastas</option>
-                        <option value="Ensaladas">Ensaladas</option>
-                        <option value="Cafeteria">Cafeteria</option>
-                        <option value="Carnes">Carnes</option>
-                    </select>
+                    <div id="product-category" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        <label><input type="checkbox" value="Hamburguesas"> Hamburguesas</label><br>
+                        <label><input type="checkbox" value="Pizzas"> Pizzas</label><br>
+                        <label><input type="checkbox" value="Pastas"> Pastas</label><br>
+                        <label><input type="checkbox" value="Ensaladas"> Ensaladas</label><br>
+                        <label><input type="checkbox" value="Cafeteria"> Cafeteria</label><br>
+                        <label><input type="checkbox" value="Carnes"> Carnes</label><br>
+                        <label><input type="checkbox" value="Verduras y Frutas"> Verduras y Frutas</label><br>
+                        <label><input type="checkbox" value="Pescado"> Pescado</label><br>
+                        <label><input type="checkbox" value="Bebidas"> Bebidas</label><br>
+                        <label><input type="checkbox" value="Dulce"> Dulce</label><br>
+                        <label><input type="checkbox" value="Frio"> Frio</label>
+                        <label><input type="checkbox" value="todos" checked disabled> Todos</label> <!-- Siempre seleccionado y deshabilitado -->
+                    </div>
                 </label>
                 <div class="flex justify-between">
                     <button type="submit" class="modal-button">Guardar Cambios</button>

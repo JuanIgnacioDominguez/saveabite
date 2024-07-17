@@ -191,17 +191,19 @@
         document.addEventListener('DOMContentLoaded', function() {
             const categoryItems = document.querySelectorAll('.category-item');
             const categoriasInput = document.getElementById('categorias');
-
+        
             categoryItems.forEach(item => {
                 item.addEventListener('click', () => {
                     item.classList.toggle('selected');
-                    const selectedCategories = Array.from(categoryItems).filter(i => i.classList.contains('selected')).map(i => i.getAttribute('data-category'));
+                    const selectedCategories = Array.from(categoryItems)
+                        .filter(i => i.classList.contains('selected'))
+                        .map(i => i.getAttribute('data-category'));
                     categoriasInput.value = selectedCategories.join(',');
                 });
             });
-
+        
             const form = document.querySelector('form');
-
+        
             form.addEventListener('submit', function(event) {
                 event.preventDefault();
                 if (!validateForm()) {
@@ -228,7 +230,7 @@
                 });
             });
         });
-
+        
         function validateForm() {
             const imagen = document.getElementById('imagen').value;
             const nombre = document.getElementById('nombre').value;
@@ -236,7 +238,7 @@
             const descripcion = document.getElementById('descripcion').value;
             const categorias = document.getElementById('categorias').value;
             const stock = document.getElementById('stock').value;
-
+        
             if (!imagen || !nombre || !precio || !descripcion || !categorias || !stock) {
                 alert("Todos los campos son obligatorios.");
                 return false;
@@ -294,6 +296,11 @@
                                 <span class="category-item" data-category="Ensaladas">Ensaladas</span>
                                 <span class="category-item" data-category="Cafeteria">Cafeteria</span>
                                 <span class="category-item" data-category="Carnes">Carnes</span>
+                                <span class="category-item" data-category="Verduras y Frutas">Verduras y Frutas</span>
+                                <span class="category-item" data-category="Pescado">Pescado</span>
+                                <span class="category-item" data-category="Bebidas">Bebidas</span>
+                                <span class="category-item" data-category="Dulce">Dulce</span>
+                                <span class="category-item" data-category="Frio">Frio</span>
                             </div>
                         </div>                      
                     </div>

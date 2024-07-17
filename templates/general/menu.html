@@ -303,6 +303,16 @@
         .search button[type="button"] {
             display: '{{ 'inline-block' if request.args.get('query', '') else 'none' }}'';
         }
+        .modal-content img, .swal2-popup img {
+            width: 150px; 
+            height: auto; 
+            object-fit: cover; 
+        }
+        .swal2-image {
+            width: 400px !important;
+            height: 200px !important;
+            object-fit: cover;
+        }
     </style>
     <script>
         function filterCategory(category) {
@@ -557,7 +567,7 @@
                                             text: 'El producto se ha agregado al carrito con éxito.',
                                             imageUrl: data.image_url,
                                             imageWidth: 400,
-                                            imageHeight: 200,
+                                            imageHeight: 400,
                                             imageAlt: 'Imagen',
                                             confirmButtonText: 'Cerrar',
                                             confirmButtonColor: '#27a2e8'

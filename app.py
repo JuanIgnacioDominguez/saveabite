@@ -1298,20 +1298,31 @@ def carrito():
 @app.route("/agregar_al_carrito/<int:producto_id>", methods=['POST'])
 def agregar_al_carrito(producto_id):
     user_id = session.get('user_id')
-    cantidad = request.form.get('cantidad', type=int)  # Obtiene la cantidad del formulario y la convierte a entero
+    cantidad = request.form.get('cantidad', type=int)
     if not cantidad or cantidad < 1:
-        cantidad = 1  # Asegura que la cantidad sea al menos 1 si no se proporciona o es inválida
+        cantidad = 1
 
     conn = get_db_connection()
+    producto = conn.execute('SELECT stock FROM Productos WHERE id = ?', (producto_id,)).fetchone()
+
+    if producto['stock'] < cantidad:
+        conn.close()
+        return jsonify({'message': 'No hay suficiente stock disponible', 'success': False})
+
     item = conn.execute('SELECT * FROM carrito WHERE usuario_id = ? AND producto_id = ?', (user_id, producto_id)).fetchone()
     
     if item:
-        # Actualiza la cantidad del producto en el carrito con la cantidad especificada
-        conn.execute('UPDATE carrito SET cantidad = cantidad + ? WHERE usuario_id = ? AND producto_id = ?', (cantidad, user_id, producto_id))
+        nueva_cantidad = item['cantidad'] + cantidad
+        if producto['stock'] < nueva_cantidad:
+            conn.close()
+            return jsonify({'message': 'No hay suficiente stock disponible', 'success': False})
+        conn.execute('UPDATE carrito SET cantidad = ? WHERE usuario_id = ? AND producto_id = ?', (nueva_cantidad, user_id, producto_id))
     else:
-        # Agrega el producto al carrito con la cantidad especificada
         conn.execute('INSERT INTO carrito (usuario_id, producto_id, cantidad) VALUES (?, ?, ?)', (user_id, producto_id, cantidad))
     
+    # Actualizar el stock del producto
+    conn.execute('UPDATE Productos SET stock = stock - ? WHERE id = ?', (cantidad, producto_id))
+
     conn.commit()
     conn.close()
     return jsonify({'message': 'Producto agregado al carrito', 'success': True})

@@ -1200,8 +1200,9 @@ def crear_producto():
         nombre = request.form['nombre']
         precio = request.form['precio']
         descripcion = request.form['descripcion']
-        categorias = request.form['categorias']  # Obtener las categorías seleccionadas
+        categorias = request.form['categorias']  
         tipo_dieta = request.form['tipo_dieta']
+        stock = request.form['stock']
         file = request.files['imagen']
         
         if file and allowed_file(file.filename):
@@ -1219,9 +1220,9 @@ def crear_producto():
             # Guardar el producto en la base de datos
             conn = get_db_connection()
             conn.execute('''
-                INSERT INTO Productos (id_empresa, nombre, precio, descripcion, imagen, tipoComida, tipo_dieta, empresa) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (session.get('user_id'), nombre, precio, descripcion, filename, categorias, tipo_dieta, session.get('user_name')))
+                INSERT INTO Productos (id_empresa, nombre, precio, descripcion, imagen, tipoComida, tipo_dieta, stock, empresa) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (session.get('user_id'), nombre, precio, descripcion, filename, categorias, tipo_dieta, stock, session.get('user_name')))
             conn.commit()
             conn.close()
             return redirect(url_for('menu_empresas'))

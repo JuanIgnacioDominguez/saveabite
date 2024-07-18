@@ -119,8 +119,6 @@
             text-align: center;
             margin-bottom: 2rem;
             position: relative;
-            max-width: 400px; /* Limitar el ancho máximo de la tarjeta */
-            margin: 0 auto; /* Centrando horizontalmente */
         }
         .membership-card p {
             margin: 0;
@@ -245,14 +243,14 @@
             </a>
             <div class="separator"></div>
             <br>
-            <div class="w-full flex justify-center"> <!-- Cambiado a flex con justify-center -->
+            <div class="w-full grid grid-cols-1 xl:grid-cols-3 gap-8">
                 
                 <div class="membership-card">
                     <div class="crown-icon pro-crown">
                         <i class="fas fa-crown"></i>
                     </div>
                     <p class="text-xl text-center font-bold text-blue-600">Avanzada</p>
-                    <p class="price">$5000</p>
+                    <p class="price">$15000</p>
                     <p class="period">/ MES</p>
                     <ul class="border-t border-gray-300 py-8 space-y-6">
                         <li><span class="icon check"><i class="fas fa-check"></i></span><span class="text">Prioridad en el posicionamiento de las comidas en el menu</span></li>
